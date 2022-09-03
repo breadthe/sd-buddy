@@ -35,6 +35,10 @@ The app is built with:
 
 * Make sure the program runs without errors and it can generate images by running the above command manually, before using the app. *The app doesn't have a lot of error checking built in, so try not to abuse it 🙂*
 
+## Download
+
+Download the compiled app in `.app` or `.dmg` format from the [Releases](https://github.com/breadthe/sd-buddy/releases) page.
+
 ## Building the app
 
 In addition to the above, if you want to build the Mac binary yourself, first install the [Tauri environment + CLI](https://tauri.app/v1/guides/getting-started/prerequisites) (it includes Rust), then clone this repo and run:
