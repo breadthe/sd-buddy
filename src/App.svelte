@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { open as openDialog } from "@tauri-apps/api/dialog";
+  import { appDir } from "@tauri-apps/api/path";
+  import { open } from "@tauri-apps/api/shell";
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
-  import { open } from "@tauri-apps/api/dialog";
   import { get, set } from "tauri-settings";
-  import { appDir } from "@tauri-apps/api/path";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -17,6 +18,7 @@
   */
   let stableDiffusionDirectoryInput: HTMLInputElement;
   let stableDiffusionDirectory: string = "";
+  let stableDiffusionOutputDirectory: string = "";
   let stableDiffusionCommand: string = "";
   let stableDiffusionCommandHtml: string = "";
   let rustResponse: string = "";
@@ -43,9 +45,15 @@
     stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples 1 --n_iter 1 --plms --ddim_steps <strong>${steps}</strong>`;
   }
 
+  $: {
+    if (stableDiffusionDirectory) {
+        stableDiffusionOutputDirectory = `${stableDiffusionDirectory}/outputs/txt2img-samples`;
+    }
+  }
+
   async function openDirectorySelectionDialog() {
     // Open a selection dialog for directories
-    const selected = await open({
+    const selected = await openDialog({
       directory: true,
       multiple: false,
       defaultPath: await appDir(),
@@ -99,14 +107,20 @@
       });
   }
 
+  async function openDirectory(directory: string) {
+    await open(`file://${directory}`);
+  }
+
   onMount(() => {
     invoke("close_splashscreen");
 
-    get<directory>("stableDiffusionDirectory").then((directory) => {
-      stableDiffusionDirectory = directory;
-    }).catch((err) => {
-      // do nothing, the user will have to set the directory
-    });
+    get<directory>("stableDiffusionDirectory")
+      .then((directory) => {
+        stableDiffusionDirectory = directory;
+      })
+      .catch((err) => {
+        // do nothing, the user will have to set the directory
+      });
   });
 </script>
 
@@ -135,7 +149,28 @@
     </div>
 
     {#if stableDiffusionDirectory}
-      <small class="font-mono text-blue-600">{stableDiffusionDirectory}</small>
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-bold">SD project:</span>
+            <a
+              href={`file://${stableDiffusionDirectory}`}
+              class="font-mono text-xs text-blue-600 hover:underline"
+              on:click|preventDefault={() =>
+                openDirectory(stableDiffusionDirectory)}
+              >{stableDiffusionDirectory}</a
+            >
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-bold">SD output:</span>
+            <a
+              href={`file://${stableDiffusionOutputDirectory}`}
+              class="font-mono text-xs text-blue-600 hover:underline"
+              on:click|preventDefault={() =>
+                openDirectory(stableDiffusionOutputDirectory)}
+              >{stableDiffusionOutputDirectory}</a
+            >
+        </div>
+      </div>
     {/if}
   </div>
 

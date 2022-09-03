@@ -78,6 +78,7 @@ I'll tackle these in whatever order I feel is a priority for how I use Stable Di
 * A gallery of generated images.
 * Light/dark mode.
 * UI improvements including a Help section.
+* Configurable script parameters in addition to prompt and steps, including output folder.
 
 In addition, I need to sort out various small details around developing with Tauri, such as global keyboard shortcuts for common actions such as quitting the app, enabling copy/paste in text boxes, and narrowing down the file/directory operations scope to the settings folder.
 

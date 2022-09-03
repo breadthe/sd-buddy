@@ -17,6 +17,9 @@
             "path": {
                 "all": true
             },
+            "shell": {
+                "open": "^https?://|^file://"
+            },
             "fs": {
                 "scope": [
                     "**"
