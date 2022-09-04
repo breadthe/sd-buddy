@@ -19,7 +19,7 @@
   --ddim_steps 100 (1m) 2m on M1 Pro
   */
   let stableDiffusionDirectoryInput: HTMLInputElement;
-  let stableDiffusionDirectory: string = "";
+  $: stableDiffusionDirectory = "";
   let stableDiffusionOutputDirectory: string = "";
   let stableDiffusionCommand: string = "";
   let stableDiffusionCommandHtml: string = "";
@@ -92,6 +92,7 @@
 
     // Invoke the Stable Diffusion command
     await invoke("stable_diffusion_command", {
+      directory: stableDiffusionDirectory,
       command: stableDiffusionCommand,
     })
       .then((res) => {
@@ -126,7 +127,7 @@
   });
 </script>
 
-<main class="flex flex-col gap-8">
+<main class="flex flex-col gap-8 text-black">
   <div class="flex flex-col gap-2">
     <div class="flex gap-2">
       <input
@@ -191,6 +192,11 @@
       <option value="50">50 (default)</option>
       <option value="100">100</option>
     </select>
+
+    {@debug stableDiffusionDirectory}
+    {@debug prompt}
+    {@debug generating}
+
 
     <button
       class=""
