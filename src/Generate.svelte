@@ -1,15 +1,11 @@
 <script lang="ts">
-  import { open as openDialog } from "@tauri-apps/api/dialog";
-  import { appDir } from "@tauri-apps/api/path";
-  import { open } from "@tauri-apps/api/shell";
-  import { invoke } from "@tauri-apps/api/tauri";
-  import { onMount } from "svelte";
-  import { get, set } from "tauri-settings";
-  import { v4 as uuidv4 } from "uuid";
-  import { AlertTypes, Rating } from "./types";
-  import type { Run } from "./types";
-  import { runs, reusePrompt } from "./store";
-  import Alert from "./lib/Alert.svelte";
+    import { invoke } from "@tauri-apps/api/tauri";
+    import { v4 as uuidv4 } from "uuid";
+    import { AlertTypes, Rating } from "./types";
+    import type { Run } from "./types";
+    import { runs, reusePrompt, stableDiffusionDirectory } from "./store";
+    import Alert from "./lib/Alert.svelte";
+    import RegisterProjectDirectory from "./RegisterProjectDirectory.svelte";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -21,8 +17,6 @@
   --ddim_steps 50 (30s) default
   --ddim_steps 100 (1m) 2m on M1 Pro
   */
-  let stableDiffusionDirectoryInput: HTMLInputElement;
-  $: stableDiffusionDirectory = "";
   let stableDiffusionOutputDirectory: string = "";
   let stableDiffusionCommand: string = "";
   let stableDiffusionCommandHtml: string = "";
@@ -30,7 +24,6 @@
   let rustError: string = "";
 
   // Flags
-  let isReregistering: boolean = false; // re-registering the Stable Diffusion directory
   let isGenerating: boolean = false;
   let useCustomSteps: boolean = false;
 
@@ -48,18 +41,14 @@
   let endTimer: Date;
   let elapsed: number = 0;
 
-  $: stableDiffusionDirectoryIsRegistered =
-    stableDiffusionDirectoryInput &&
-    stableDiffusionDirectoryInput.value.trim() !== "";
-
   $: {
     stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps.toString()}`;
     stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples 1 --n_iter 1 --plms --ddim_steps <strong>${steps}</strong>`;
   }
 
   $: {
-    if (stableDiffusionDirectory) {
-      stableDiffusionOutputDirectory = `${stableDiffusionDirectory}/outputs/txt2img-samples`;
+    if ($stableDiffusionDirectory) {
+      stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
     }
   }
 
@@ -67,38 +56,6 @@
     if ($reusePrompt.length) {
       prompt = $reusePrompt;
     }
-  }
-
-  async function openDirectorySelectionDialog() {
-    // Open a selection dialog for directories
-    const selected = await openDialog({
-      directory: true,
-      multiple: false,
-      defaultPath: await appDir(),
-    });
-    if (Array.isArray(selected)) {
-      // user selected multiple directories
-    } else if (selected === null) {
-      // user cancelled the selection
-    } else {
-      // user selected a single directory
-      stableDiffusionDirectoryInput.value = selected;
-    }
-  }
-
-  async function openDirectory(directory: string) {
-    await open(`file://${directory}`);
-  }
-
-  async function saveStableDiffusionDirectory() {
-    stableDiffusionDirectory = stableDiffusionDirectoryInput.value;
-    stableDiffusionDirectoryInput.value = "";
-    isReregistering = false;
-
-    // Saves to /Users/your.user/Library/Application Support/com.sd-buddy.breadthe/settings.json
-    await set<directory>("stableDiffusionDirectory", stableDiffusionDirectory)
-      .then(() => console.log("Stable Diffusion directory saved"))
-      .catch((err) => console.log(err));
   }
 
   async function saveRun(run: Run) {
@@ -111,7 +68,6 @@
     steps = defaultSteps;
     isGenerating = false;
     useCustomSteps = false;
-    isReregistering = false;
     startTimer = null;
     endTimer = null;
     elapsed = 0;
@@ -120,7 +76,7 @@
   }
 
   async function generate() {
-    if (stableDiffusionDirectory.trim() === "") return;
+    if ($stableDiffusionDirectory.trim() === "") return;
     if (stableDiffusionCommand.trim() === "") return;
 
     isGenerating = true;
@@ -139,7 +95,7 @@
 
     // Invoke the Stable Diffusion command
     await invoke("stable_diffusion_command", {
-      directory: stableDiffusionDirectory,
+      directory: $stableDiffusionDirectory,
       command: stableDiffusionCommand,
     })
       .then((res) => {
@@ -167,93 +123,13 @@
     // very hacky way of swapping input <-> select without losing the value
     useCustomSteps = event.target.selectedOptions[0].innerText === "custom";
   }
-
-  onMount(async () => {
-    await get<directory>("stableDiffusionDirectory")
-      .then((directory) => {
-        stableDiffusionDirectory = directory;
-      })
-      .catch((err) => {
-        // do nothing, the user will have to set the directory
-      });
-  });
 </script>
 
 <section class="flex-1 flex flex-col">
-  <div class="flex flex-col gap-2">
-    {#if !stableDiffusionDirectory || isReregistering}
-      <div class="flex gap-2">
-        <input
-          bind:this={stableDiffusionDirectoryInput}
-          type="text"
-          placeholder="/absolute/path/to/Stable/Diffusion/directory"
-          class="flex-1"
-        />
-
-        <button
-          class=""
-          title="Browse directories"
-          on:click={openDirectorySelectionDialog}>Browse</button
-        >
-
-        <button
-          class=""
-          title="Register Stable Diffusion directory"
-          disabled={!stableDiffusionDirectoryIsRegistered}
-          on:click={saveStableDiffusionDirectory}>Save</button
-        >
-      </div>
-    {/if}
-    {#if stableDiffusionDirectory}
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold">SD project:</span>
-          <a
-            href={`file://${stableDiffusionDirectory}`}
-            class="font-mono text-xs text-blue-600 hover:underline"
-            on:click|preventDefault={() =>
-              openDirectory(stableDiffusionDirectory)}
-            >{stableDiffusionDirectory}</a
-          >
-          <button
-            title="Re-register the Stable Diffusion directory"
-            class="transparent"
-            on:click={() => (isReregistering = true)}
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-4 h-4"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold">SD output:</span>
-          <a
-            href={`file://${stableDiffusionOutputDirectory}`}
-            class="font-mono text-xs text-blue-600 hover:underline"
-            on:click|preventDefault={() =>
-              openDirectory(stableDiffusionOutputDirectory)}
-            >{stableDiffusionOutputDirectory}</a
-          >
-        </div>
-      </div>
-    {/if}
-  </div>
+  <RegisterProjectDirectory />
 
   <div class="flex flex-col items-end gap-2">
-    <button
-      class="transparent"
-      on:click={resetForm}>reset</button
-    >
+    <button class="transparent" on:click={resetForm}>reset</button>
 
     <textarea
       rows="5"
@@ -303,7 +179,7 @@
 
     <button
       class="w-full"
-      disabled={!stableDiffusionDirectory ||
+      disabled={!$stableDiffusionDirectory ||
         prompt.trim() === "" ||
         isGenerating}
       on:click={generate}>{isGenerating ? "generating..." : "Generate!"}</button
