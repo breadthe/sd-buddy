@@ -179,7 +179,7 @@
   });
 </script>
 
-<section class="flex-1 flex flex-col gap-8">
+<section class="flex-1 flex flex-col">
   <div class="flex flex-col gap-2">
     {#if !stableDiffusionDirectory || isReregistering}
       <div class="flex gap-2">
