@@ -81,8 +81,8 @@ button.link:hover {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: theme("colors.black");
+    background-color: theme("colors.white");
   }
   a:not(.hello-*):hover {
     color: #747bff;
