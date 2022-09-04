@@ -193,11 +193,6 @@
       <option value="100">100</option>
     </select>
 
-    {@debug stableDiffusionDirectory}
-    {@debug prompt}
-    {@debug generating}
-
-
     <button
       class=""
       disabled={!stableDiffusionDirectory || prompt.trim() === "" || generating}
