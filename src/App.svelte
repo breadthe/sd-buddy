@@ -5,7 +5,8 @@
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
   import { get, set } from "tauri-settings";
-  import Alert from "./components/Alert.svelte";
+  import Alert from "./lib/Alert.svelte";
+  import { AlertTypes } from "./types";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -198,7 +199,8 @@
     >
 
     {#if prompt.trim() !== ""}
-      <Alert type="info">{@html stableDiffusionCommandHtml}</Alert>
+      <Alert alertType={AlertTypes.Info}
+        >{@html stableDiffusionCommandHtml}</Alert>
     {/if}
 
     {#if elapsed}
@@ -207,12 +209,12 @@
 
     {#if rustResponse}
       {@const html = JSON.parse(rustResponse).replaceAll("\n", "<br>")}
-      <Alert type="success">{@html html}</Alert>
+      <Alert alertType={AlertTypes.Success}>{@html html}</Alert>
     {/if}
 
     {#if rustError}
       {@const html = JSON.parse(rustError).replaceAll("\n", "<br>")}
-      <Alert type="error">{@html html}</Alert>
+      <Alert alertType={AlertTypes.Error}>{@html html}</Alert>
     {/if}
   </div>
 </main>
