@@ -82,9 +82,16 @@ I'll tackle these in whatever order I feel is a priority for how I use Stable Di
 
 In addition, I need to sort out various small details around developing with Tauri, such as global keyboard shortcuts for common actions such as quitting the app, enabling copy/paste in text boxes, and narrowing down the file/directory operations scope to the settings folder.
 
+[](#known_issues)
+## Known issues
+
+1. The biggest (and most annoying) issue is that you can't use keyboard shortcuts to copy/cut/paste text (CMD+C, etc). The workaround is to use the mouse (select text, right click > Copy/Paste). I haven't dug deep into this issue. I suspect it's a Tauri thing since I didn't encounter it in Electron.
+
+2. The other thing is the `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
+
 ## Security FAQ
 
-* **How secure is the app?** It is strictly a local app that doesn't communicate with the network. I've enabled the minimum necessary system APIs to allow it to function. Tauri disables all such APIs by default.
+* **How secure is the app?** It is strictly a local app that doesn't communicate with the network. Tauri disables all system APIs by default. I've enabled the minimum necessary system APIs to allow it to function.
 * **How do I know it's not communicating with the internet?** Use a network inspector tool to analyze the traffic.
 * **How do I know it doesn't do nefarious things on my computer?** It's open source. Feel empowered to inspect the source code and build it yourself.
 
