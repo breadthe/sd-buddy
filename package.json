@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.0.2",
-    "tauri-settings": "^0.1.2"
+    "tauri-settings": "^0.1.2",
+    "uuid": "^8.3.2"
   }
 }
