@@ -1,6 +1,9 @@
 import { readable, writable } from "svelte/store";
 import type { Run } from "./types";
 
+// Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
+export const reusePrompt = writable('');
+
 // Store runs to localStorage for now
 function createRunsStore() {
     let storedRuns = JSON.parse(localStorage.getItem("runs")) || [];

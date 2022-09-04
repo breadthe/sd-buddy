@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { reusePrompt } from "../store";
   import { createEventDispatcher } from "svelte";
   import type { Run } from "../types";
 
@@ -13,7 +14,11 @@
   class="relative flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded"
 >
   {#if !isDeleting}
-    <dl class="p-2 text-xs">
+    <dl
+      class="p-2 text-xs hover:bg-blue-100 cursor-pointer"
+      title="Click to re-use this prompt"
+      on:click={() => reusePrompt.set(run.prompt)}
+    >
       <dt class="font-bold">prompt</dt>
       <dd>{run.prompt}</dd>
     </dl>

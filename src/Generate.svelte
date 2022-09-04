@@ -8,7 +8,7 @@
   import { v4 as uuidv4 } from 'uuid';
   import { AlertTypes, Rating } from "./types";
   import type { Run } from "./types";
-  import { runs } from "./store";
+  import { runs, reusePrompt } from "./store";
   import Alert from "./lib/Alert.svelte";
 
   type directory = {
@@ -53,6 +53,12 @@
   $: {
     if (stableDiffusionDirectory) {
       stableDiffusionOutputDirectory = `${stableDiffusionDirectory}/outputs/txt2img-samples`;
+    }
+  }
+
+  $: {
+    if ($reusePrompt.length) {
+      prompt = $reusePrompt;
     }
   }
 
