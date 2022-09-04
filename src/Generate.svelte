@@ -84,7 +84,7 @@
     stableDiffusionDirectoryInput.value = "";
 
     // Saves to /Users/your.user/Library/Application Support/com.sd-buddy.breadthe/settings.json
-    set<directory>("stableDiffusionDirectory", stableDiffusionDirectory)
+    await set<directory>("stableDiffusionDirectory", stableDiffusionDirectory)
       .then(() => console.log("Stable Diffusion directory saved"))
       .catch((err) => console.log(err));
   }
@@ -141,8 +141,8 @@
     await open(`file://${directory}`);
   }
 
-  onMount(() => {
-    get<directory>("stableDiffusionDirectory")
+  onMount(async () => {
+    await get<directory>("stableDiffusionDirectory")
       .then((directory) => {
         stableDiffusionDirectory = directory;
       })
