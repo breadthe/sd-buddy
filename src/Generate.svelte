@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
   import { get, set } from "tauri-settings";
   import { v4 as uuidv4 } from 'uuid';
-  import { AlertTypes } from "./types";
+  import { AlertTypes, Rating } from "./types";
   import type { Run } from "./types";
   import { runs } from "./store";
   import Alert from "./lib/Alert.svelte";
@@ -102,6 +102,7 @@
       prompt,
       steps: parseInt(steps, 10),
       started_at: startTimer,
+      rating: Rating.One,
     };
 
     // Invoke the Stable Diffusion command
