@@ -12,7 +12,7 @@
   export let alertType: AlertTypes = AlertTypes.Neutral;
 </script>
 
-<div class={`p-2 font-mono text-sm shadow max-h-24 overflow-auto ${colors[alertType]}`}>
+<div class={`w-full p-2 font-mono text-sm shadow max-h-24 overflow-auto ${colors[alertType]}`}>
   <slot />
 </div>
 
