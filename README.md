@@ -76,6 +76,7 @@ I'll tackle these in whatever order I feel is a priority for how I use Stable Di
 * Display a thumbnail of the generated image on completion. This is a bit tricky because the command doesn't say the name of the image file, but I have a solution in mind.
 * **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
 * A gallery of generated images.
+* Persist last run's settings, such as steps.
 * Light/dark mode.
 * UI improvements including a Help section.
 * Configurable script parameters in addition to prompt and steps, including output folder.

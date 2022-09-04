@@ -1,0 +1,23 @@
+<script lang="ts">
+  import { runs } from "../store";
+  import RunItem from "./RunItem.svelte";
+
+  $: sortedRuns = $runs.sort(
+    (a: { ended_at: Date }, b: { ended_at: Date }) =>
+      Date.parse(b.ended_at) - Date.parse(a.ended_at)
+  );
+</script>
+
+<aside class="flex flex-col gap-2 w-full max-w-[200px]">
+  <h2 class="font-bold">Runs</h2>
+  {#if $runs.length}
+    {#each sortedRuns as run}
+      <RunItem {run} />
+    {/each}
+  {:else}
+    <p class="text-xs text-center text-gray-500">No runs yet</p>
+  {/if}
+</aside>
+
+<style>
+</style>

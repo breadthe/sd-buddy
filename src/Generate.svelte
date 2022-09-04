@@ -5,8 +5,11 @@
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
   import { get, set } from "tauri-settings";
-  import Alert from "./lib/Alert.svelte";
+  import { v4 as uuidv4 } from 'uuid';
   import { AlertTypes } from "./types";
+  import type { Run } from "./types";
+  import { runs } from "./store";
+  import Alert from "./lib/Alert.svelte";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -80,6 +83,10 @@
       .catch((err) => console.log(err));
   }
 
+  async function saveRun(run: Run) {
+    runs.push(run);
+  }
+
   async function generate() {
     if (stableDiffusionDirectory.trim() === "") return;
     if (stableDiffusionCommand.trim() === "") return;
@@ -90,22 +97,35 @@
     rustError = "";
     startTimer = new Date();
 
+    const run: Run = {
+      id: uuidv4(),
+      prompt,
+      steps: parseInt(steps, 10),
+      started_at: startTimer,
+    };
+
     // Invoke the Stable Diffusion command
     await invoke("stable_diffusion_command", {
       command: stableDiffusionCommand,
     })
       .then((res) => {
-        console.log(res);
         rustResponse = JSON.stringify(res);
+
+        run.image_name = "image.png"; // @todo use magic to get the image name
+        run.image_path = stableDiffusionOutputDirectory;
       })
       .catch((err) => {
-        console.log(err);
         rustError = JSON.stringify(err);
       })
       .finally(() => {
         generating = false;
         endTimer = new Date();
         elapsed = endTimer - startTimer; // in ms
+
+        run.ended_at = endTimer;
+        run.elapsed = elapsed;
+
+        saveRun(run);
       });
   }
 
@@ -124,7 +144,7 @@
   });
 </script>
 
-<section class="flex flex-col gap-8">
+<section class="flex-1 flex flex-col gap-8">
   <div class="flex flex-col gap-2">
     <div class="flex gap-2">
       <input
