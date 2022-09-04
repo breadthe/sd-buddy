@@ -21,7 +21,7 @@ function createRunsStore() {
             set(storedRuns);
         },
         remove: (run: Run) => {
-            const ix = storedRuns.indexOf(run);
+            const ix = storedRuns.findIndex((r: Run) => r.id === run.id);
             if (ix > -1) {
                 storedRuns.splice(ix, 1);
 

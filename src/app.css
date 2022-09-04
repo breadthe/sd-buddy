@@ -66,6 +66,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button.link {
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0;
+    font-weight: inherit;
+    text-decoration: underline;
+}
+button.link:hover {
+    background-color: transparent;
+    border-color: transparent;
+    color: inherit;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
