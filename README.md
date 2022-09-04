@@ -97,7 +97,9 @@ In addition, I need to sort out various small details around developing with Tau
 
 1. The biggest (and most annoying) issue is that you can't use keyboard shortcuts to copy/cut/paste text (CMD+C, etc). The workaround is to use the mouse (select text, right click > Copy/Paste). I haven't dug deep into this issue. I suspect it's a Tauri thing since I didn't encounter it in Electron.
 
-2. The other thing is the `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
+2. The compiled binary `.app` or the binary in the `.dmg` is known to crash when launching the app, with the message "SD-Buddy quit unexpectedly". If that's the case, keep clicking Reopen until it launches. I believe I have fixed or at least mitigated this in v0.2.0 but be aware it could happen.
+
+3. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
 
 ## Security FAQ
 
@@ -108,6 +110,16 @@ In addition, I need to sort out various small details around developing with Tau
 ## Contributing
 
 At this time **Stable Diffusion Buddy** is **not** open to contribution. You may create issues but there's absolutely no guarantee I will tackle or even glance at them.
+
+If you feel strongly that you want to contribute, please focus on these areas:
+
+* Submit fixes for critical bugs you have encountered
+* Submit PRs that handle the [known issues](#known_issues) listed above
+* Improvements on the Tauri side (I'm still a noob, please teach me)
+
+New feature requests that are not on the [wishlist](#wishlist) will probably fall on deaf ears, unless it's something that I personally like, or has been explained really well in [Discussions](https://github.com/breadthe/sd-buddy/discussions).
+
+Here's an example of a very [thoughtful PR](https://github.com/breadthe/sd-buddy/pull/2) by [Swyx](https://github.com/sw-yx) that fixed actual issues. I added those myself manually since by that time the code had shifted. So use that as a model and all will be good.
 
 ## License
 
