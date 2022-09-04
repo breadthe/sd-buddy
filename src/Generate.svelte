@@ -185,8 +185,15 @@
 
     <select name="steps" id="steps" bind:value={steps}>
       <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
       <option value="10" selected>10</option>
+      <option value="15">15</option>
+      <option value="25">25</option>
       <option value="50">50 (default)</option>
+      <option value="75">75</option>
       <option value="100">100</option>
     </select>
 
