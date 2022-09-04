@@ -63,29 +63,26 @@ The first publicly-available version is pretty thin on features. My goal was to 
 
 * <label><input type="checkbox" checked /> Register the location of the Stable Diffusion directory.</label>
 * <label><input type="checkbox" checked /> Persist the Stable Diffusion directory once registered.</label>
-* <label><input type="checkbox" checked /> **NEW** Show clickable links for the Stable Diffusion project and output directories.</label>
+* <label><input type="checkbox" checked /> Show clickable links for the Stable Diffusion project and output directories.</label>
 * <label><input type="checkbox" checked /> Text box for **prompt**.</label>
-* <label><input type="checkbox" checked /> Dropdown for **steps**.</label>
-* <label><input type="checkbox" checked /> **NEW** More step options.</label>
+* <label><input type="checkbox" checked /> Dropdown for **steps** with predefined and custom numbers.</label>
 * <label><input type="checkbox" checked /> Display total duration at the end.</label>
 * <label><input type="checkbox" checked /> Display the output of the command.</label>
-* <label><input type="checkbox" checked /> **NEW** Sidebar with a history of previous runs.</label>
-* <label><input type="checkbox" checked /> **NEW** Delete a run from history.</label>
-* <label><input type="checkbox" checked /> **NEW** Click a previous run to reuse the prompt.</label>
+* <label><input type="checkbox" checked /> Sidebar with a history of previous runs.</label>
+* <label><input type="checkbox" checked /> Delete a run from history.</label>
+* <label><input type="checkbox" checked /> Click a previous run to reuse the prompt.</label>
 
 [](#wishlist)
 ## Wishlist
 
 I'll tackle these in whatever order I feel is a priority for how I use Stable Diffusion.
 
-* Display a clickable link to the output folder.
 * Custom steps, not just the 4 built-in ones.
 * Persist each run on disk, with metadata such as steps, duration, link to the generated image, etc.
-* Embed the metadata in the generated image, optionally.
 * Display a thumbnail of the generated image on completion. This is a bit tricky because the command doesn't say the name of the image file, but I have a solution in mind.
-* **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
 * A gallery of generated images.
-* Persist last run's settings, such as steps.
+* Embed the metadata in the generated image, optionally.
+* **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
 * Light/dark mode.
 * UI improvements including a Help section.
 * Configurable script parameters in addition to prompt and steps, including output folder.

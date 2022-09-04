@@ -28,13 +28,19 @@
   let stableDiffusionCommandHtml: string = "";
   let rustResponse: string = "";
   let rustError: string = "";
-  let generating: boolean = false;
+
+  // Flags
+  let isGenerating: boolean = false;
+  let useCustomSteps: boolean = false;
 
   // Form parameters
   const placeholder =
     "a red juicy apple floating in outer space, like a planet";
   let prompt: string = "";
-  let steps: string = "10"; // default 50
+  let defaultSteps: number = 10; // default --ddim_steps 50
+  let steps: number = 10; // selected steps
+  let maxSteps: number = 100;
+  let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
 
   // Duration timers
   let startTimer: Date;
@@ -46,7 +52,7 @@
     stableDiffusionDirectoryInput.value.trim() !== "";
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps}`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps.toString()}`;
     stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples 1 --n_iter 1 --plms --ddim_steps <strong>${steps}</strong>`;
   }
 
@@ -97,7 +103,7 @@
     if (stableDiffusionDirectory.trim() === "") return;
     if (stableDiffusionCommand.trim() === "") return;
 
-    generating = true;
+    isGenerating = true;
     elapsed = 0;
     rustResponse = "";
     rustError = "";
@@ -106,7 +112,7 @@
     const run: Run = {
       id: uuidv4(),
       prompt,
-      steps: parseInt(steps, 10),
+      steps: steps,
       started_at: startTimer,
       rating: Rating.One,
     };
@@ -126,7 +132,7 @@
         rustError = JSON.stringify(err);
       })
       .finally(() => {
-        generating = false;
+        isGenerating = false;
         endTimer = new Date();
         elapsed = endTimer - startTimer; // in ms
 
@@ -139,6 +145,11 @@
 
   async function openDirectory(directory: string) {
     await open(`file://${directory}`);
+  }
+
+  function handleCustomSteps(event: Event) {
+    // very hacky way of swapping input <-> select without losing the value
+    useCustomSteps = event.target.selectedOptions[0].innerText === "custom";
   }
 
   onMount(async () => {
@@ -202,33 +213,59 @@
     {/if}
   </div>
 
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col items-end gap-2">
     <textarea
-      type="text"
       rows="5"
       cols="50"
       bind:value={prompt}
       {placeholder}
+      class="w-full"
     />
 
-    <select name="steps" id="steps" bind:value={steps}>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="10" selected>10</option>
-      <option value="15">15</option>
-      <option value="25">25</option>
-      <option value="50">50 (default)</option>
-      <option value="75">75</option>
-      <option value="100">100</option>
-    </select>
+    <label class="flex items-center gap-2">
+      <span class="font-bold">Steps</span>
+
+      {#if useCustomSteps}
+        <input type="number" bind:value={steps} min="1" max={maxSteps} />
+        <button
+          class="p-0 bg-transparent hover:bg-transparent hover:border-transparent text-black/50 hover:text-black"
+          on:click={() => {
+            useCustomSteps = false;
+            steps = defaultSteps;
+          }}
+          title="Switch to dropdown"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+            />
+          </svg>
+        </button>
+      {:else}
+        <select bind:value={steps} on:change={handleCustomSteps}>
+          {#each stepsOptions as option}
+            <option value={option}>{option}</option>
+          {/each}
+          <option value="10">custom</option>
+        </select>
+      {/if}
+    </label>
 
     <button
-      class=""
-      disabled={!stableDiffusionDirectory || prompt.trim() === "" || generating}
-      on:click={generate}>{generating ? "generating..." : "Generate!"}</button
+      class="w-full"
+      disabled={!stableDiffusionDirectory ||
+        prompt.trim() === "" ||
+        isGenerating}
+      on:click={generate}>{isGenerating ? "generating..." : "Generate!"}</button
     >
 
     {#if prompt.trim() !== ""}
