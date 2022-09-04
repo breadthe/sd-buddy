@@ -5,6 +5,7 @@
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
   import { get, set } from "tauri-settings";
+  import Alert from "./components/Alert.svelte";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -47,7 +48,7 @@
 
   $: {
     if (stableDiffusionDirectory) {
-        stableDiffusionOutputDirectory = `${stableDiffusionDirectory}/outputs/txt2img-samples`;
+      stableDiffusionOutputDirectory = `${stableDiffusionDirectory}/outputs/txt2img-samples`;
     }
   }
 
@@ -151,24 +152,24 @@
     {#if stableDiffusionDirectory}
       <div class="flex flex-col gap-1">
         <div class="flex items-center gap-2">
-            <span class="text-xs font-bold">SD project:</span>
-            <a
-              href={`file://${stableDiffusionDirectory}`}
-              class="font-mono text-xs text-blue-600 hover:underline"
-              on:click|preventDefault={() =>
-                openDirectory(stableDiffusionDirectory)}
-              >{stableDiffusionDirectory}</a
-            >
+          <span class="text-xs font-bold">SD project:</span>
+          <a
+            href={`file://${stableDiffusionDirectory}`}
+            class="font-mono text-xs text-blue-600 hover:underline"
+            on:click|preventDefault={() =>
+              openDirectory(stableDiffusionDirectory)}
+            >{stableDiffusionDirectory}</a
+          >
         </div>
         <div class="flex items-center gap-2">
-            <span class="text-xs font-bold">SD output:</span>
-            <a
-              href={`file://${stableDiffusionOutputDirectory}`}
-              class="font-mono text-xs text-blue-600 hover:underline"
-              on:click|preventDefault={() =>
-                openDirectory(stableDiffusionOutputDirectory)}
-              >{stableDiffusionOutputDirectory}</a
-            >
+          <span class="text-xs font-bold">SD output:</span>
+          <a
+            href={`file://${stableDiffusionOutputDirectory}`}
+            class="font-mono text-xs text-blue-600 hover:underline"
+            on:click|preventDefault={() =>
+              openDirectory(stableDiffusionOutputDirectory)}
+            >{stableDiffusionOutputDirectory}</a
+          >
         </div>
       </div>
     {/if}
@@ -197,29 +198,21 @@
     >
 
     {#if prompt.trim() !== ""}
-      <div class="p-2 bg-blue-100 font-mono text-sm shadow">
-        {@html stableDiffusionCommandHtml}
-      </div>
+      <Alert type="info">{@html stableDiffusionCommandHtml}</Alert>
     {/if}
 
     {#if elapsed}
-      <div class="p-2 bg-gray-100 font-mono text-sm shadow">
-        Elapsed: {elapsed / 1000}s
-      </div>
+      <Alert>Elapsed: {elapsed / 1000}s</Alert>
     {/if}
 
     {#if rustResponse}
       {@const html = JSON.parse(rustResponse).replaceAll("\n", "<br>")}
-      <div class="p-2 bg-green-100 font-mono text-sm shadow">
-        {@html html}
-      </div>
+      <Alert type="success">{@html html}</Alert>
     {/if}
 
     {#if rustError}
       {@const html = JSON.parse(rustError).replaceAll("\n", "<br>")}
-      <div class="p-2 bg-red-100 font-mono text-sm shadow">
-        {@html html}
-      </div>
+      <Alert type="error">{@html html}</Alert>
     {/if}
   </div>
 </main>
