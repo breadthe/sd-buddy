@@ -217,7 +217,7 @@
           >
           <button
             title="Re-register the Stable Diffusion directory"
-            class="p-0 bg-transparent hover:bg-transparent hover:border-transparent text-black/50 hover:text-black"
+            class="transparent"
             on:click={() => (isReregistering = true)}
             ><svg
               xmlns="http://www.w3.org/2000/svg"
@@ -251,7 +251,7 @@
 
   <div class="flex flex-col items-end gap-2">
     <button
-      class="p-0 bg-transparent hover:bg-transparent hover:border-transparent text-black/50 hover:text-black"
+      class="transparent"
       on:click={resetForm}>reset</button
     >
 
@@ -269,7 +269,7 @@
       {#if useCustomSteps}
         <input type="number" bind:value={steps} min="1" max={maxSteps} />
         <button
-          class="p-0 bg-transparent hover:bg-transparent hover:border-transparent text-black/50 hover:text-black"
+          class="transparent"
           on:click={() => {
             useCustomSteps = false;
             steps = defaultSteps;

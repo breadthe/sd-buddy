@@ -79,6 +79,19 @@ button.link:hover {
     color: inherit;
 }
 
+button.transparent {
+    padding: theme("padding.0");
+    background-color: theme("colors.transparent");
+    color: inherit;
+    opacity: theme("opacity.50");
+}
+button.transparent:hover {
+    background-color: theme("colors.transparent");
+    color: theme("colors.black");
+    opacity: theme("opacity.100");
+    border-color: theme("colors.transparent");
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: theme("colors.black");
