@@ -4,7 +4,7 @@ Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](h
 
 It is intended to be a lazier way to generate images, by allowing you to focus on writing prompts instead of messing with the command line.
 
-![2022-09-03-sd-buddy-proto](https://user-images.githubusercontent.com/17433578/188289354-ccdbde4a-346d-403a-a5c2-f636aede5a3c.png)
+![2022-09-04-sd-buddy-proto-v0 2 0](https://user-images.githubusercontent.com/17433578/188326810-5b9138d3-2a58-49c5-b981-956ea6422d71.png)
 
 Behind the scenes it executes this command in your local Stable Diffusion directory:
 
@@ -53,16 +53,25 @@ npm run dev
 npm run build
 ```
 
+## Alpha status
+
+Be aware that if the current version looks like v0.x.x the app is in "alpha" state, meaning that things can and will change drastically between versions. This includes breaking changes, regressions, or new bugs.
+
 ## Features
 
 The first publicly-available version is pretty thin on features. My goal was to provide a basic UI around the CLI command.
 
 * <label><input type="checkbox" checked /> Register the location of the Stable Diffusion directory.</label>
 * <label><input type="checkbox" checked /> Persist the Stable Diffusion directory once registered.</label>
+* <label><input type="checkbox" checked /> **NEW** Show clickable links for the Stable Diffusion project and output directories.</label>
 * <label><input type="checkbox" checked /> Text box for **prompt**.</label>
 * <label><input type="checkbox" checked /> Dropdown for **steps**.</label>
+* <label><input type="checkbox" checked /> **NEW** More step options.</label>
 * <label><input type="checkbox" checked /> Display total duration at the end.</label>
 * <label><input type="checkbox" checked /> Display the output of the command.</label>
+* <label><input type="checkbox" checked /> **NEW** Sidebar with a history of previous runs.</label>
+* <label><input type="checkbox" checked /> **NEW** Delete a run from history.</label>
+* <label><input type="checkbox" checked /> **NEW** Click a previous run to reuse the prompt.</label>
 
 [](#wishlist)
 ## Wishlist
