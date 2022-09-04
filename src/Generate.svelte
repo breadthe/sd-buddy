@@ -102,7 +102,6 @@
         rustResponse = JSON.stringify(res);
 
         run.image_name = "image.png"; // @todo use magic to get the image name
-        run.image_path = stableDiffusionOutputDirectory;
       })
       .catch((err) => {
         rustError = JSON.stringify(err);
