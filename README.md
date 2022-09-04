@@ -66,6 +66,7 @@ The first publicly-available version is pretty thin on features. My goal was to 
 * <label><input type="checkbox" checked /> Show clickable links for the Stable Diffusion project and output directories.</label>
 * <label><input type="checkbox" checked /> Text box for **prompt**.</label>
 * <label><input type="checkbox" checked /> Dropdown for **steps** with predefined and custom numbers.</label>
+* <label><input type="checkbox" checked /> Reset form button.</label>
 * <label><input type="checkbox" checked /> Display total duration at the end.</label>
 * <label><input type="checkbox" checked /> Display the output of the command.</label>
 * <label><input type="checkbox" checked /> Sidebar with a history of previous runs.</label>

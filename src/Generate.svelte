@@ -85,6 +85,10 @@
     }
   }
 
+  async function openDirectory(directory: string) {
+    await open(`file://${directory}`);
+  }
+
   async function saveStableDiffusionDirectory() {
     stableDiffusionDirectory = stableDiffusionDirectoryInput.value;
     stableDiffusionDirectoryInput.value = "";
@@ -97,6 +101,19 @@
 
   async function saveRun(run: Run) {
     runs.push(run);
+  }
+
+  // resets the form to its original state and clears the response alerts
+  function resetForm() {
+    prompt = "";
+    steps = defaultSteps;
+    isGenerating = false;
+    useCustomSteps = false;
+    startTimer = null;
+    endTimer = null;
+    elapsed = 0;
+    rustResponse = "";
+    rustError = "";
   }
 
   async function generate() {
@@ -141,10 +158,6 @@
 
         saveRun(run);
       });
-  }
-
-  async function openDirectory(directory: string) {
-    await open(`file://${directory}`);
   }
 
   function handleCustomSteps(event: Event) {
@@ -214,6 +227,11 @@
   </div>
 
   <div class="flex flex-col items-end gap-2">
+    <button
+      class="p-0 bg-transparent hover:bg-transparent hover:border-transparent text-black/50 hover:text-black"
+      on:click={resetForm}>reset</button
+    >
+
     <textarea
       rows="5"
       cols="50"
