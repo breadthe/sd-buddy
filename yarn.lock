@@ -73,6 +73,26 @@
   "resolved" "https://registry.npmjs.org/@tauri-apps/api/-/api-1.0.2.tgz"
   "version" "1.0.2"
 
+"@tauri-apps/cli-darwin-arm64@1.0.5":
+  "integrity" "sha512-oxpFb9ZeMiC3xPUJ9NsXWCnnwFSVkPbJUvDKpc9IaoDIUpsMTV72W4P0Nh0uQRbyhx4modPpstt7+ONypNVYNg=="
+  "resolved" "https://registry.npmjs.org/@tauri-apps/cli-darwin-arm64/-/cli-darwin-arm64-1.0.5.tgz"
+  "version" "1.0.5"
+
+"@tauri-apps/cli@^1.0.5":
+  "integrity" "sha512-vbY+MwK+xN65x0R/o16UQPxBtJl8pmzVzC0TZKokZfmeOkomoqOEOinSwznAMeyR1ZMJW+fXVgJCPvGsRQ0LGg=="
+  "resolved" "https://registry.npmjs.org/@tauri-apps/cli/-/cli-1.0.5.tgz"
+  "version" "1.0.5"
+  optionalDependencies:
+    "@tauri-apps/cli-darwin-arm64" "1.0.5"
+    "@tauri-apps/cli-darwin-x64" "1.0.5"
+    "@tauri-apps/cli-linux-arm-gnueabihf" "1.0.5"
+    "@tauri-apps/cli-linux-arm64-gnu" "1.0.5"
+    "@tauri-apps/cli-linux-arm64-musl" "1.0.5"
+    "@tauri-apps/cli-linux-x64-gnu" "1.0.5"
+    "@tauri-apps/cli-linux-x64-musl" "1.0.5"
+    "@tauri-apps/cli-win32-ia32-msvc" "1.0.5"
+    "@tauri-apps/cli-win32-x64-msvc" "1.0.5"
+
 "@tsconfig/svelte@^3.0.0":
   "integrity" "sha512-pYrtLtOwku/7r1i9AMONsJMVYAtk3hzOfiGNekhtq5tYBGA7unMve8RvUclKLMT3PrihvJqUmzsRGh0RP84hKg=="
   "resolved" "https://registry.npmjs.org/@tsconfig/svelte/-/svelte-3.0.0.tgz"

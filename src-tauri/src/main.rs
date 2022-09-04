@@ -14,6 +14,9 @@ fn main() {
         .add_native_item(MenuItem::Copy)
         .add_native_item(MenuItem::Paste)
         .add_native_item(MenuItem::Cut)
+        .add_native_item(MenuItem::SelectAll)
+        .add_native_item(MenuItem::Undo)
+        .add_native_item(MenuItem::Redo)
         .add_item(CustomMenuItem::new("hide", "Hide"))
         .add_submenu(submenu);
 
@@ -38,9 +41,8 @@ fn main() {
 }
 
 #[tauri::command]
-async fn stable_diffusion_command(command: String) -> String {
-    // let stable_diffusion_directory = Path::new("/Users/zagreus/code/ml/stable-diffusion");
-    let stable_diffusion_directory = "/Users/zagreus/code/ml/stable-diffusion";
+async fn stable_diffusion_command(directory: String, command: String) -> String {
+    let stable_diffusion_directory = directory; // "/Users/zagreus/code/ml/stable-diffusion"
     let virtual_env_cmd = "venv/bin/activate";
 
     println!("Stable Diffusion directory: {}", stable_diffusion_directory);

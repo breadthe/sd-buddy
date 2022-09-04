@@ -5,7 +5,7 @@
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
   import { get, set } from "tauri-settings";
-  import { v4 as uuidv4 } from 'uuid';
+  import { v4 as uuidv4 } from "uuid";
   import { AlertTypes, Rating } from "./types";
   import type { Run } from "./types";
   import { runs, reusePrompt } from "./store";
@@ -22,7 +22,7 @@
   --ddim_steps 100 (1m) 2m on M1 Pro
   */
   let stableDiffusionDirectoryInput: HTMLInputElement;
-  let stableDiffusionDirectory: string = "";
+  $: stableDiffusionDirectory = "";
   let stableDiffusionOutputDirectory: string = "";
   let stableDiffusionCommand: string = "";
   let stableDiffusionCommandHtml: string = "";
@@ -113,6 +113,7 @@
 
     // Invoke the Stable Diffusion command
     await invoke("stable_diffusion_command", {
+      directory: stableDiffusionDirectory,
       command: stableDiffusionCommand,
     })
       .then((res) => {
