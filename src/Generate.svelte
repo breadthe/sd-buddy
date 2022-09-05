@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { invoke } from "@tauri-apps/api/tauri";
-    import { v4 as uuidv4 } from "uuid";
-    import { AlertTypes, Rating } from "./types";
-    import type { Run } from "./types";
-    import { runs, reusePrompt, stableDiffusionDirectory } from "./store";
-    import Alert from "./lib/Alert.svelte";
-    import RegisterProjectDirectory from "./RegisterProjectDirectory.svelte";
+  import { invoke } from "@tauri-apps/api/tauri";
+  import { v4 as uuidv4 } from "uuid";
+  import { AlertTypes, Rating } from "./types";
+  import type { Run } from "./types";
+  import { runs, reusePrompt, stableDiffusionDirectory } from "./store";
+  import Alert from "./lib/Alert.svelte";
+  import RegisterProjectDirectory from "./lib/RegisterProjectDirectory.svelte";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -98,7 +98,7 @@
       directory: $stableDiffusionDirectory,
       command: stableDiffusionCommand,
     })
-      .then((res) => {
+      .then(async (res) => {
         rustResponse = JSON.stringify(res);
 
         run.image_name = "image.png"; // @todo use magic to get the image name
@@ -113,9 +113,35 @@
 
         run.ended_at = endTimer;
         run.elapsed = elapsed;
-
-        saveRun(run);
       });
+
+      await getLatestImageFromOutputDirectory(elapsed).then((image_name) => {
+        run.image_name = JSON.parse(image_name);
+      });
+
+      saveRun(run);
+  }
+
+  // Get the latest image from the output directory
+  // We will assume that the latest image is the one we just generated
+  async function getLatestImageFromOutputDirectory(elapsed: number): Promise<string> {
+    let latest_image = "";
+    let seconds = Math.ceil(elapsed / 1000) + 10; // convert ms to seconds, add 10 seconds to be safe
+
+    await invoke("get_latest_image", {
+        dirPath: stableDiffusionOutputDirectory,
+        elapsed: seconds.toString(),
+    })
+      .then((res) => {
+        latest_image = JSON.stringify(res);
+      })
+      .catch((err) => {
+        console.log(err);
+
+        latest_image = "";
+      });
+
+      return latest_image;
   }
 
   function handleCustomSteps(event: Event) {

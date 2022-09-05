@@ -3,6 +3,8 @@
     windows_subsystem = "windows"
 )]
 
+use std::fs;
+use std::process::{Command, Stdio};
 use tauri::{Manager, Menu, MenuItem, Submenu};
 
 fn main() {
@@ -52,6 +54,7 @@ fn main() {
         // This is where you pass in your commands
         .invoke_handler(tauri::generate_handler![
             stable_diffusion_command,
+            get_latest_image,
             close_splashscreen
         ])
         .menu(menu)
@@ -79,8 +82,6 @@ async fn stable_diffusion_command(directory: String, command: String) -> String 
     let output = String::from_utf8(output.stdout)
         .expect("failed to convert Stable Diffusion output to string");
 
-    // let output = "Hi back from Rust".to_string();
-    // let output = dev_string.to_string();
     output
 }
 
@@ -93,4 +94,76 @@ async fn close_splashscreen(window: tauri::Window) {
     }
     // Show main window
     window.get_window("main").unwrap().show().unwrap();
+}
+
+#[tauri::command]
+async fn get_latest_image(dir_path: String, elapsed: String) -> String {
+    latest_image(dir_path, elapsed)
+}
+
+// Runs the find command to get the latest image:
+// find . -depth 1 -type f -ctime -2130s | sort -r | head -n1
+// "find all files in the current directory, depth of 1 (no subfolders), created in the last  2130s, sort by time created, and return the first one"
+// Output: grid-0034.png
+// @see https://rust-lang-nursery.github.io/rust-cookbook/os/external.html#run-piped-external-commands
+fn latest_image(dir_path: String, elapsed: String) -> String {
+    let mut output: String = "".to_string();
+
+    let find_args: [&str; 9] = [
+        &dir_path,
+        "-name",
+        "*.png",
+        "-depth",
+        "1",
+        "-type",
+        "f",
+        "-ctime",
+        &format!("-{}s", elapsed),
+    ];
+    let mut find_output_child = std::process::Command::new("find")
+        .args(&find_args)
+        .current_dir(&dir_path)
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to execute `find` command");
+
+    if let Some(find_output) = find_output_child.stdout.take() {
+        let mut sort_output_child = Command::new("sort")
+            .arg("-r")
+            .stdin(find_output)
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("Failed to execute `sort` command");
+
+        find_output_child.wait().expect("Failed to wait on `find`");
+
+        if let Some(sort_output) = sort_output_child.stdout.take() {
+            let head_output_child = Command::new("head")
+                .args(&["-n", "1"])
+                .stdin(sort_output)
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("Failed to execute `head` command");
+
+            let head_stdout = head_output_child
+                .wait_with_output()
+                .expect("Failed to wait on `head`");
+
+            sort_output_child.wait().expect("Failed to wait on `sort`");
+
+            // convert the output to a string
+            // /absolute/path/to/Stable/Diffusion/directory/output/grid-0034.png
+            output = String::from_utf8(head_stdout.stdout)
+                .expect("failed to convert find output to string");
+
+            // remove the path from the beginning of the string
+            let from: String = format!("{}/", &dir_path); // /absolute/path/to/Stable/Diffusion/directory/output/
+            output = output.replace(&from, ""); // grid-0034.png\n
+
+            // remove the newline from the end of the string
+            output = output.replace("\n", ""); // grid-0034.png
+        }
+    }
+
+    output
 }

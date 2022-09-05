@@ -1,19 +1,76 @@
 <script lang="ts">
-  import { reusePrompt } from "../store";
-  import { createEventDispatcher } from "svelte";
+  import { readBinaryFile } from "@tauri-apps/api/fs";
+  import { open } from "@tauri-apps/api/shell";
+  import { reusePrompt, stableDiffusionDirectory } from "../store";
+  import { createEventDispatcher, onMount } from "svelte";
   import type { Run } from "../types";
 
   export let run: Run;
 
   const dispatch = createEventDispatcher();
 
+  // Image processing stuff
+  const stableDiffusionOutputDirectory: string = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
+  let imgContents: string = ""; // base64 encoded image contents
+  let imgSrc: string = ""; // img src base64 string
+  $: {
+    if (imgContents) {
+      imgSrc = `data:image/png;base64,${imgContents}`;
+    }
+  }
+
+  // Flags
   let isDeleting = false;
+
+  async function readTheImageFile() {
+    let imgPath: string = ""; // absolute path of the image on disk (SD output directory)
+
+    if (run.image_name.match(/.png/gi)) {
+      imgPath = `${stableDiffusionOutputDirectory}/${run.image_name}`;
+    }
+
+    if (!imgPath) return;
+
+    imgPath = imgPath; // needs this to be reassigned for... reasons
+
+    await readBinaryFile(imgPath)
+      .then((contents) => {
+        // convert from Uint8Array to base64
+        imgContents = btoa(
+          new Uint8Array(contents).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          )
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  async function openImage(imageName: string) {
+    if (!imageName) return;
+
+    await open(`file://${stableDiffusionOutputDirectory}/${imageName}`);
+  }
+
+  onMount(async () => {
+    await readTheImageFile();
+  });
 </script>
 
 <div
   class="relative flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded"
 >
   {#if !isDeleting}
+    {#if imgSrc}
+      <img
+        src={imgSrc}
+        alt={run.image_name}
+        class="cursor-pointer"
+        on:click|preventDefault={() => openImage(run.image_name)}
+      />
+    {/if}
     <dl
       class="p-2 text-xs hover:bg-blue-100 cursor-pointer"
       title="Click to re-use this prompt"
@@ -29,6 +86,12 @@
       <dd>{run.steps}</dd>
       <dt class="font-bold">elapsed</dt>
       <dd>{run.elapsed / 1000}s</dd>
+      <dt class="font-bold">image</dt>
+      <dd>
+        <a href="#" on:click|preventDefault={() => openImage(run.image_name)}
+          >{run.image_name}</a
+        >
+      </dd>
       {#if run.rating}
         <dt class="font-bold">rating</dt>
         <dd>{run.rating}/5</dd>

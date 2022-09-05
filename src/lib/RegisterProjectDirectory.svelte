@@ -4,7 +4,7 @@
   import { open } from "@tauri-apps/api/shell";
   import { onMount } from "svelte";
   import { get, set } from "tauri-settings";
-  import { stableDiffusionDirectory } from "./store";
+  import { stableDiffusionDirectory } from "../store";
 
   type directory = {
     stableDiffusionDirectory: string;
