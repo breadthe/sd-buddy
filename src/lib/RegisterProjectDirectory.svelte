@@ -37,7 +37,7 @@
   }
 
   async function saveStableDiffusionDirectory() {
-    stableDiffusionDirectory.register(stableDiffusionDirectoryInput.value);
+    stableDiffusionDirectory.set(stableDiffusionDirectoryInput.value);
     stableDiffusionDirectoryInput.value = "";
     isReregistering = false;
   }

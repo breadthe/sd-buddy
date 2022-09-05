@@ -1,11 +1,10 @@
 import { readable, writable } from "svelte/store";
 import type { Run } from "./types";
-import { get, set } from "tauri-settings";
+// import { get, set } from "tauri-settings";
 
-type directory = {
+/* type directory = {
     stableDiffusionDirectory: string;
 };
-
 const getStableDiffusionDirectory = async () => {
     let sdDir = "";
 
@@ -36,10 +35,26 @@ async function stableDiffusionDirectoryStore() {
         register: (sdDirectory: string) => setStableDiffusionDirectory(sdDirectory),
     };
 }
-export const stableDiffusionDirectory = await stableDiffusionDirectoryStore();
+export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); */
 
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
 export const reusePrompt = writable('');
+
+// Store runs to localStorage for now
+function createStableDiffusionDirectory() {
+    let storedStableDiffusionDirectory = JSON.parse(localStorage.getItem("stableDiffusionDirectory")) || "";
+    const { subscribe, set } = writable(storedStableDiffusionDirectory);
+
+    return {
+        subscribe,
+        set: (sdDir: string) => {
+            localStorage.setItem("stableDiffusionDirectory", JSON.stringify(sdDir));
+            set(sdDir);
+        }
+    };
+}
+
+export const stableDiffusionDirectory = createStableDiffusionDirectory();
 
 // Store runs to localStorage for now
 function createRunsStore() {
