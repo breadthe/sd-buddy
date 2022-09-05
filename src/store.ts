@@ -15,9 +15,6 @@ const getStableDiffusionDirectory = async () => {
             // do nothing, the user will have to set the directory
         });
 
-    console.log(`getStableDiffusionDirectory::${sdDir}`);
-
-
     return sdDir;
 }
 const setStableDiffusionDirectory = async (sdDirectory: string) => {

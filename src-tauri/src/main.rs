@@ -3,7 +3,6 @@
     windows_subsystem = "windows"
 )]
 
-use std::fs;
 use std::process::{Command, Stdio};
 use tauri::{Manager, Menu, MenuItem, Submenu};
 
