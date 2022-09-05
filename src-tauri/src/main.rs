@@ -3,22 +3,50 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
+use tauri::{Manager, Menu, MenuItem, Submenu};
 
 fn main() {
     // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let close = CustomMenuItem::new("close".to_string(), "Close");
-    let submenu = Submenu::new("File", Menu::new().add_item(quit).add_item(close));
-    let menu = Menu::new() // configure the menu
-        .add_native_item(MenuItem::Copy)
-        .add_native_item(MenuItem::Paste)
-        .add_native_item(MenuItem::Cut)
-        .add_native_item(MenuItem::SelectAll)
-        .add_native_item(MenuItem::Undo)
-        .add_native_item(MenuItem::Redo)
-        .add_item(CustomMenuItem::new("hide", "Hide"))
-        .add_submenu(submenu);
+
+    let about_menu = Submenu::new(
+        "App",
+        Menu::new()
+            .add_native_item(MenuItem::Hide)
+            .add_native_item(MenuItem::HideOthers)
+            .add_native_item(MenuItem::ShowAll)
+            .add_native_item(MenuItem::Separator)
+            .add_native_item(MenuItem::Quit),
+    );
+
+    let edit_menu = Submenu::new(
+        "Edit",
+        Menu::new()
+            .add_native_item(MenuItem::Undo)
+            .add_native_item(MenuItem::Redo)
+            .add_native_item(MenuItem::Separator)
+            .add_native_item(MenuItem::Cut)
+            .add_native_item(MenuItem::Copy)
+            .add_native_item(MenuItem::Paste)
+            .add_native_item(MenuItem::SelectAll),
+    );
+
+    let view_menu = Submenu::new(
+        "View",
+        Menu::new().add_native_item(MenuItem::EnterFullScreen),
+    );
+
+    let window_menu = Submenu::new(
+        "Window",
+        Menu::new()
+          .add_native_item(MenuItem::Minimize)
+            .add_native_item(MenuItem::Zoom),
+    );
+
+    let menu = Menu::new()
+        .add_submenu(about_menu)
+        .add_submenu(edit_menu)
+        .add_submenu(view_menu)
+        .add_submenu(window_menu);
 
     tauri::Builder::default()
         // This is where you pass in your commands
@@ -27,15 +55,6 @@ fn main() {
             close_splashscreen
         ])
         .menu(menu)
-        .on_menu_event(|event| match event.menu_item_id() {
-            "quit" => {
-                std::process::exit(0);
-            }
-            "close" => {
-                event.window().close().unwrap();
-            }
-            _ => {}
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -57,7 +76,8 @@ async fn stable_diffusion_command(directory: String, command: String) -> String 
         .expect("failed to execute Stable Diffusion command");
 
     // convert the output to a string
-    let output = String::from_utf8(output.stdout).expect("failed to convert Stable Diffusion output to string");
+    let output = String::from_utf8(output.stdout)
+        .expect("failed to convert Stable Diffusion output to string");
 
     // let output = "Hi back from Rust".to_string();
     // let output = dev_string.to_string();
