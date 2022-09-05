@@ -2,16 +2,9 @@
   import { open as openDialog } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
   import { open } from "@tauri-apps/api/shell";
-  import { onMount } from "svelte";
-  import { get, set } from "tauri-settings";
   import { stableDiffusionDirectory } from "../store";
 
-  type directory = {
-    stableDiffusionDirectory: string;
-  };
-
   let stableDiffusionDirectoryInput: HTMLInputElement;
-  let stableDiffusionOutputDirectory: string = "";
 
   // Flags
   let isReregistering: boolean = false; // re-registering the Stable Diffusion directory
@@ -20,11 +13,7 @@
     stableDiffusionDirectoryInput &&
     stableDiffusionDirectoryInput.value.trim() !== "";
 
-  $: {
-    if ($stableDiffusionDirectory) {
-      stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
-    }
-  }
+  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
 
   async function openDirectorySelectionDialog() {
     // Open a selection dialog for directories
@@ -48,25 +37,10 @@
   }
 
   async function saveStableDiffusionDirectory() {
-    stableDiffusionDirectory.set(stableDiffusionDirectoryInput.value);
+    stableDiffusionDirectory.register(stableDiffusionDirectoryInput.value);
     stableDiffusionDirectoryInput.value = "";
     isReregistering = false;
-
-    // Saves to /Users/your.user/Library/Application Support/com.sd-buddy.breadthe/settings.json
-    await set<directory>("stableDiffusionDirectory", $stableDiffusionDirectory)
-      .then(() => console.log("Stable Diffusion directory saved"))
-      .catch((err) => console.log(err));
   }
-
-  onMount(async () => {
-    await get<directory>("stableDiffusionDirectory")
-      .then((directory) => {
-        stableDiffusionDirectory.set(directory);
-      })
-      .catch((err) => {
-        // do nothing, the user will have to set the directory
-      });
-  });
 </script>
 
 <div class="flex flex-col gap-2">

@@ -10,7 +10,7 @@
   const dispatch = createEventDispatcher();
 
   // Image processing stuff
-  const stableDiffusionOutputDirectory: string = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
+  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
   let imgContents: string = ""; // base64 encoded image contents
   let imgSrc: string = ""; // img src base64 string
   $: {
