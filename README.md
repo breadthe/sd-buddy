@@ -4,7 +4,7 @@ Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](h
 
 It is intended to be a lazier way to generate images, by allowing you to focus on writing prompts instead of messing with the command line.
 
-![2022-09-04-sd-buddy-proto-v0 2 0](https://user-images.githubusercontent.com/17433578/188326810-5b9138d3-2a58-49c5-b981-956ea6422d71.png)
+![2022-09-04-sd-buddy-v0 3 0](https://user-images.githubusercontent.com/17433578/188510045-eafc6ba4-22cb-4763-81d4-2cdf1ace9173.png)
 
 Behind the scenes it executes this command in your local Stable Diffusion directory:
 
@@ -72,32 +72,33 @@ The first publicly-available version is pretty thin on features. My goal was to 
 * <label><input type="checkbox" checked /> Sidebar with a history of previous runs.</label>
 * <label><input type="checkbox" checked /> Delete a run from history.</label>
 * <label><input type="checkbox" checked /> Click a previous run to reuse the prompt.</label>
+* <label><input type="checkbox" checked /> **NEW** Display the generated image in the sidebar (click to open it in the associated program).</label>
+* <label><input type="checkbox" checked /> **NEW** Display a link to the generated image in the sidebar (opens it in the associated program).</label>
+* <label><input type="checkbox" checked /> **NEW** Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
 
 [](#wishlist)
 ## Wishlist
 
 I'll tackle these in whatever order I feel is a priority for how I use Stable Diffusion.
 
-* Custom steps, not just the 4 built-in ones.
-* Persist each run on disk, with metadata such as steps, duration, link to the generated image, etc.
-* Display a thumbnail of the generated image on completion. This is a bit tricky because the command doesn't say the name of the image file, but I have a solution in mind.
+* Configurable script parameters in addition to prompt and steps, including output folder.
+* Duration timer
 * A gallery of generated images.
 * Embed the metadata in the generated image, optionally.
 * **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
 * Light/dark mode.
 * UI improvements including a Help section.
-* Configurable script parameters in addition to prompt and steps, including output folder.
 
 In addition, I need to sort out various small details around developing with Tauri, such as global keyboard shortcuts for common actions such as quitting the app, enabling copy/paste in text boxes, and narrowing down the file/directory operations scope to the settings folder.
 
 [](#known_issues)
 ## Known issues
 
-1. The biggest (and most annoying) issue is that you can't use keyboard shortcuts to copy/cut/paste text (CMD+C, etc). The workaround is to use the mouse (select text, right click > Copy/Paste). I haven't dug deep into this issue. I suspect it's a Tauri thing since I didn't encounter it in Electron.
+1. The compiled binary `.app` or the binary in the `.dmg` is known to crash when launching the app, with the message "SD-Buddy quit unexpectedly". If that's the case, keep clicking Reopen until it launches. I believe I have fixed or at least mitigated this in v0.2.0 but be aware it could happen.
 
-2. The compiled binary `.app` or the binary in the `.dmg` is known to crash when launching the app, with the message "SD-Buddy quit unexpectedly". If that's the case, keep clicking Reopen until it launches. I believe I have fixed or at least mitigated this in v0.2.0 but be aware it could happen.
+2. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
 
-3. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
+3. The current (v0.3.0) image thumbnail rendering feature suffers from an issue stemming from the way I implemented it. Essentially when the program completes, I run a Rust function that executes a system command (`find` + arguments) to retrieve the name of the newest image in the output folder that was created during the timeframe in which the run completed. Then I read the image contents from disk as binary data and convert it to a base64 string to be rendered on the front-end. Unfortunately it seems that the Stable Diffusion python command sometimes overwrites files. So what used to be `grid-0032.jpg` from a previous run is also the same for a new run. This causes the generated thumbnails to look the same, since the metadata embedded with each run to points to the same location. **Workaround** I think my problem appeared because I was deleting images from disk that I didn't like, thus creating gaps. The SD command likes to back-fill those gaps but it also overwrites images that I hadn't deleted.
 
 ## Security FAQ
 
