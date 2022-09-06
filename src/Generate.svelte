@@ -165,16 +165,15 @@
   <div class="flex flex-col items-end gap-2">
     <button class="transparent" on:click={resetForm}>reset</button>
 
-    <textarea
-      rows="5"
-      cols="50"
-      bind:value={prompt}
-      {placeholder}
-      class="w-full"
-    />
+    <div class="w-full">
+      <label class="flex flex-col">
+        <span class="font-bold">Prompt</span>
+        <textarea rows="5" cols="50" bind:value={prompt} {placeholder} />
+      </label>
+    </div>
 
     <div class="flex gap-8">
-      <label class="flex items-center gap-2">
+      <label class="flex flex-col">
         <span class="font-bold">Steps</span>
 
         {#if useCustomSteps}
@@ -212,13 +211,13 @@
         {/if}
       </label>
 
-      <label class="flex items-center gap-2">
+      <label class="flex flex-col">
         <span class="font-bold">Samples</span>
 
         <input type="number" bind:value={samples} min="1" max={maxSamples} />
       </label>
 
-      <label class="flex items-center gap-2">
+      <label class="flex flex-col">
         <span class="font-bold">Seed</span>
 
         <input type="number" bind:value={seed} min="-1" max={maxSeed} />
