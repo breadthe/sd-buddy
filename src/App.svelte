@@ -9,7 +9,7 @@
   });
 </script>
 
-<main class="flex gap-8">
+<main class="flex flex-col gap-8">
   <Generate />
 
   <Runs />

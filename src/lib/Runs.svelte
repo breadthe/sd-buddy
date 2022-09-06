@@ -14,10 +14,10 @@
   }
 </script>
 
-<aside class="flex flex-col gap-2 w-full max-w-[200px]">
+<aside class="flex flex-col gap-2 w-full">
   <h2 class="font-bold">Runs</h2>
   {#if $runs.length}
-    <div class="flex flex-col gap-2 max-h-screen overflow-auto">
+    <div class="flex flex-wrap gap-2">
       {#each sortedRuns as run}
         <RunItem {run} on:deleteRun={(e) => deleteRun(e)} />
       {/each}

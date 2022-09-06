@@ -60,7 +60,7 @@
 </script>
 
 <div
-  class="relative flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded"
+  class="relative max-w-[200px] flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded"
 >
   {#if !isDeleting}
     {#if imgSrc}
