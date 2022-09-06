@@ -88,12 +88,16 @@
         >
       </dd>
       <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
+      <dt class="font-bold">steps</dt>
+      <dd>{run.steps}</dd>
+      {#if run.samples}
+        <dt class="font-bold">samples</dt>
+        <dd>{run.samples}</dd>
+      {/if}
       {#if run.seed}
         <dt class="font-bold">seed</dt>
         <dd>{run.seed}</dd>
       {/if}
-      <dt class="font-bold">steps</dt>
-      <dd>{run.steps}</dd>
       <dt class="font-bold">elapsed</dt>
       <dd>{run.elapsed / 1000}s</dd>
       {#if run.rating}

@@ -31,10 +31,12 @@
   const placeholder =
     "a red juicy apple floating in outer space, like a planet";
   let prompt: string = "";
-  let defaultSteps: number = 10; // default --ddim_steps 50
+  let defaultSteps: number = 10; // --ddim_steps, default 50
   let steps: number = 10; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
+  let samples = 1; // --n_samples, default 3
+  let maxSamples = 10; // no idea what is should be, go with 10 for now
   let seed = 42; // --seed default 42, set to -1 for random
   let maxSeed = 4294967295; //
 
@@ -42,8 +44,8 @@
   let elapsed: number = 0; // in ms
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps.toString()} --seed ${steps.toString()}`;
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples 1 --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --seed <strong>${seed}</strong>`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples.toString()} --n_iter 1 --plms --ddim_steps ${steps.toString()} --seed ${steps.toString()}`;
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples <strong>${samples}</strong> --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --seed <strong>${seed}</strong>`;
   }
 
   $: {
@@ -92,6 +94,7 @@
       id: uuidv4(),
       prompt,
       steps,
+      samples,
       seed,
       started_at: startTimer,
       rating: Rating.One,
@@ -207,6 +210,12 @@
             <option value="10">custom</option>
           </select>
         {/if}
+      </label>
+
+      <label class="flex items-center gap-2">
+        <span class="font-bold">Samples</span>
+
+        <input type="number" bind:value={samples} min="1" max={maxSamples} />
       </label>
 
       <label class="flex items-center gap-2">
