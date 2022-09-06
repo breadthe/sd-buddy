@@ -2,7 +2,7 @@
   import { readBinaryFile } from "@tauri-apps/api/fs";
   import { open } from "@tauri-apps/api/shell";
   import { reusePrompt, stableDiffusionDirectory } from "../store";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onMount, beforeUpdate } from "svelte";
   import type { Run } from "../types";
 
   export let run: Run;
@@ -25,11 +25,11 @@
   async function readTheImageFile() {
     let imgPath: string = ""; // absolute path of the image on disk (SD output directory)
 
+    if (!run.image_name) return;
+
     if (run.image_name.match(/.png/gi)) {
       imgPath = `${stableDiffusionOutputDirectory}/${run.image_name}`;
     }
-
-    if (!imgPath) return;
 
     imgPath = imgPath; // needs this to be reassigned for... reasons
 
@@ -54,6 +54,10 @@
     await open(`file://${stableDiffusionOutputDirectory}/${imageName}`);
   }
 
+  beforeUpdate(async () => {
+    await readTheImageFile();
+  });
+
   onMount(async () => {
     await readTheImageFile();
   });
@@ -63,7 +67,7 @@
   class="relative max-w-[200px] flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded"
 >
   {#if !isDeleting}
-    {#if imgSrc}
+    {#if run.image_name && imgSrc}
       <img
         src={imgSrc}
         alt={run.image_name}
@@ -83,9 +87,13 @@
     <dl class="p-2 grid grid-cols-2 text-xs">
       <dt class="font-bold">image</dt>
       <dd>
-        <a href="#" on:click|preventDefault={() => openImage(run.image_name)}
-          >{run.image_name}</a
-        >
+        {#if run.image_name}
+          <a href="#" on:click|preventDefault={() => openImage(run.image_name)}
+            >{run.image_name}</a
+          >
+        {:else}
+          <span class="text-red-600">error</span>
+        {/if}
       </dd>
       <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
       {#if run.height && run.width}
