@@ -46,7 +46,7 @@
   let elapsed: number = 0; // in ms
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples.toString()} --n_iter 1 --plms --ddim_steps ${steps.toString()} --seed ${steps.toString()}`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples.toString()} --n_iter 1 --plms --ddim_steps ${steps.toString()} --seed ${seed.toString()}`;
     stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples <strong>${samples}</strong> --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --seed <strong>${seed}</strong>`;
   }
 
