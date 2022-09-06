@@ -4,14 +4,14 @@ Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](h
 
 It is intended to be a lazier way to generate images, by allowing you to focus on writing prompts instead of messing with the command line.
 
-![2022-09-04-sd-buddy-v0 3 0](https://user-images.githubusercontent.com/17433578/188510045-eafc6ba4-22cb-4763-81d4-2cdf1ace9173.png)
+![2022-09-04-sd-buddy-v0 4 0](https://user-images.githubusercontent.com/17433578/188539399-996bb64a-08d1-4f56-aa87-4c3fe5af0032.png)
 
 Behind the scenes it executes this command in your local Stable Diffusion directory:
 
 ```shell
 python scripts/txt2img.py \
   --prompt "a red juicy apple floating in outer space, like a planet" \
-  --n_samples 1 --n_iter 1 --plms --ddim_steps 10
+  --n_samples 1 --n_iter 1 --plms --ddim_steps 10 --H 512 --W 512 --seed 42
 ```
 
 **Important Note 1** It's a WIP, so check back often. For now it's barely a step above running the command manually, but I have a lot of things in mind (see the [wishlist](#wishlist) below) that should make my life easier when generating images with Stable Diffusion.
@@ -41,16 +41,16 @@ Download the compiled app in `.app` or `.dmg` format from the [Releases](https:/
 
 ## Building the app
 
-In addition to the above, if you want to build the Mac binary yourself, first install the [Tauri environment + CLI](https://tauri.app/v1/guides/getting-started/prerequisites) (it includes Rust), then clone this repo and run:
+In addition to the above, if you want to build the Mac binary yourself, first install the [Tauri environment + CLI](https://tauri.app/v1/guides/getting-started/prerequisites) (including the Rust CLI + Cargo), then clone this repo and run:
 
 ```shell
 npm install
 
 # dev mode
-npm run dev
+cargo tauri dev
 
 # build the production app
-npm run build
+cargo tauri build
 ```
 
 ## Alpha status
@@ -64,17 +64,17 @@ The first publicly-available version is pretty thin on features. My goal was to 
 * <label><input type="checkbox" checked /> Register the location of the Stable Diffusion directory.</label>
 * <label><input type="checkbox" checked /> Persist the Stable Diffusion directory once registered.</label>
 * <label><input type="checkbox" checked /> Show clickable links for the Stable Diffusion project and output directories.</label>
-* <label><input type="checkbox" checked /> Text box for **prompt**.</label>
-* <label><input type="checkbox" checked /> Dropdown for **steps** with predefined and custom numbers.</label>
+* <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **samples** (`--n_samples`), image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
 * <label><input type="checkbox" checked /> Reset form button.</label>
-* <label><input type="checkbox" checked /> Display total duration at the end.</label>
+* <label><input type="checkbox" checked /> **NEW** Real-time duration timer.</label>
 * <label><input type="checkbox" checked /> Display the output of the command.</label>
-* <label><input type="checkbox" checked /> Sidebar with a history of previous runs.</label>
 * <label><input type="checkbox" checked /> Delete a run from history.</label>
 * <label><input type="checkbox" checked /> Click a previous run to reuse the prompt.</label>
-* <label><input type="checkbox" checked /> **NEW** Display the generated image in the sidebar (click to open it in the associated program).</label>
-* <label><input type="checkbox" checked /> **NEW** Display a link to the generated image in the sidebar (opens it in the associated program).</label>
-* <label><input type="checkbox" checked /> **NEW** Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
+* <label><input type="checkbox" checked /> A history of previous runs displayed below the form.</label>
+* <label><input type="checkbox" checked /> Thumbnails for the generated images (click an image to open it in the associated program).</label>
+* <label><input type="checkbox" checked /> Links to the generated images (opens it in the associated program).</label>
+* <label><input type="checkbox" checked /> Each run contains generation parameters metadata.</label>
+* <label><input type="checkbox" checked /> Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
 
 [](#wishlist)
 ## Wishlist
@@ -82,7 +82,6 @@ The first publicly-available version is pretty thin on features. My goal was to 
 I'll tackle these in whatever order I feel is a priority for how I use Stable Diffusion.
 
 * Configurable script parameters in addition to prompt and steps, including output folder.
-* Duration timer
 * A gallery of generated images.
 * Embed the metadata in the generated image, optionally.
 * **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
