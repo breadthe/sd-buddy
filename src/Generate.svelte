@@ -163,18 +163,17 @@
   }
 </script>
 
-<section class="flex-1 flex flex-col">
+<section class="flex-1 flex flex-col gap-4">
   <RegisterProjectDirectory />
 
   <div class="flex flex-col items-end gap-2">
-    <button class="transparent" on:click={resetForm}>reset</button>
-
-    <div class="w-full">
-      <label class="flex flex-col">
+    <label class="w-full flex flex-col">
+      <div class="flex justify-between">
         <span class="font-bold">Prompt</span>
-        <textarea rows="5" cols="50" bind:value={prompt} {placeholder} />
-      </label>
-    </div>
+        <button class="transparent" on:click={resetForm}>reset</button>
+      </div>
+      <textarea rows="5" cols="50" bind:value={prompt} {placeholder} />
+    </label>
 
     <div class="flex gap-8">
       <label class="flex flex-col">
