@@ -32,13 +32,15 @@
     "a red juicy apple floating in outer space, like a planet";
   let prompt: string = "";
   let defaultSteps: number = 10; // --ddim_steps, default 50
-  let steps: number = 10; // selected steps
+  let steps: number = defaultSteps; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
-  let samples = 1; // --n_samples, default 3
-  let maxSamples = 10; // no idea what is should be, go with 10 for now
-  let seed = 42; // --seed default 42, set to -1 for random
-  let maxSeed = 4294967295; //
+  let defaultSamples: number = 1; // --n_samples, default 3
+  let samples: number = defaultSamples; // selected samples
+  let maxSamples: number = 10; // no idea what is should be, go with 10 for now
+  let defaultSeed: number = 42; // --seed default 42, set to -1 for random
+  let seed: number = defaultSeed; // selected seed
+  let maxSeed: number = 4294967295;
 
   // Duration timers
   let elapsed: number = 0; // in ms
@@ -68,6 +70,8 @@
   function resetForm() {
     prompt = "";
     steps = defaultSteps;
+    samples = defaultSamples;
+    seed = defaultSeed;
     isGenerating = false;
     useCustomSteps = false;
     elapsed = 0;
