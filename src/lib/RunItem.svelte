@@ -100,10 +100,10 @@
       {/if}
       <dt class="font-bold">elapsed</dt>
       <dd>{run.elapsed / 1000}s</dd>
-      {#if run.rating}
+      <!-- {#if run.rating}
         <dt class="font-bold">rating</dt>
         <dd>{run.rating}/5</dd>
-      {/if}
+      {/if} -->
     </dl>
 
     <button
