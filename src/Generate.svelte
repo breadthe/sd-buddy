@@ -50,7 +50,7 @@
   let elapsed: number = 0; // in ms
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples.toString()} --n_iter 1 --plms --ddim_steps ${steps.toString()} --H ${height.toString()} --W ${width.toString()} --seed ${seed.toString()}`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples?.toString()} --n_iter 1 --plms --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
     stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples <strong>${samples}</strong> --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
   }
 
@@ -236,7 +236,7 @@
       </label>
 
       <label class="flex flex-col">
-        <span class="font-bold">Image Weight</span>
+        <span class="font-bold">Image Width</span>
 
         <input type="number" bind:value={width} min="1" class="w-32" />
       </label>
