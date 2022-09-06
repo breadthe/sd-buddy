@@ -88,6 +88,10 @@
         >
       </dd>
       <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
+      {#if run.height && run.width}
+        <dt class="font-bold">size</dt>
+        <dd>{run.height}x{run.width}</dd>
+      {/if}
       <dt class="font-bold">steps</dt>
       <dd>{run.steps}</dd>
       {#if run.samples}

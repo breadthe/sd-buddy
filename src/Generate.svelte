@@ -38,6 +38,10 @@
   let defaultSamples: number = 1; // --n_samples, default 3
   let samples: number = defaultSamples; // selected samples
   let maxSamples: number = 10; // no idea what is should be, go with 10 for now
+  let defaultHeight: number = 512; // --H default 512
+  let height: number = defaultHeight; // selected height
+  let defaultWidth: number = 512; // --W default 512
+  let width: number = defaultWidth; // selected width
   let defaultSeed: number = 42; // --seed default 42, set to -1 for random
   let seed: number = defaultSeed; // selected seed
   let maxSeed: number = 4294967295;
@@ -46,8 +50,8 @@
   let elapsed: number = 0; // in ms
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples.toString()} --n_iter 1 --plms --ddim_steps ${steps.toString()} --seed ${seed.toString()}`;
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples <strong>${samples}</strong> --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --seed <strong>${seed}</strong>`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples.toString()} --n_iter 1 --plms --ddim_steps ${steps.toString()} --H ${height.toString()} --W ${width.toString()} --seed ${seed.toString()}`;
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples <strong>${samples}</strong> --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
   }
 
   $: {
@@ -72,6 +76,8 @@
     prompt = "";
     steps = defaultSteps;
     samples = defaultSamples;
+    height = defaultHeight;
+    width = defaultWidth;
     seed = defaultSeed;
     isGenerating = false;
     useCustomSteps = false;
@@ -100,6 +106,8 @@
       prompt,
       steps,
       samples,
+      height,
+      width,
       seed,
       started_at: startTimer,
       rating: Rating.One,
@@ -219,6 +227,18 @@
         <span class="font-bold">Samples</span>
 
         <input type="number" bind:value={samples} min="1" max={maxSamples} />
+      </label>
+
+      <label class="flex flex-col">
+        <span class="font-bold">Image Height</span>
+
+        <input type="number" bind:value={height} min="1" class="w-32" />
+      </label>
+
+      <label class="flex flex-col">
+        <span class="font-bold">Image Weight</span>
+
+        <input type="number" bind:value={width} min="1" class="w-32" />
       </label>
 
       <label class="flex flex-col">
