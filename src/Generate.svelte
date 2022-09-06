@@ -37,9 +37,7 @@
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
 
   // Duration timers
-  let startTimer: Date;
-  let endTimer: Date;
-  let elapsed: number = 0;
+  let elapsed: number = 0; // in ms
 
   $: {
     stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps.toString()}`;
@@ -68,8 +66,6 @@
     steps = defaultSteps;
     isGenerating = false;
     useCustomSteps = false;
-    startTimer = null;
-    endTimer = null;
     elapsed = 0;
     rustResponse = "";
     rustError = "";
@@ -83,7 +79,14 @@
     elapsed = 0;
     rustResponse = "";
     rustError = "";
-    startTimer = new Date();
+
+    // timer that runs every 100ms
+    const startTimer = new Date();
+    const timer = setInterval(() => {
+      elapsed = Math.floor(
+        (new Date().getTime() - startTimer.getTime())
+      );
+    }, 100);
 
     const run: Run = {
       id: uuidv4(),
@@ -108,29 +111,31 @@
       })
       .finally(() => {
         isGenerating = false;
-        endTimer = new Date();
-        elapsed = endTimer - startTimer; // in ms
 
-        run.ended_at = endTimer;
-        run.elapsed = elapsed;
+        clearInterval(timer);
+
+        run.ended_at = new Date();
+        run.elapsed = elapsed; // in s
       });
 
-      await getLatestImageFromOutputDirectory(elapsed).then((image_name) => {
-        run.image_name = JSON.parse(image_name);
-      });
+    await getLatestImageFromOutputDirectory(elapsed).then((image_name) => {
+      run.image_name = JSON.parse(image_name);
+    });
 
-      saveRun(run);
+    saveRun(run);
   }
 
   // Get the latest image from the output directory
   // We will assume that the latest image is the one we just generated
-  async function getLatestImageFromOutputDirectory(elapsed: number): Promise<string> {
+  async function getLatestImageFromOutputDirectory(
+    elapsed: number
+  ): Promise<string> {
     let latest_image = "";
     let seconds = Math.ceil(elapsed / 1000) + 10; // convert ms to seconds, add 10 seconds to be safe
 
     await invoke("get_latest_image", {
-        dirPath: stableDiffusionOutputDirectory,
-        elapsed: seconds.toString(),
+      dirPath: stableDiffusionOutputDirectory,
+      elapsed: seconds.toString(),
     })
       .then((res) => {
         latest_image = JSON.stringify(res);
@@ -141,7 +146,7 @@
         latest_image = "";
       });
 
-      return latest_image;
+    return latest_image;
   }
 
   function handleCustomSteps(event: Event) {
