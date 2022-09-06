@@ -35,13 +35,15 @@
   let steps: number = 10; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
+  let seed = 42; // --seed default 42, set to -1 for random
+  let maxSeed = 4294967295; //
 
   // Duration timers
   let elapsed: number = 0; // in ms
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps.toString()}`;
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples 1 --n_iter 1 --plms --ddim_steps <strong>${steps}</strong>`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples 1 --n_iter 1 --plms --ddim_steps ${steps.toString()} --seed ${steps.toString()}`;
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples 1 --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --seed <strong>${seed}</strong>`;
   }
 
   $: {
@@ -83,15 +85,14 @@
     // timer that runs every 100ms
     const startTimer = new Date();
     const timer = setInterval(() => {
-      elapsed = Math.floor(
-        (new Date().getTime() - startTimer.getTime())
-      );
+      elapsed = Math.floor(new Date().getTime() - startTimer.getTime());
     }, 100);
 
     const run: Run = {
       id: uuidv4(),
       prompt,
-      steps: steps,
+      steps,
+      seed,
       started_at: startTimer,
       rating: Rating.One,
     };
@@ -169,43 +170,51 @@
       class="w-full"
     />
 
-    <label class="flex items-center gap-2">
-      <span class="font-bold">Steps</span>
+    <div class="flex gap-8">
+      <label class="flex items-center gap-2">
+        <span class="font-bold">Steps</span>
 
-      {#if useCustomSteps}
-        <input type="number" bind:value={steps} min="1" max={maxSteps} />
-        <button
-          class="transparent"
-          on:click={() => {
-            useCustomSteps = false;
-            steps = defaultSteps;
-          }}
-          title="Switch to dropdown"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-4 h-4"
+        {#if useCustomSteps}
+          <input type="number" bind:value={steps} min="1" max={maxSteps} />
+          <button
+            class="transparent"
+            on:click={() => {
+              useCustomSteps = false;
+              steps = defaultSteps;
+            }}
+            title="Switch to dropdown"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-            />
-          </svg>
-        </button>
-      {:else}
-        <select bind:value={steps} on:change={handleCustomSteps}>
-          {#each stepsOptions as option}
-            <option value={option}>{option}</option>
-          {/each}
-          <option value="10">custom</option>
-        </select>
-      {/if}
-    </label>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+              />
+            </svg>
+          </button>
+        {:else}
+          <select bind:value={steps} on:change={handleCustomSteps}>
+            {#each stepsOptions as option}
+              <option value={option}>{option}</option>
+            {/each}
+            <option value="10">custom</option>
+          </select>
+        {/if}
+      </label>
+
+      <label class="flex items-center gap-2">
+        <span class="font-bold">Seed</span>
+
+        <input type="number" bind:value={seed} min="-1" max={maxSeed} />
+      </label>
+    </div>
 
     <button
       class="w-full"

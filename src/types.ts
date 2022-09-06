@@ -18,6 +18,7 @@ export interface Run {
     id: string; // uuid
     prompt: string; // text prompt
     steps: number; // --ddim_steps
+    seed: number; // --seed
     started_at: Date;
     ended_at?: Date;
     elapsed?: number; // milliseconds

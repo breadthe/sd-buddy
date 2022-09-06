@@ -81,17 +81,21 @@
     </dl>
 
     <dl class="p-2 grid grid-cols-2 text-xs">
-      <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
-      <dt class="font-bold">steps</dt>
-      <dd>{run.steps}</dd>
-      <dt class="font-bold">elapsed</dt>
-      <dd>{run.elapsed / 1000}s</dd>
       <dt class="font-bold">image</dt>
       <dd>
         <a href="#" on:click|preventDefault={() => openImage(run.image_name)}
           >{run.image_name}</a
         >
       </dd>
+      <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
+      {#if run.seed}
+        <dt class="font-bold">seed</dt>
+        <dd>{run.seed}</dd>
+      {/if}
+      <dt class="font-bold">steps</dt>
+      <dd>{run.steps}</dd>
+      <dt class="font-bold">elapsed</dt>
+      <dd>{run.elapsed / 1000}s</dd>
       {#if run.rating}
         <dt class="font-bold">rating</dt>
         <dd>{run.rating}/5</dd>
