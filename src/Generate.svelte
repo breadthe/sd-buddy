@@ -68,6 +68,7 @@
 
   // resets the form to its original state and clears the response alerts
   function resetForm() {
+    reusePrompt.set("");
     prompt = "";
     steps = defaultSteps;
     samples = defaultSamples;
