@@ -31,7 +31,7 @@
   const placeholder =
     "a red juicy apple floating in outer space, like a planet";
   let prompt: string = "";
-  let defaultSteps: number = 10; // --ddim_steps, default 50
+  let defaultSteps: number = 50; // --ddim_steps, default 50
   let steps: number = defaultSteps; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
