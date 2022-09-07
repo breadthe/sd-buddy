@@ -176,13 +176,13 @@
   <RegisterProjectDirectory />
 
   <div class="flex flex-col items-end gap-2">
-    <label class="w-full flex flex-col">
+    <div class="w-full flex flex-col">
       <div class="flex justify-between">
-        <span class="font-bold">Prompt</span>
+        <label for="prompt" class="font-bold">Prompt</label>
         <button class="transparent" on:click={resetForm}>reset</button>
       </div>
-      <textarea rows="5" cols="50" bind:value={prompt} {placeholder} />
-    </label>
+      <textarea name="prompt" rows="5" cols="50" bind:value={prompt} {placeholder} />
+    </div>
 
     <div class="flex gap-8">
       <label class="flex flex-col">
