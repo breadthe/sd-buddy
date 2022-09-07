@@ -35,9 +35,9 @@
   let steps: number = defaultSteps; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
-  let defaultScale: number = 1; // --scale, default 1
+  let defaultScale: number = 8; // --scale, default 7.5 but we round to 8
   let scale: number = defaultScale; // selected scale (context free guidance)
-  let maxScale: number = 20; // 1 is AI decides, 20 is "stick to my prompt"
+  let maxScale: number = 20; // 1 is AI almost ignores prompt, 20 is "stick to my prompt"
   let defaultIter: number = 1; // --n_iter, default 1
   let iter: number = defaultIter; // selected iter(ations?)
   let maxIter: number = 10; // no idea what is should be, go with 10 for now
