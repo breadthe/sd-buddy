@@ -63,16 +63,17 @@
     }
   }
 
-  $: {
-    if (Object.keys($reusePrompt).length) {
-        prompt = $reusePrompt?.prompt ?? prompt;
-        steps = $reusePrompt?.steps ?? steps;
-        iter = $reusePrompt?.iter ?? iter;
-        samples = $reusePrompt?.samples ?? samples;
-        seed = $reusePrompt?.seed ?? seed;
-        height = $reusePrompt?.height ?? height;
-        width = $reusePrompt?.width ?? width;
-    }
+  $: if (Object.keys($reusePrompt).length) {
+    prompt = $reusePrompt?.prompt ?? prompt;
+    steps = $reusePrompt?.steps ?? steps;
+    iter = $reusePrompt?.iter ?? iter;
+    samples = $reusePrompt?.samples ?? samples;
+    seed = $reusePrompt?.seed ?? seed;
+    height = $reusePrompt?.height ?? height;
+    width = $reusePrompt?.width ?? width;
+
+    // Reset the prompt so we can modify the values.
+    $reusePrompt = {} as Run;
   }
 
   async function saveRun(run: Run) {
