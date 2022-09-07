@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { readBinaryFile } from "@tauri-apps/api/fs";
+  import { convertFileSrc } from "@tauri-apps/api/tauri";
   import { open } from "@tauri-apps/api/shell";
   import { reusePrompt, stableDiffusionDirectory } from "../store";
   import { createEventDispatcher, onMount, beforeUpdate } from "svelte";
@@ -11,42 +11,10 @@
 
   // Image processing stuff
   $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
-  let imgContents: string = ""; // base64 encoded image contents
   let imgSrc: string = ""; // img src base64 string
-  $: {
-    if (imgContents) {
-      imgSrc = `data:image/png;base64,${imgContents}`;
-    }
-  }
 
   // Flags
   let isDeleting = false;
-
-  async function readTheImageFile() {
-    let imgPath: string = ""; // absolute path of the image on disk (SD output directory)
-
-    if (!run.image_name) return;
-
-    if (run.image_name.match(/.png/gi)) {
-      imgPath = `${stableDiffusionOutputDirectory}/${run.image_name}`;
-    }
-
-    imgPath = imgPath; // needs this to be reassigned for... reasons
-
-    await readBinaryFile(imgPath)
-      .then((contents) => {
-        // convert from Uint8Array to base64
-        imgContents = btoa(
-          new Uint8Array(contents).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            ""
-          )
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
 
   async function openImage(imageName: string) {
     if (!imageName) return;
@@ -54,12 +22,19 @@
     await open(`file://${stableDiffusionOutputDirectory}/${imageName}`);
   }
 
+  // @see https://tauri.app/v1/api/js/modules/tauri/#convertfilesrc
+  async function loadTheImage() {
+    const filePath = `${stableDiffusionOutputDirectory}/${run.image_name}`;
+    const imageUrl = convertFileSrc(filePath);
+    imgSrc = imageUrl;
+  }
+
   beforeUpdate(async () => {
-    await readTheImageFile();
+    await loadTheImage();
   });
 
   onMount(async () => {
-    await readTheImageFile();
+    await loadTheImage();
   });
 </script>
 

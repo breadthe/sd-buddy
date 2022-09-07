@@ -28,6 +28,10 @@
                 "readDir": true,
                 "readFile": true,
                 "writeFile": true
+            },
+            "protocol": {
+                "asset": true,
+                "assetScope": ["**"]
             }
         },
         "bundle": {
