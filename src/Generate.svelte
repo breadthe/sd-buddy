@@ -267,15 +267,22 @@
 
       <label class="flex flex-col">
         <span class="font-bold">Image Height</span>
-        <!-- must be a multiple of 16 -->
-        <input type="number" bind:value={height} min="1" step="16" class="w-32" />
+        <!-- must be a multiple of 8 -->
+        <input type="number" bind:value={height} min="1" step="8" class="w-32" />
       </label>
 
       <label class="flex flex-col">
         <span class="font-bold">Image Width</span>
-        <!-- must be a multiple of 16 -->
-        <input type="number" bind:value={width} min="1" step="16" class="w-32" />
+        <!-- must be a multiple of 8 -->
+        <input type="number" bind:value={width} min="1" step="8" class="w-32" />
       </label>
+
+      {#if (width !== 512) && (height !== 512)}
+        <div class="flex flex-col">
+          <span class="font-bold">Dimension validation warning</span>
+          <span class="text-red-500">Either Height or Width should be 512 for best results (<a class="text-blue-400 hover:text-blue-200" href="https://huggingface.co/blog/stable_diffusion">source</a>)</span>
+        </div>
+      {/if}
 
       <label class="flex flex-col">
         <span class="font-bold">Seed</span>
