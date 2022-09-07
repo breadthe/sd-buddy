@@ -64,8 +64,14 @@
   }
 
   $: {
-    if ($reusePrompt.length) {
-      prompt = $reusePrompt;
+    if (Object.keys($reusePrompt).length) {
+        prompt = $reusePrompt?.prompt ?? prompt;
+        steps = $reusePrompt?.steps ?? steps;
+        iter = $reusePrompt?.iter ?? iter;
+        samples = $reusePrompt?.samples ?? samples;
+        seed = $reusePrompt?.seed ?? seed;
+        height = $reusePrompt?.height ?? height;
+        width = $reusePrompt?.width ?? width;
     }
   }
 
@@ -75,7 +81,7 @@
 
   // resets the form to its original state and clears the response alerts
   function resetForm() {
-    reusePrompt.set("");
+    reusePrompt.set(<Run>{});
     prompt = "";
     steps = defaultSteps;
     samples = defaultSamples;

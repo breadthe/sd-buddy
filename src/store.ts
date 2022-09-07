@@ -41,7 +41,7 @@ export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); *
 export const copying = writable(false);
 
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
-export const reusePrompt = writable('');
+export const reusePrompt = writable(<Run>{});
 
 // Store runs to localStorage for now
 function createStableDiffusionDirectory() {
