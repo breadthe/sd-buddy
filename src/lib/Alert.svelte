@@ -4,11 +4,11 @@
   import { copyToClipboard } from "../utils";
 
   const colors = {
-    error: "bg-red-100",
-    info: "bg-blue-100",
-    success: "bg-green-100",
-    warning: "bg-yellow-100",
-    neutral: "bg-gray-100", // default
+    error: "bg-red-100 dark:bg-red-800",
+    info: "bg-blue-100 dark:bg-blue-800",
+    success: "bg-green-100 dark:bg-green-800",
+    warning: "bg-yellow-100 dark:bg-yellow-800",
+    neutral: "bg-gray-100 dark:bg-gray-800", // default
   };
 
   export let copy = false; // allow copying of text
@@ -42,7 +42,9 @@
     <div
       class="absolute top-0 left-0 w-full h-full flex items-center justify-center"
     >
-      <div class="bg-white p-2 text-xs text-gray-600">copied!</div>
+      <div class="bg-white dark:bg-gray-800 p-2 text-xs text-gray-600">
+        copied!
+      </div>
     </div>
   {/if}
 </div>
