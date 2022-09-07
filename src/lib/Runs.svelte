@@ -18,7 +18,7 @@
   <h2 class="font-bold">Runs <small class="text-xs font-normal">({$runs.length})</small></h2>
   {#if $runs.length}
     <div class="flex flex-wrap gap-2">
-      {#each sortedRuns as run}
+      {#each sortedRuns as run (run.id)}
         <RunItem {run} on:deleteRun={(e) => deleteRun(e)} />
       {/each}
     </div>
