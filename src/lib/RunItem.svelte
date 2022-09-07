@@ -76,7 +76,7 @@
       />
     {/if}
     <dl
-      class="p-2 text-xs hover:bg-blue-100 cursor-pointer"
+      class="p-2 text-xs hover:bg-blue-100 hover:dark:bg-blue-800 cursor-pointer"
       title="Click to re-use this prompt & parameters"
       on:click={() => reusePrompt.set(run)}
     >
