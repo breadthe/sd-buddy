@@ -268,7 +268,7 @@
     >
 
     {#if prompt.trim() !== ""}
-      <Alert alertType={AlertTypes.Info}
+      <Alert alertType={AlertTypes.Info} copy
         >{@html stableDiffusionCommandHtml}</Alert
       >
     {/if}

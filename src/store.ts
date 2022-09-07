@@ -37,6 +37,9 @@ async function stableDiffusionDirectoryStore() {
 }
 export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); */
 
+// Indicator for when the user is copying to clipboard
+export const copying = writable(false);
+
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
 export const reusePrompt = writable('');
 
