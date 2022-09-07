@@ -119,14 +119,17 @@
     </dl>
 
     <button
-      class="absolute bottom-0 right-0 py-0 px-0 leading-none rounded-none rounded-br rounded-tl"
+      class="absolute bottom-0 right-0 py-0 px-1 leading-none rounded-none rounded-br rounded-tl"
       title="Delete run"
       on:click={() => (isDeleting = true)}>&times;</button
     >
   {:else}
-    <div class="flex flex-col items-center gap-2 p-2">
-      <p class="text-xs text-center">
+    <div class="flex flex-col items-center justify-center h-full gap-2 p-2">
+      <p class="text-xs text-center font-bold">
         Are you sure you want to delete this run?
+      </p>
+      <p class="text-xs text-center">
+        The image will NOT be deleted from disk.
       </p>
       <div class="flex gap-2">
         <button
