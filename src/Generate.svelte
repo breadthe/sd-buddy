@@ -35,6 +35,9 @@
   let steps: number = defaultSteps; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
+  let defaultIter: number = 1; // --n_iter, default 1
+  let iter: number = defaultIter; // selected iter(ations?)
+  let maxIter: number = 10; // no idea what is should be, go with 10 for now
   let defaultSamples: number = 1; // --n_samples, default 3
   let samples: number = defaultSamples; // selected samples
   let maxSamples: number = 10; // no idea what is should be, go with 10 for now
@@ -50,8 +53,8 @@
   let elapsed: number = 0; // in ms
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --n_samples ${samples?.toString()} --n_iter 1 --plms --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --n_samples <strong>${samples}</strong> --n_iter 1 --plms --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
+      stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
+      stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
   }
 
   $: {
@@ -76,6 +79,7 @@
     prompt = "";
     steps = defaultSteps;
     samples = defaultSamples;
+    iter = defaultIter;
     height = defaultHeight;
     width = defaultWidth;
     seed = defaultSeed;
@@ -106,6 +110,7 @@
       prompt,
       steps,
       samples,
+      iter,
       height,
       width,
       seed,
@@ -227,6 +232,12 @@
         <span class="font-bold">Samples</span>
 
         <input type="number" bind:value={samples} min="1" max={maxSamples} />
+      </label>
+
+      <label class="flex flex-col">
+        <span class="font-bold">Iter</span>
+
+        <input type="number" bind:value={iter} min="1" max={maxIter} />
       </label>
 
       <label class="flex flex-col">

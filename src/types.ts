@@ -19,6 +19,7 @@ export interface Run {
     prompt: string; // text prompt
     steps: number; // --ddim_steps
     samples: number; // --n_samples
+    iter: number; // --n_iter
     height: number; // --H, default 512
     width: number; // --W, default 512
     seed: number; // --seed
