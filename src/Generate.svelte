@@ -35,6 +35,9 @@
   let steps: number = defaultSteps; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
+  let defaultScale: number = 1; // --scale, default 1
+  let scale: number = defaultScale; // selected scale (context free guidance)
+  let maxScale: number = 20; // 1 is AI decides, 20 is "stick to my prompt"
   let defaultIter: number = 1; // --n_iter, default 1
   let iter: number = defaultIter; // selected iter(ations?)
   let maxIter: number = 10; // no idea what is should be, go with 10 for now
@@ -87,6 +90,7 @@
     steps = defaultSteps;
     samples = defaultSamples;
     iter = defaultIter;
+    scale = defaultScale;
     height = defaultHeight;
     width = defaultWidth;
     seed = defaultSeed;
@@ -182,6 +186,8 @@
     // very hacky way of swapping input <-> select without losing the value
     useCustomSteps = event.target.selectedOptions[0].innerText === "custom";
   }
+
+  $: numPromptTokens = Math.ceil(prompt.length/4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 </script>
 
 <section class="flex-1 flex flex-col gap-4">
@@ -190,7 +196,12 @@
   <div class="flex flex-col items-end gap-2">
     <div class="w-full flex flex-col">
       <div class="flex justify-between">
-        <label for="prompt" class="font-bold">Prompt</label>
+        <label for="prompt" class="font-bold">
+          Prompt
+          {#if numPromptTokens > 75}
+            <span class="text-red-500">(estimated {numPromptTokens} tokens - max is ~77)</span>
+          {/if}
+        </label>
         <button class="transparent" on:click={resetForm}>reset</button>
       </div>
       <textarea name="prompt" rows="5" cols="50" bind:value={prompt} {placeholder} />
@@ -242,6 +253,13 @@
       </label>
 
       <label class="flex flex-col">
+        <span class="font-bold">Scale (CFG)</span>
+
+        <input type="number" bind:value={scale} min="1" max={maxScale} />
+      </label>
+
+
+      <label class="flex flex-col">
         <span class="font-bold">Iter</span>
 
         <input type="number" bind:value={iter} min="1" max={maxIter} />
@@ -249,14 +267,14 @@
 
       <label class="flex flex-col">
         <span class="font-bold">Image Height</span>
-
-        <input type="number" bind:value={height} min="1" class="w-32" />
+        <!-- must be a multiple of 16 -->
+        <input type="number" bind:value={height} min="1" step="16" class="w-32" />
       </label>
 
       <label class="flex flex-col">
         <span class="font-bold">Image Width</span>
-
-        <input type="number" bind:value={width} min="1" class="w-32" />
+        <!-- must be a multiple of 16 -->
+        <input type="number" bind:value={width} min="1" step="16" class="w-32" />
       </label>
 
       <label class="flex flex-col">
@@ -270,6 +288,7 @@
       class="w-full"
       disabled={!$stableDiffusionDirectory ||
         prompt.trim() === "" ||
+        numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
         isGenerating}
       on:click={generate}>{isGenerating ? "generating..." : "Generate!"}</button
     >
