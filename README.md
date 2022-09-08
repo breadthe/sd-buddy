@@ -4,7 +4,7 @@ Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](h
 
 It is intended to be a lazier way to generate images, by allowing you to focus on writing prompts instead of messing with the command line.
 
-![2022-09-04-sd-buddy-v0 4 0](https://user-images.githubusercontent.com/17433578/188539399-996bb64a-08d1-4f56-aa87-4c3fe5af0032.png)
+![2022-09-04-sd-buddy-v0 6 0](https://user-images.githubusercontent.com/17433578/189040815-24a684d1-59ef-40e9-b193-6bf469f3cb4a.png)
 
 Behind the scenes it executes this command in your local Stable Diffusion directory:
 
