@@ -31,7 +31,7 @@
   const placeholder =
     "a red juicy apple floating in outer space, like a planet";
   let prompt: string = "";
-  let defaultSteps: number = 50; // --ddim_steps, default 50
+  let defaultSteps: number = 10; // --ddim_steps, default 50 (keeping it 10 because slow computer)
   let steps: number = defaultSteps; // selected steps
   let maxSteps: number = 100;
   let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100];
@@ -56,8 +56,8 @@
   let elapsed: number = 0; // in ms
 
   $: {
-      stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
-      stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
+      stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
+      stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
   }
 
   $: {
@@ -71,6 +71,7 @@
     steps = $reusePrompt?.steps ?? steps;
     iter = $reusePrompt?.iter ?? iter;
     samples = $reusePrompt?.samples ?? samples;
+    scale = $reusePrompt?.scale ?? scale;
     seed = $reusePrompt?.seed ?? seed;
     height = $reusePrompt?.height ?? height;
     width = $reusePrompt?.width ?? width;
@@ -89,6 +90,7 @@
     prompt = "";
     steps = defaultSteps;
     samples = defaultSamples;
+    scale = defaultScale;
     iter = defaultIter;
     scale = defaultScale;
     height = defaultHeight;
@@ -121,6 +123,7 @@
       prompt,
       steps,
       samples,
+      scale,
       iter,
       height,
       width,

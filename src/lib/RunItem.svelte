@@ -81,6 +81,10 @@
         <dt class="font-bold">samples</dt>
         <dd>{run.samples}</dd>
       {/if}
+      {#if run.scale}
+        <dt class="font-bold">scale</dt>
+        <dd>{run.scale}</dd>
+      {/if}
       {#if run.seed}
         <dt class="font-bold">seed</dt>
         <dd>{run.seed}</dd>
