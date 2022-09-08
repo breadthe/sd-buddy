@@ -301,7 +301,8 @@
           <span class="text-red-500"
             >Either Height or Width should be 512 for best results (<a
               class="text-blue-400 hover:text-blue-200"
-              href="https://huggingface.co/blog/stable_diffusion">source</a
+              href="https://huggingface.co/blog/stable_diffusion"
+              target="_blank">source</a
             >)</span
           >
         </div>
