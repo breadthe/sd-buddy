@@ -95,7 +95,7 @@
     elapsed = 0;
     rustResponse = "";
     rustError = "";
-    currentRun = <Run>{};
+    currentRun = null;
   }
 
   async function generate() {
