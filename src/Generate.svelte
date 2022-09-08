@@ -5,7 +5,6 @@
   import type { Run } from "./types";
   import { runs, reusePrompt, stableDiffusionDirectory } from "./store";
   import Alert from "./lib/Alert.svelte";
-  import RegisterProjectDirectory from "./lib/RegisterProjectDirectory.svelte";
 
   type directory = {
     stableDiffusionDirectory: string;
@@ -194,8 +193,6 @@
 </script>
 
 <section class="flex-1 flex flex-col gap-4">
-  <RegisterProjectDirectory />
-
   <div class="flex flex-col items-end gap-2">
     <div class="w-full flex flex-col">
       <div class="flex justify-between">
