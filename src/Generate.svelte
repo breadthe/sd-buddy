@@ -56,8 +56,8 @@
   let elapsed: number = 0; // in ms
 
   $: {
-      stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
-      stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
   }
 
   $: {
@@ -190,7 +190,7 @@
     useCustomSteps = event.target.selectedOptions[0].innerText === "custom";
   }
 
-  $: numPromptTokens = Math.ceil(prompt.length/4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
+  $: numPromptTokens = Math.ceil(prompt.length / 4); // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 </script>
 
 <section class="flex-1 flex flex-col gap-4">
@@ -202,12 +202,20 @@
         <label for="prompt" class="font-bold">
           Prompt
           {#if numPromptTokens > 75}
-            <span class="text-red-500">(estimated {numPromptTokens} tokens - max is ~77)</span>
+            <span class="text-red-500"
+              >(estimated {numPromptTokens} tokens - max is ~77)</span
+            >
           {/if}
         </label>
         <button class="transparent" on:click={resetForm}>reset</button>
       </div>
-      <textarea name="prompt" rows="5" cols="50" bind:value={prompt} {placeholder} />
+      <textarea
+        name="prompt"
+        rows="5"
+        cols="50"
+        bind:value={prompt}
+        {placeholder}
+      />
     </div>
 
     <div class="flex gap-8">
@@ -215,30 +223,32 @@
         <span class="font-bold">Steps</span>
 
         {#if useCustomSteps}
-          <input type="number" bind:value={steps} min="1" max={maxSteps} />
-          <button
-            class="transparent"
-            on:click={() => {
-              useCustomSteps = false;
-              steps = defaultSteps;
-            }}
-            title="Switch to dropdown"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-4 h-4"
+          <div class="flex items-center gap-2">
+            <input type="number" bind:value={steps} min="1" max={maxSteps} />
+            <button
+              class="transparent"
+              on:click={() => {
+                useCustomSteps = false;
+                steps = defaultSteps;
+              }}
+              title="Switch to dropdown"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                />
+              </svg>
+            </button>
+          </div>
         {:else}
           <select bind:value={steps} on:change={handleCustomSteps}>
             {#each stepsOptions as option}
@@ -261,7 +271,6 @@
         <input type="number" bind:value={scale} min="1" max={maxScale} />
       </label>
 
-
       <label class="flex flex-col">
         <span class="font-bold">Iter</span>
 
@@ -271,7 +280,13 @@
       <label class="flex flex-col">
         <span class="font-bold">Image Height</span>
         <!-- must be a multiple of 8 -->
-        <input type="number" bind:value={height} min="1" step="8" class="w-32" />
+        <input
+          type="number"
+          bind:value={height}
+          min="1"
+          step="8"
+          class="w-32"
+        />
       </label>
 
       <label class="flex flex-col">
@@ -280,10 +295,15 @@
         <input type="number" bind:value={width} min="1" step="8" class="w-32" />
       </label>
 
-      {#if (width !== 512) && (height !== 512)}
+      {#if width !== 512 && height !== 512}
         <div class="flex flex-col">
           <span class="font-bold">Dimension validation warning</span>
-          <span class="text-red-500">Either Height or Width should be 512 for best results (<a class="text-blue-400 hover:text-blue-200" href="https://huggingface.co/blog/stable_diffusion">source</a>)</span>
+          <span class="text-red-500"
+            >Either Height or Width should be 512 for best results (<a
+              class="text-blue-400 hover:text-blue-200"
+              href="https://huggingface.co/blog/stable_diffusion">source</a
+            >)</span
+          >
         </div>
       {/if}
 
