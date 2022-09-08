@@ -48,6 +48,8 @@
   // Duration timers
   let elapsed: number = 0; // in ms
 
+  $: numPromptTokens = Math.ceil(prompt.length / 4); // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
+
   $: {
     stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
     stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
@@ -182,8 +184,6 @@
     // very hacky way of swapping input <-> select without losing the value
     useCustomSteps = event.target.selectedOptions[0].innerText === "custom";
   }
-
-  $: numPromptTokens = Math.ceil(prompt.length / 4); // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 </script>
 
 <section class="flex flex-col gap-4">
@@ -192,8 +192,13 @@
       <label for="prompt" class="font-bold">
         Prompt
         {#if numPromptTokens > 75}
-          <span class="text-red-500"
-            >(estimated {numPromptTokens} tokens - max is ~77)</span
+          <span class="text-red-600"
+            >(estimated {numPromptTokens} tokens - max is ~77
+            <a
+              class="text-blue-600 hover:underline"
+              href="https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/"
+              target="_blank">source</a
+            >)</span
           >
         {/if}
       </label>
@@ -282,9 +287,9 @@
     {#if width !== 512 && height !== 512}
       <div class="flex flex-col">
         <span class="font-bold">Dimension validation warning</span>
-        <span class="text-red-500"
+        <span class="text-red-600"
           >Either Height or Width should be 512 for best results (<a
-            class="text-blue-400 hover:text-blue-200"
+            class="text-blue-600 hover:underline"
             href="https://huggingface.co/blog/stable_diffusion"
             target="_blank">source</a
           >)</span
