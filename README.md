@@ -80,12 +80,13 @@ The first publicly-available version is pretty thin on features. My goal was to 
 
 I'll tackle these in whatever order I feel is a priority for how I use Stable Diffusion.
 
-* Configurable script parameters in addition to prompt and steps, including output folder.
 * A gallery of generated images.
-* Embed the metadata in the generated image, optionally.
-* **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
 * Light/dark mode.
 * UI improvements including a Help section.
+* Configurable output folder.
+* Embed the metadata in the generated image, optionally. A similar thing can be done by saving the generation parameters to a text file with the same name as the image. Follow the changes in my [txt2img.py gist](https://gist.github.com/breadthe/e0fda9f766c691a2cf4533f1da65560e).
+* **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
+* Support `img2img.py` as in `python scripts/img2img.py --prompt "a red juicy apple floating in outer space, like a planet" --init-img apple-input.jpg --strength 0.8 --skip_grid --n_samples 1`.
 
 In addition, I need to sort out various small details around developing with Tauri, such as global keyboard shortcuts for common actions such as quitting the app, enabling copy/paste in text boxes, and narrowing down the file/directory operations scope to the settings folder.
 
