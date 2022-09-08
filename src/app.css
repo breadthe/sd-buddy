@@ -113,5 +113,5 @@ button.transparent:hover {
 input,
 select,
 textarea {
-  background: transparent !important;
+  background-color: transparent !important;
 }
