@@ -65,6 +65,12 @@
         disabled={!stableDiffusionDirectoryIsRegistered}
         on:click={saveStableDiffusionDirectory}>Save</button
       >
+
+      <button
+        class="transparent"
+        title="Close directory selection"
+        on:click={() => (isReregistering = false)}>Cancel</button
+      >
     </div>
   {/if}
   {#if $stableDiffusionDirectory}
@@ -97,6 +103,7 @@
             />
           </svg>
         </button>
+
       </div>
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold">SD output:</span>
