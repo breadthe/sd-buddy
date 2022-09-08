@@ -5,10 +5,7 @@
   import type { Run } from "./types";
   import { runs, reusePrompt, stableDiffusionDirectory } from "./store";
   import Alert from "./lib/Alert.svelte";
-
-  type directory = {
-    stableDiffusionDirectory: string;
-  };
+  import RunItem from "./lib/RunItem.svelte";
 
   let stableDiffusionOutputDirectory: string = "";
   let stableDiffusionCommand: string = "";
@@ -47,6 +44,8 @@
 
   // Duration timers
   let elapsed: number = 0; // in ms
+
+  let currentRun: Run; // the currently generated run
 
   $: numPromptTokens = Math.ceil(prompt.length / 4); // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
@@ -96,6 +95,7 @@
     elapsed = 0;
     rustResponse = "";
     rustError = "";
+    currentRun = <Run>{};
   }
 
   async function generate() {
@@ -154,6 +154,8 @@
     });
 
     saveRun(run);
+
+    currentRun = run;
   }
 
   // Get the latest image from the output directory
@@ -186,152 +188,179 @@
   }
 </script>
 
-<section class="flex flex-col gap-4">
-  <div class="w-full flex flex-col">
-    <div class="flex justify-between">
-      <label for="prompt" class="font-bold">
-        Prompt
-        {#if numPromptTokens > 75}
+<section class="flex gap-8">
+  <!-- Left column: prompt + params -->
+  <div class="flex-1 flex flex-col gap-4">
+    <!-- Prompt -->
+    <div class="w-full flex flex-col">
+      <div class="flex justify-between">
+        <label for="prompt" class="font-bold">
+          Prompt
+          {#if numPromptTokens > 75}
+            <span class="text-red-600"
+              >(estimated {numPromptTokens} tokens - max is ~77
+              <a
+                class="text-blue-600 hover:underline"
+                href="https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/"
+                target="_blank">source</a
+              >)</span
+            >
+          {/if}
+        </label>
+        <button class="transparent" on:click={resetForm}>reset</button>
+      </div>
+      <textarea
+        name="prompt"
+        rows="5"
+        cols="50"
+        bind:value={prompt}
+        {placeholder}
+      />
+    </div>
+
+    <!-- Params -->
+    <div class="flex flex-col gap-4">
+      <label class="flex flex-col">
+        <span class="font-bold">Steps</span>
+
+        {#if useCustomSteps}
+          <div class="flex items-center gap-2">
+            <input type="number" bind:value={steps} min="1" max={maxSteps} />
+            <button
+              class="transparent"
+              on:click={() => {
+                useCustomSteps = false;
+                steps = defaultSteps;
+              }}
+              title="Switch to dropdown"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                />
+              </svg>
+            </button>
+          </div>
+        {:else}
+          <select bind:value={steps} on:change={handleCustomSteps}>
+            {#each stepsOptions as option}
+              <option value={option}>{option}</option>
+            {/each}
+            <option value="10">custom</option>
+          </select>
+        {/if}
+      </label>
+
+      <label class="flex flex-col">
+        <span class="font-bold">Samples</span>
+
+        <input type="number" bind:value={samples} min="1" max={maxSamples} />
+      </label>
+
+      <label class="flex flex-col">
+        <span class="font-bold">Scale (CFG)</span>
+
+        <input type="number" bind:value={scale} min="1" max={maxScale} />
+      </label>
+
+      <label class="flex flex-col">
+        <span class="font-bold">Iter</span>
+
+        <input type="number" bind:value={iter} min="1" max={maxIter} />
+      </label>
+
+      <div class="flex gap-4">
+        <label class="flex flex-col">
+          <span class="font-bold">Image Height</span>
+          <!-- must be a multiple of 8 -->
+          <input type="number" bind:value={height} min="1" step="8" />
+        </label>
+
+        <label class="flex flex-col">
+          <span class="font-bold">Image Width</span>
+          <!-- must be a multiple of 8 -->
+          <input type="number" bind:value={width} min="1" step="8" />
+        </label>
+      </div>
+
+      {#if width !== 512 && height !== 512}
+        <div class="flex flex-col">
+          <span class="font-bold">Dimension validation warning</span>
           <span class="text-red-600"
-            >(estimated {numPromptTokens} tokens - max is ~77
-            <a
+            >Either Height or Width should be 512 for best results (<a
               class="text-blue-600 hover:underline"
-              href="https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/"
+              href="https://huggingface.co/blog/stable_diffusion"
               target="_blank">source</a
             >)</span
           >
-        {/if}
-      </label>
-      <button class="transparent" on:click={resetForm}>reset</button>
-    </div>
-    <textarea
-      name="prompt"
-      rows="5"
-      cols="50"
-      bind:value={prompt}
-      {placeholder}
-    />
-  </div>
-
-  <div class="flex gap-8">
-    <label class="flex flex-col">
-      <span class="font-bold">Steps</span>
-
-      {#if useCustomSteps}
-        <div class="flex items-center gap-2">
-          <input type="number" bind:value={steps} min="1" max={maxSteps} />
-          <button
-            class="transparent"
-            on:click={() => {
-              useCustomSteps = false;
-              steps = defaultSteps;
-            }}
-            title="Switch to dropdown"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-4 h-4"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-              />
-            </svg>
-          </button>
         </div>
-      {:else}
-        <select bind:value={steps} on:change={handleCustomSteps}>
-          {#each stepsOptions as option}
-            <option value={option}>{option}</option>
-          {/each}
-          <option value="10">custom</option>
-        </select>
       {/if}
-    </label>
 
-    <label class="flex flex-col">
-      <span class="font-bold">Samples</span>
+      <label class="flex flex-col">
+        <span class="font-bold">Seed</span>
 
-      <input type="number" bind:value={samples} min="1" max={maxSamples} />
-    </label>
+        <input type="number" bind:value={seed} min="-1" max={maxSeed} />
+      </label>
+    </div>
 
-    <label class="flex flex-col">
-      <span class="font-bold">Scale (CFG)</span>
-
-      <input type="number" bind:value={scale} min="1" max={maxScale} />
-    </label>
-
-    <label class="flex flex-col">
-      <span class="font-bold">Iter</span>
-
-      <input type="number" bind:value={iter} min="1" max={maxIter} />
-    </label>
-
-    <label class="flex flex-col">
-      <span class="font-bold">Image Height</span>
-      <!-- must be a multiple of 8 -->
-      <input type="number" bind:value={height} min="1" step="8" class="w-32" />
-    </label>
-
-    <label class="flex flex-col">
-      <span class="font-bold">Image Width</span>
-      <!-- must be a multiple of 8 -->
-      <input type="number" bind:value={width} min="1" step="8" class="w-32" />
-    </label>
-
-    {#if width !== 512 && height !== 512}
-      <div class="flex flex-col">
-        <span class="font-bold">Dimension validation warning</span>
-        <span class="text-red-600"
-          >Either Height or Width should be 512 for best results (<a
-            class="text-blue-600 hover:underline"
-            href="https://huggingface.co/blog/stable_diffusion"
-            target="_blank">source</a
-          >)</span
-        >
-      </div>
-    {/if}
-
-    <label class="flex flex-col">
-      <span class="font-bold">Seed</span>
-
-      <input type="number" bind:value={seed} min="-1" max={maxSeed} />
-    </label>
+    <!-- Generate button -->
+    <button
+      class="w-full"
+      disabled={!$stableDiffusionDirectory ||
+        prompt.trim() === "" ||
+        numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
+        isGenerating}
+      on:click={generate}>{isGenerating ? "generating..." : "Generate!"}</button
+    >
   </div>
 
-  <button
-    class="w-full"
-    disabled={!$stableDiffusionDirectory ||
-      prompt.trim() === "" ||
-      numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
-      isGenerating}
-    on:click={generate}>{isGenerating ? "generating..." : "Generate!"}</button
-  >
-
-  {#if prompt.trim() !== ""}
-    <Alert alertType={AlertTypes.Info} copy
-      >{@html stableDiffusionCommandHtml}</Alert
+  <!-- Right column: generated image -->
+  <div class="flex flex-col gap-4">
+    <!-- Image + timer -->
+    <div
+      class="flex items-center justify-center border border-blue-500/50 rounded w-[512px] h-[512px] mt-6"
     >
-  {/if}
+      {#if currentRun}
+        <RunItem run={currentRun} imageOnly />
+      {:else if elapsed}
+        {elapsed / 1000}s
+      {:else}
+        <span class="text-black/50 dark:text-white/50">the image will be generated here</span>
+      {/if}
+    </div>
 
-  {#if elapsed}
-    <Alert>Elapsed: {elapsed / 1000}s</Alert>
-  {/if}
+    <!-- Alerts -->
+    <div class="flex flex-col gap-4 max-w-[512px]">
+      {#if prompt.trim() !== ""}
+        <Alert alertType={AlertTypes.Info} copy
+          >{@html stableDiffusionCommandHtml}</Alert
+        >
+      {/if}
 
-  {#if rustResponse}
-    {@const html = JSON.parse(rustResponse).replaceAll("\n", "<br>")}
-    <Alert alertType={AlertTypes.Success}>{@html html}</Alert>
-  {/if}
+      {#if elapsed && currentRun}
+        <Alert>Elapsed: {elapsed / 1000}s</Alert>
+      {/if}
 
-  {#if rustError}
-    {@const html = JSON.parse(rustError).replaceAll("\n", "<br>")}
-    <Alert alertType={AlertTypes.Error}>{@html html}</Alert>
-  {/if}
+      {#if rustResponse}
+        {@const html = JSON.parse(rustResponse).replaceAll("\n", "<br>")}
+        <Alert alertType={AlertTypes.Success}>{@html html}</Alert>
+      {/if}
+
+      {#if rustError}
+        {@const html = JSON.parse(rustError).replaceAll("\n", "<br>")}
+        <Alert alertType={AlertTypes.Error}>{@html html}</Alert>
+      {/if}
+    </div>
+  </div>
 </section>
 
 <style>

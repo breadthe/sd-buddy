@@ -6,6 +6,7 @@
   import type { Run } from "../types";
 
   export let run: Run;
+  export let imageOnly: boolean = false; // display only the image
 
   const dispatch = createEventDispatcher();
 
@@ -39,7 +40,7 @@
 </script>
 
 <div
-  class="relative max-w-[196px] flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded"
+  class={`relative ${imageOnly ? "w-full" : "max-w-[196px]" } flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded`}
 >
   {#if !isDeleting}
     {#if run.image_name && imgSrc}
@@ -50,58 +51,63 @@
         on:click|preventDefault={() => openImage(run.image_name)}
       />
     {/if}
-    <dl
-      class="p-2 text-xs hover:bg-blue-100 hover:dark:bg-blue-800 cursor-pointer"
-      title="Click to re-use this prompt & parameters"
-      on:click={() => reusePrompt.set(run)}
-    >
-      <dt class="font-bold">prompt</dt>
-      <dd>{run.prompt}</dd>
-    </dl>
 
-    <dl class="p-2 grid grid-cols-2 text-xs">
-      <dt class="font-bold">image</dt>
-      <dd>
-        {#if run.image_name}
-          <a href="#" on:click|preventDefault={() => openImage(run.image_name)}
-            >{run.image_name}</a
-          >
-        {:else}
-          <span class="text-red-600">error</span>
+    {#if !imageOnly}
+      <dl
+        class="p-2 text-xs hover:bg-blue-100 hover:dark:bg-blue-800 cursor-pointer"
+        title="Click to re-use this prompt & parameters"
+        on:click={() => reusePrompt.set(run)}
+      >
+        <dt class="font-bold">prompt</dt>
+        <dd>{run.prompt}</dd>
+      </dl>
+
+      <dl class="p-2 grid grid-cols-2 text-xs">
+        <dt class="font-bold">image</dt>
+        <dd>
+          {#if run.image_name}
+            <a
+              href="#"
+              on:click|preventDefault={() => openImage(run.image_name)}
+              >{run.image_name}</a
+            >
+          {:else}
+            <span class="text-red-600">error</span>
+          {/if}
+        </dd>
+        <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
+        {#if run.height && run.width}
+          <dt class="font-bold">size</dt>
+          <dd>{run.height}x{run.width}</dd>
         {/if}
-      </dd>
-      <!-- <dt class="font-bold">id</dt><dd>{run.id}</dd> -->
-      {#if run.height && run.width}
-        <dt class="font-bold">size</dt>
-        <dd>{run.height}x{run.width}</dd>
-      {/if}
-      <dt class="font-bold">steps</dt>
-      <dd>{run.steps}</dd>
-      {#if run.samples}
-        <dt class="font-bold">samples</dt>
-        <dd>{run.samples}</dd>
-      {/if}
-      {#if run.scale}
-        <dt class="font-bold">scale</dt>
-        <dd>{run.scale}</dd>
-      {/if}
-      {#if run.seed}
-        <dt class="font-bold">seed</dt>
-        <dd>{run.seed}</dd>
-      {/if}
-      <dt class="font-bold">elapsed</dt>
-      <dd>{run.elapsed / 1000}s</dd>
-      <!-- {#if run.rating}
+        <dt class="font-bold">steps</dt>
+        <dd>{run.steps}</dd>
+        {#if run.samples}
+          <dt class="font-bold">samples</dt>
+          <dd>{run.samples}</dd>
+        {/if}
+        {#if run.scale}
+          <dt class="font-bold">scale</dt>
+          <dd>{run.scale}</dd>
+        {/if}
+        {#if run.seed}
+          <dt class="font-bold">seed</dt>
+          <dd>{run.seed}</dd>
+        {/if}
+        <dt class="font-bold">elapsed</dt>
+        <dd>{run.elapsed / 1000}s</dd>
+        <!-- {#if run.rating}
         <dt class="font-bold">rating</dt>
         <dd>{run.rating}/5</dd>
       {/if} -->
-    </dl>
+      </dl>
 
-    <button
-      class="absolute bottom-0 right-0 py-0 px-1 leading-none rounded-none rounded-br rounded-tl"
-      title="Delete run"
-      on:click={() => (isDeleting = true)}>&times;</button
-    >
+      <button
+        class="absolute bottom-0 right-0 py-0 px-1 leading-none rounded-none rounded-br rounded-tl"
+        title="Delete run"
+        on:click={() => (isDeleting = true)}>&times;</button
+      >
+    {/if}
   {:else}
     <div class="flex flex-col items-center justify-center h-full gap-2 p-2">
       <p class="text-xs text-center font-bold">

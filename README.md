@@ -63,15 +63,16 @@ The first publicly-available version is pretty thin on features. My goal was to 
 
 * <label><input type="checkbox" checked /> Register and persist the location of the Stable Diffusion directory.</label>
 * <label><input type="checkbox" checked /> Show clickable links for the Stable Diffusion project and output directories.</label>
-* <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **samples** (`--n_samples`), **iter(ations?)** (`--n_iter`) image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
+* <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **samples** (`--n_samples`), **scale** (`--scale`), **iter(ations?)** (`--n_iter`) image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
 * <label><input type="checkbox" checked /> Reset form button.</label>
 * <label><input type="checkbox" checked /> Real-time duration timer.</label>
-* <label><input type="checkbox" checked /> Display the output of the command and **NEW** click it to copy to the clipboard.</label>
+* <label><input type="checkbox" checked /> Display the output of the command and click it to copy to the clipboard.</label>
+* <label><input type="checkbox" checked /> Display the generated image at 512x512.</label>
 * <label><input type="checkbox" checked /> Delete a run from history.</label>
-* <label><input type="checkbox" checked /> Click a previous run to reuse the prompt & all the generation parameters.</label>
 * <label><input type="checkbox" checked /> A history of previous runs displayed below the form.</label>
 * <label><input type="checkbox" checked /> Thumbnails for the generated images (click an image to open it in the associated program).</label>
 * <label><input type="checkbox" checked /> Links to the generated images (opens it in the associated program).</label>
+* <label><input type="checkbox" checked /> Click a previous run to reuse the prompt & all the generation parameters.</label>
 * <label><input type="checkbox" checked /> Each run contains generation parameters metadata.</label>
 * <label><input type="checkbox" checked /> Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
 
