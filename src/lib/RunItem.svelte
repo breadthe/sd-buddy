@@ -40,7 +40,7 @@
 </script>
 
 <div
-  class={`relative ${imageOnly ? "w-full" : "max-w-[196px]" } flex flex-col divide-y divide-blue-600/50 border border-blue-500/50 hover:border-blue-500 rounded`}
+  class={`relative ${imageOnly ? "w-full" : "max-w-[196px] border border-blue-500/50" } flex flex-col divide-y divide-blue-600/50 hover:border-blue-500 rounded`}
 >
   {#if !isDeleting}
     {#if run.image_name && imgSrc}
@@ -50,6 +50,8 @@
         class="cursor-pointer"
         on:click|preventDefault={() => openImage(run.image_name)}
       />
+    {:else}
+        <div class="w-full text-center text-red-600" class:text-xs={!imageOnly}>image error</div>
     {/if}
 
     {#if !imageOnly}
