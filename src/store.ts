@@ -2,41 +2,6 @@ import { readable, writable } from "svelte/store";
 import type { Run } from "./types";
 // import { get, set } from "tauri-settings";
 
-/* type directory = {
-    stableDiffusionDirectory: string;
-};
-const getStableDiffusionDirectory = async () => {
-    let sdDir = "";
-
-    await get<directory>("stableDiffusionDirectory")
-        .then((sdDirectory: string) => sdDir = sdDirectory)
-        .catch((err) => {
-            // do nothing, the user will have to set the directory
-        });
-
-    return sdDir;
-}
-const setStableDiffusionDirectory = async (sdDirectory: string) => {
-    await set<directory>("stableDiffusionDirectory", sdDirectory)
-        .then(() => {
-            // update the store
-            stableDiffusionDirectory.set(sdDirectory);
-            console.log(`Stable Diffusion directory saved: ${sdDirectory}`)
-        })
-        .catch((err) => console.log(err));
-}
-async function stableDiffusionDirectoryStore() {
-    let storedStableDiffusionDirectory = await getStableDiffusionDirectory();
-    const { subscribe, set } = writable(storedStableDiffusionDirectory);
-
-    return {
-        subscribe,
-        set,
-        register: (sdDirectory: string) => setStableDiffusionDirectory(sdDirectory),
-    };
-}
-export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); */
-
 // Indicator for when the user is copying to clipboard
 export const copying = writable(false);
 
@@ -56,7 +21,6 @@ function createStableDiffusionDirectory() {
         }
     };
 }
-
 export const stableDiffusionDirectory = createStableDiffusionDirectory();
 
 // Store runs to localStorage for now
@@ -96,5 +60,40 @@ function createRunsStore() {
         }
     };
 }
-
 export const runs = createRunsStore();
+
+
+/* type directory = {
+    stableDiffusionDirectory: string;
+};
+const getStableDiffusionDirectory = async () => {
+    let sdDir = "";
+
+    await get<directory>("stableDiffusionDirectory")
+        .then((sdDirectory: string) => sdDir = sdDirectory)
+        .catch((err) => {
+            // do nothing, the user will have to set the directory
+        });
+
+    return sdDir;
+}
+const setStableDiffusionDirectory = async (sdDirectory: string) => {
+    await set<directory>("stableDiffusionDirectory", sdDirectory)
+        .then(() => {
+            // update the store
+            stableDiffusionDirectory.set(sdDirectory);
+            console.log(`Stable Diffusion directory saved: ${sdDirectory}`)
+        })
+        .catch((err) => console.log(err));
+}
+async function stableDiffusionDirectoryStore() {
+    let storedStableDiffusionDirectory = await getStableDiffusionDirectory();
+    const { subscribe, set } = writable(storedStableDiffusionDirectory);
+
+    return {
+        subscribe,
+        set,
+        register: (sdDirectory: string) => setStableDiffusionDirectory(sdDirectory),
+    };
+}
+export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); */
