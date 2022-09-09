@@ -36,7 +36,6 @@ h1 {
   line-height: 1.1;
 }
 
-
 #app {
   max-width: 1280px;
   margin: 0 auto;
@@ -67,29 +66,29 @@ button:disabled {
 }
 
 button.link {
-    background-color: transparent;
-    border-color: transparent;
-    padding: 0;
-    font-weight: inherit;
-    text-decoration: underline;
+  background-color: transparent;
+  border-color: transparent;
+  padding: 0;
+  font-weight: inherit;
+  text-decoration: underline;
 }
 button.link:hover {
-    background-color: transparent;
-    border-color: transparent;
-    color: inherit;
+  background-color: transparent;
+  border-color: transparent;
+  color: inherit;
 }
 
 button.transparent {
-    padding: theme("padding.0");
-    background-color: theme("colors.transparent");
-    color: inherit;
-    opacity: theme("opacity.50");
+  padding: theme("padding.0");
+  background-color: theme("colors.transparent");
+  color: inherit;
+  opacity: theme("opacity.50");
 }
 button.transparent:hover {
-    background-color: theme("colors.transparent");
-    color: theme("colors.black");
-    opacity: theme("opacity.100");
-    border-color: theme("colors.transparent");
+  background-color: theme("colors.transparent");
+  color: theme("colors.black");
+  opacity: theme("opacity.100");
+  border-color: theme("colors.transparent");
 }
 
 @media (prefers-color-scheme: light) {

@@ -10,58 +10,58 @@ export const reusePrompt = writable(<Run>{});
 
 // Store runs to localStorage for now
 function createStableDiffusionDirectory() {
-    let storedStableDiffusionDirectory = JSON.parse(localStorage.getItem("stableDiffusionDirectory")) || "";
-    const { subscribe, set } = writable(storedStableDiffusionDirectory);
+  let storedStableDiffusionDirectory =
+    JSON.parse(localStorage.getItem("stableDiffusionDirectory")) || "";
+  const { subscribe, set } = writable(storedStableDiffusionDirectory);
 
-    return {
-        subscribe,
-        set: (sdDir: string) => {
-            localStorage.setItem("stableDiffusionDirectory", JSON.stringify(sdDir));
-            set(sdDir);
-        }
-    };
+  return {
+    subscribe,
+    set: (sdDir: string) => {
+      localStorage.setItem("stableDiffusionDirectory", JSON.stringify(sdDir));
+      set(sdDir);
+    },
+  };
 }
 export const stableDiffusionDirectory = createStableDiffusionDirectory();
 
 // Store runs to localStorage for now
 function createRunsStore() {
-    let storedRuns = JSON.parse(localStorage.getItem("runs")) || [];
-    const { subscribe, set } = writable(storedRuns);
+  let storedRuns = JSON.parse(localStorage.getItem("runs")) || [];
+  const { subscribe, set } = writable(storedRuns);
 
-    return {
-        subscribe,
-        set: (runsJson: string) => {
-            localStorage.setItem("runs", runsJson);
-        },
-        push: (run: Run) => {
-            const newRuns = storedRuns;
+  return {
+    subscribe,
+    set: (runsJson: string) => {
+      localStorage.setItem("runs", runsJson);
+    },
+    push: (run: Run) => {
+      const newRuns = storedRuns;
 
-            newRuns.push(run);
+      newRuns.push(run);
 
-            storedRuns = newRuns;
-            localStorage.setItem("runs", JSON.stringify(storedRuns));
-            set(storedRuns);
-        },
-        remove: (run: Run) => {
-            const ix = storedRuns.findIndex((r: Run) => r.id === run.id);
-            if (ix > -1) {
-                storedRuns.splice(ix, 1);
+      storedRuns = newRuns;
+      localStorage.setItem("runs", JSON.stringify(storedRuns));
+      set(storedRuns);
+    },
+    remove: (run: Run) => {
+      const ix = storedRuns.findIndex((r: Run) => r.id === run.id);
+      if (ix > -1) {
+        storedRuns.splice(ix, 1);
 
-                storedRuns = storedRuns;
-                localStorage.setItem("runs", JSON.stringify(storedRuns));
-                set(storedRuns);
-            }
-        },
-        clear: () => {
-            storedRuns = [];
+        storedRuns = storedRuns;
+        localStorage.setItem("runs", JSON.stringify(storedRuns));
+        set(storedRuns);
+      }
+    },
+    clear: () => {
+      storedRuns = [];
 
-            localStorage.setItem("runs", JSON.stringify([]));
-            set(storedRuns);
-        }
-    };
+      localStorage.setItem("runs", JSON.stringify([]));
+      set(storedRuns);
+    },
+  };
 }
 export const runs = createRunsStore();
-
 
 /* type directory = {
     stableDiffusionDirectory: string;
