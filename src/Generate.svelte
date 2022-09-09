@@ -106,6 +106,7 @@
     elapsed = 0;
     rustResponse = "";
     rustError = "";
+    currentRun = null;
 
     // timer that runs every 100ms
     const startTimer = new Date();
