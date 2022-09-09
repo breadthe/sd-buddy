@@ -44,6 +44,7 @@
 
   // Duration timers
   let elapsed: number = 0; // in ms
+  $: elapsedSeconds = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2, style: "unit", unit: "second" }).format(elapsed / 1000);
 
   let currentRun: Run; // the currently generated run
 
@@ -333,7 +334,7 @@
       {#if currentRun}
         <RunItem run={currentRun} imageOnly />
       {:else if elapsed}
-        {elapsed / 1000}s
+        <span class="tabular-nums">{elapsedSeconds}</span>
       {:else}
         <span class="text-black/50 dark:text-white/50">the image will be generated here</span>
       {/if}
