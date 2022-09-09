@@ -42,6 +42,12 @@
   let seed: number = defaultSeed; // selected seed
   let maxSeed: number = 4294967295;
 
+  // parameters for generating multiple images with the same settings
+  let copiesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  let defaultCopies: number = 1; // number of copies to generate
+  let copies: number;
+  let currentCopy: number = 1;
+
   // Duration timers
   let elapsed: number = 0; // in ms
   $: elapsedSeconds = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2, style: "unit", unit: "second" }).format(elapsed / 1000);
@@ -99,7 +105,18 @@
     currentRun = null;
   }
 
+  // queue up multiple runs
   async function generate() {
+    for (let i = 1; i <= copies; i++) {
+      currentCopy = i;
+      console.log(`Queueing ${currentCopy}`);
+      const result = await doTheWork(currentCopy);
+      console.log(result);
+    }
+  }
+
+  // generate a single run
+  async function doTheWork(n: number) {
     if ($stableDiffusionDirectory.trim() === "") return;
     if (stableDiffusionCommand.trim() === "") return;
 
@@ -158,6 +175,14 @@
     saveRun(run);
 
     currentRun = run;
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(`done ${n}`);
+
+        if (rustError) reject(rustError);
+      }, 10);
+    });
   }
 
   // Get the latest image from the output directory
@@ -314,15 +339,29 @@
       </label>
     </div>
 
-    <!-- Generate button -->
-    <button
-      class="w-full"
-      disabled={!$stableDiffusionDirectory ||
-        prompt.trim() === "" ||
-        numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
-        isGenerating}
-      on:click={generate}>{isGenerating ? "generating..." : "Generate!"}</button
-    >
+    <div class="flex items-center justify-between gap-4">
+      <!-- Generate button -->
+      <button
+        class="w-full"
+        disabled={!$stableDiffusionDirectory ||
+          prompt.trim() === "" ||
+          numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
+          isGenerating}
+        on:click={generate}
+        >{isGenerating
+          ? `generating${copies > 1 ? ` ${currentCopy}/${copies}` : ""}...`
+          : "Generate!"}</button
+      >
+
+      <select
+        bind:value={copies}
+        title="Generate this many images with the same settings"
+      >
+        {#each copiesOptions as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
+    </div>
   </div>
 
   <!-- Right column: generated image -->
@@ -336,7 +375,9 @@
       {:else if elapsed}
         <span class="tabular-nums">{elapsedSeconds}</span>
       {:else}
-        <span class="text-black/50 dark:text-white/50">the image will be generated here</span>
+        <span class="text-black/50 dark:text-white/50"
+          >the image will be generated here</span
+        >
       {/if}
     </div>
 
