@@ -59,7 +59,7 @@
 
   $: {
     stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`;
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`;
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong>` + (randomSeed ? '' : ` --seed <strong>${seed}</strong>`);
   }
 
   $: {
@@ -343,7 +343,7 @@
           <label class="flex-1 flex flex-col">
             <span class="font-bold">Seed</span>
 
-            <input type="number" bind:value={seed} min="-1" max={maxSeed} />
+            <input type="number" bind:value={seed} disabled={randomSeed} class:opacity-30={randomSeed} min="-1" max={maxSeed} />
           </label>
 
           <label class="flex flex-col text-right">
