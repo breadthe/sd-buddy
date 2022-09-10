@@ -41,6 +41,7 @@
   let defaultSeed: number = 42; // --seed default 42, set to -1 for random
   let seed: number = defaultSeed; // selected seed
   let maxSeed: number = 4294967295;
+  let randomSeed: boolean = false;
 
   // parameters for generating multiple images with the same settings
   let copiesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -132,6 +133,12 @@
       elapsed = Math.floor(new Date().getTime() - startTimer.getTime());
     }, 100);
 
+    // generate a random seed between 0 and maxSeed
+    let tmpSeed = seed
+    if (randomSeed) {
+        tmpSeed = Math.floor(Math.random() * maxSeed)
+    }
+
     const run: Run = {
       id: uuidv4(),
       prompt,
@@ -141,7 +148,7 @@
       iter,
       height,
       width,
-      seed,
+      seed: tmpSeed,
       started_at: startTimer,
       rating: Rating.One,
     };
@@ -332,11 +339,19 @@
         </div>
       {/if}
 
-      <label class="flex flex-col">
-        <span class="font-bold">Seed</span>
+      <div class="flex items-center justify-between gap-4">
+          <label class="flex-1 flex flex-col">
+            <span class="font-bold">Seed</span>
 
-        <input type="number" bind:value={seed} min="-1" max={maxSeed} />
-      </label>
+            <input type="number" bind:value={seed} min="-1" max={maxSeed} />
+          </label>
+
+          <label class="flex flex-col text-right">
+            <span class="font-bold">Random</span>
+
+            <input type="checkbox" bind:checked={randomSeed} class="my-2 border" />
+          </label>
+      </div>
     </div>
 
     <div class="flex items-center justify-between gap-4">
