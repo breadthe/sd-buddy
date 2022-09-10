@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::process::{Command, Stdio};
+use std::{path::Path, process::{Command, Stdio}};
 use tauri::{Manager, Menu, MenuItem, Submenu};
 
 fn main() {
@@ -64,15 +64,24 @@ fn main() {
 #[tauri::command]
 async fn stable_diffusion_command(directory: String, command: String) -> String {
     let stable_diffusion_directory = directory; // "/Users/zagreus/code/ml/stable-diffusion"
-    let virtual_env_cmd = "venv/bin/activate";
+    let shell_command: String;
 
     println!("Stable Diffusion directory: {}", stable_diffusion_directory);
     println!("Command: {}", command);
 
+    // identify virtual environments and prepend the appropriate loading command
+    if Path::new(&stable_diffusion_directory).join("venv/bin/activate").exists() {
+        shell_command = format!("source venv/bin/activate && {}", command);
+    } else if Path::new(&stable_diffusion_directory).join(".direnv").exists() {
+        shell_command = format!("direnv exec {} {}", stable_diffusion_directory, command);
+    } else {
+        shell_command = command;
+    }
+
     // execute the Stable Diffusion command
     let output = std::process::Command::new("bash")
         .arg("-c")
-        .arg(format!("source {} && {}", virtual_env_cmd, command))
+        .arg(shell_command)
         .current_dir(stable_diffusion_directory)
         .output()
         .expect("failed to execute Stable Diffusion command");
