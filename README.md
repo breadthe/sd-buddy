@@ -37,7 +37,19 @@ The app is built with:
 
 ## Download
 
-Download the compiled app in `.app` or `.dmg` format from the [Releases](https://github.com/breadthe/sd-buddy/releases) page.
+Download the compiled app in `.dmg` format from the [Releases](https://github.com/breadthe/sd-buddy/releases) page.
+
+The app is unsigned so you will get a security message when you open it the first time.
+
+![2022-09-11-sd-buddy-security-1](https://user-images.githubusercontent.com/17433578/189551753-e2f35ee8-fac5-411f-8d31-d3ab7d55e651.png)
+
+Go to System Preferences > Security & Privacy > General, and click Open Anyway.
+
+![2022-09-11-sd-buddy-security-2](https://user-images.githubusercontent.com/17433578/189551759-8bf4df8c-00fb-4e2f-9e81-d2693ad657e5.png)
+
+Open the app again and this time you'll get a different security warning. Click Open and you should be set.
+
+![2022-09-11-sd-buddy-security-3](https://user-images.githubusercontent.com/17433578/189551763-c49bf16e-82b5-496a-a81d-a48ef3329af7.png)
 
 ## Building the app
 
@@ -97,21 +109,20 @@ In addition, I need to sort out various small details around developing with Tau
 
 ## Known issues
 
-1. Release builds are currently broken. See [this issue](https://github.com/breadthe/sd-buddy/issues/1) for details. A binary (`.app` or `.dmg`) created on one machine will work on that machine but not another.
+1. While Mac ARM builds are now operational, Linux builds are yet to be tested. I don't yet have a Linux machine to test on but let me know if you try it out. Windows builds are technically available but some of the functionality is probably broken or buggy based on how the generated image is located on disk. I do need to find a universal way to do this.
 
-2. When creating your own build, the compiled binary `.app` or the binary in the `.dmg` is known to crash when launching the app, with the message "SD-Buddy quit unexpectedly". If that's the case, keep clicking Reopen until it launches. I believe I have fixed or at least mitigated this in v0.2.0 but be aware it could happen.
+2. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
 
-3. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
+3. The current (v0.3.0) image thumbnail rendering feature suffers from an issue stemming from the way I implemented it. Essentially when the program completes, I run a Rust function that executes a system command (`find` + arguments) to retrieve the name of the newest image in the output folder that was created during the timeframe in which the run completed. Then I read the image contents from disk as binary data and convert it to a base64 string to be rendered on the front-end. Unfortunately it seems that the Stable Diffusion python command sometimes overwrites files. So what used to be `grid-0032.jpg` from a previous run is also the same for a new run. This causes the generated thumbnails to look the same, since the metadata embedded with each run to points to the same location. **Workaround** I think my problem appeared because I was deleting images from disk that I didn't like, thus creating gaps. The SD command likes to back-fill those gaps but it also overwrites images that I hadn't deleted.
 
-4. The current (v0.3.0) image thumbnail rendering feature suffers from an issue stemming from the way I implemented it. Essentially when the program completes, I run a Rust function that executes a system command (`find` + arguments) to retrieve the name of the newest image in the output folder that was created during the timeframe in which the run completed. Then I read the image contents from disk as binary data and convert it to a base64 string to be rendered on the front-end. Unfortunately it seems that the Stable Diffusion python command sometimes overwrites files. So what used to be `grid-0032.jpg` from a previous run is also the same for a new run. This causes the generated thumbnails to look the same, since the metadata embedded with each run to points to the same location. **Workaround** I think my problem appeared because I was deleting images from disk that I didn't like, thus creating gaps. The SD command likes to back-fill those gaps but it also overwrites images that I hadn't deleted.
-
-5. Setting _Samples_ to anything other than 1 crashes the Python script with this message `failed assertion [MPSTemporaryNDArray initWithDevice:descriptor:] Error: product of dimension sizes > 2**31' /opt/homebrew/Cellar/python@3.10/3.10.6_2/Frameworks/Python.framework/Versions/3.10/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown`.
+4. Setting _Samples_ to anything other than 1 crashes the Python script with this message `failed assertion [MPSTemporaryNDArray initWithDevice:descriptor:] Error: product of dimension sizes > 2**31' /opt/homebrew/Cellar/python@3.10/3.10.6_2/Frameworks/Python.framework/Versions/3.10/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown`.
 
 ## Security FAQ
 
 - **How secure is the app?** It is strictly a local app that doesn't communicate with the network. Tauri disables all system APIs by default. I've enabled the minimum necessary system APIs to allow it to function.
 - **How do I know it's not communicating with the internet?** Use a network inspector tool to analyze the traffic.
 - **How do I know it doesn't do nefarious things on my computer?** It's open source. Feel empowered to inspect the source code and build it yourself.
+- **Why is the app unsigned?** Currently I don't have an Apple developer account because I'm not paying Apple for the privilege since I'm not making any money from this app or any other. When this changes, I would love to be able to sign my apps. If you want to contribute towards this goal, a [sponsorship](https://github.com/sponsors/breadthe) is very much appreciated.
 
 ## Contributing
 
