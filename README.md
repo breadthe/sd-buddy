@@ -35,6 +35,26 @@ The app is built with:
 
 - Make sure the program runs without errors and it can generate images by running the above command manually, before using the app. _The app doesn't have a lot of error checking built in, so try not to abuse it 🙂_
 
+## Features
+
+The first publicly-available version is pretty thin on features. My goal was to provide a basic UI around the CLI command.
+
+- <label><input type="checkbox" checked /> Register and persist the location of the Stable Diffusion directory.</label>
+- <label><input type="checkbox" checked /> Clickable links for the Stable Diffusion project and output directories.</label>
+- <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **samples** (`--n_samples`), **scale** (`--scale`), **iter(ations?)** (`--n_iter`) image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
+- <label><input type="checkbox" checked /> **NEW** Generate multiple images with the same parameters, in sequence.</label>
+- <label><input type="checkbox" checked /> **NEW** Use a random seed for each generation.</label>
+- <label><input type="checkbox" checked /> Real-time duration timer.</label>
+- <label><input type="checkbox" checked /> Display the output of the command and click it to copy to the clipboard.</label>
+- <label><input type="checkbox" checked /> Display the generated image at 512x512.</label>
+- <label><input type="checkbox" checked /> Delete a run from history.</label>
+- <label><input type="checkbox" checked /> A history of previous runs is displayed below the form.</label>
+- <label><input type="checkbox" checked /> Thumbnails for the generated images (click an image to open it in the associated program).</label>
+- <label><input type="checkbox" checked /> Links to the generated images (opens it in the associated program).</label>
+- <label><input type="checkbox" checked /> Click a previous run to reuse the prompt & all the generation parameters.</label>
+- <label><input type="checkbox" checked /> Each run contains generation parameters metadata.</label>
+- <label><input type="checkbox" checked /> Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
+
 ## Download
 
 Download the compiled app in `.dmg` format from the [Releases](https://github.com/breadthe/sd-buddy/releases) page.
@@ -68,26 +88,6 @@ cargo tauri build
 ## Alpha status
 
 Be aware that if the current version looks like v0.x.x the app is in "alpha" state, meaning that things can and will change drastically between versions. This includes breaking changes, regressions, or new bugs.
-
-## Features
-
-The first publicly-available version is pretty thin on features. My goal was to provide a basic UI around the CLI command.
-
-- <label><input type="checkbox" checked /> Register and persist the location of the Stable Diffusion directory.</label>
-- <label><input type="checkbox" checked /> Clickable links for the Stable Diffusion project and output directories.</label>
-- <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **samples** (`--n_samples`), **scale** (`--scale`), **iter(ations?)** (`--n_iter`) image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
-- <label><input type="checkbox" checked /> **NEW** Generate multiple images with the same parameters, in sequence.</label>
-- <label><input type="checkbox" checked /> **NEW** Use a random seed for each generation.</label>
-- <label><input type="checkbox" checked /> Real-time duration timer.</label>
-- <label><input type="checkbox" checked /> Display the output of the command and click it to copy to the clipboard.</label>
-- <label><input type="checkbox" checked /> Display the generated image at 512x512.</label>
-- <label><input type="checkbox" checked /> Delete a run from history.</label>
-- <label><input type="checkbox" checked /> A history of previous runs is displayed below the form.</label>
-- <label><input type="checkbox" checked /> Thumbnails for the generated images (click an image to open it in the associated program).</label>
-- <label><input type="checkbox" checked /> Links to the generated images (opens it in the associated program).</label>
-- <label><input type="checkbox" checked /> Click a previous run to reuse the prompt & all the generation parameters.</label>
-- <label><input type="checkbox" checked /> Each run contains generation parameters metadata.</label>
-- <label><input type="checkbox" checked /> Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
 
 [](#wishlist)
 
