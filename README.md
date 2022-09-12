@@ -85,6 +85,14 @@ cargo tauri dev
 cargo tauri build
 ```
 
+## Generating app icons
+
+Follow the official Tauri [icons guide](https://tauri.app/v1/guides/features/icons).
+
+```shell
+npx @tauri-apps/tauricon src/assets/sd-buddy-logo.png
+```
+
 ## Alpha status
 
 Be aware that if the current version looks like v0.x.x the app is in "alpha" state, meaning that things can and will change drastically between versions. This includes breaking changes, regressions, or new bugs.
