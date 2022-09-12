@@ -318,11 +318,11 @@
         {/if}
       </label>
 
-      <label class="flex flex-col">
+      <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
+      <!-- <label class="flex flex-col">
         <span class="font-bold">Samples</span>
-        <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
         <input type="number" disabled class="opacity-30" bind:value={samples} min="1" max={maxSamples} />
-      </label>
+      </label> -->
 
       <label class="flex flex-col">
         <span class="font-bold">Scale (CFG)</span>
