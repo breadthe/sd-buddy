@@ -40,7 +40,7 @@
 </script>
 
 <div
-  class={`relative ${imageOnly ? "w-full" : "max-w-[196px] border border-blue-500/50" } flex flex-col divide-y divide-blue-600/50 hover:border-blue-500 rounded`}
+  class={`relative ${imageOnly ? "w-full max-h-[512px] overflow-auto" : "max-w-[196px] border border-blue-500/50" } flex flex-col divide-y divide-blue-600/50 hover:border-blue-500 rounded`}
 >
   {#if !isDeleting}
     {#if run.image_name && imgSrc}
