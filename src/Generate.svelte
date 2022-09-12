@@ -82,8 +82,8 @@
   $: numPromptTokens = Math.ceil(prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()}`
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong>`
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
   }
 
   $: {
@@ -101,7 +101,8 @@
     seed = $reusePrompt?.seed ?? seed
     height = $reusePrompt?.height ?? height
     width = $reusePrompt?.width ?? width
-
+    useRandomSeed = false
+    copies = 1
     // Reset the prompt so we can modify the values.
     $reusePrompt = {} as Run
   }
@@ -319,8 +320,8 @@
 
       <label class="flex flex-col">
         <span class="font-bold">Samples</span>
-
-        <input type="number" bind:value={samples} min="1" max={maxSamples} />
+        <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
+        <input type="number" disabled class="opacity-30" bind:value={samples} min="1" max={maxSamples} />
       </label>
 
       <label class="flex flex-col">
