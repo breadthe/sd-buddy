@@ -1,4 +1,4 @@
-# Stable Diffussion Buddy
+# ![Square30x30Logo](https://user-images.githubusercontent.com/17433578/189560882-51ea2b07-f9a0-4798-92e5-4779592bc6c4.png) Stable Diffussion Buddy
 
 Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](https://github.com/magnusviri/stable-diffusion).
 
