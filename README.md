@@ -1,10 +1,10 @@
-# ![Square30x30Logo](https://user-images.githubusercontent.com/17433578/189560882-51ea2b07-f9a0-4798-92e5-4779592bc6c4.png) Stable Diffussion Buddy
+# ![Square30x30Logo](https://user-images.githubusercontent.com/17433578/189560882-51ea2b07-f9a0-4798-92e5-4779592bc6c4.png) Stable Diffusion Buddy
 
 Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](https://github.com/magnusviri/stable-diffusion).
 
 It is intended to be a lazier way to generate images, by allowing you to focus on writing prompts instead of messing with the command line.
 
-![Stable Diffussion Buddy v0.7.0](https://user-images.githubusercontent.com/17433578/189464864-ea98481c-9cf6-46ff-a563-03cf6bac5a49.png)
+![Stable Diffusion Buddy v0.7.0](https://user-images.githubusercontent.com/17433578/189464864-ea98481c-9cf6-46ff-a563-03cf6bac5a49.png)
 
 Behind the scenes it executes this command in your local Stable Diffusion directory:
 
