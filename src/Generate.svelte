@@ -5,6 +5,7 @@
   import type { Run } from "./types"
   import { runs, reusePrompt, stableDiffusionDirectory } from "./store"
   import Alert from "./lib/Alert.svelte"
+  import HelpBubble from "./lib/HelpBubble.svelte"
   import RunItem from "./lib/RunItem.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
@@ -279,7 +280,13 @@
     <!-- Params -->
     <div class="flex flex-col gap-4">
       <label class="flex flex-col">
-        <span class="font-bold">Steps</span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold">Steps</span>
+
+          <HelpBubble
+            title="--ddim_steps : Sampling steps, higher numbers produce more detailed images at the expense of processing time."
+          />
+        </div>
 
         {#if useCustomSteps}
           <div class="flex items-center gap-2">
@@ -320,18 +327,30 @@
 
       <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
       <!-- <label class="flex flex-col">
-        <span class="font-bold">Samples</span>
+        <span class="font-bold">Batch Size (formerly Samples)</span>
         <input type="number" disabled class="opacity-30" bind:value={samples} min="1" max={maxSamples} />
       </label> -->
 
       <label class="flex flex-col">
-        <span class="font-bold">Scale (CFG)</span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold">CFG Scale</span>
+
+          <HelpBubble
+            title={`--scale : Classifier Free Guidance Scale, how closely the image should resemble the prompt, 1-${maxScale}.`}
+          />
+        </div>
 
         <input type="number" bind:value={scale} min="1" max={maxScale} />
       </label>
 
       <label class="flex flex-col">
-        <span class="font-bold">Iter</span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold">Batch Count</span>
+
+          <HelpBubble
+            title="--n_iter : Number of images to generate (stacked vertically)."
+          />
+        </div>
 
         <input type="number" bind:value={iter} min="1" max={maxIter} />
       </label>
@@ -365,7 +384,11 @@
 
       <div class="flex items-center justify-between gap-4">
         <label class="flex-1 flex flex-col">
-          <span class="font-bold">Seed</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold">Seed</span>
+
+            <HelpBubble title={`--seed : -1 to randomize, max ${maxSeed}.`} />
+          </div>
 
           <input
             type="number"
@@ -378,7 +401,11 @@
         </label>
 
         <label class="flex flex-col text-right">
-          <span class="font-bold">Random</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold">Random</span>
+
+            <HelpBubble title={`Using seed=-1 for a random seed does not tell you what the value is. If you want to have a record of what seed was used, check this option to get a random seed between 1-${maxSeed}.`} />
+          </div>
 
           <input
             type="checkbox"
