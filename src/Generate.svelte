@@ -325,12 +325,6 @@
         {/if}
       </label>
 
-      <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
-      <!-- <label class="flex flex-col">
-        <span class="font-bold">Batch Size (formerly Samples)</span>
-        <input type="number" disabled class="opacity-30" bind:value={samples} min="1" max={maxSamples} />
-      </label> -->
-
       <label class="flex flex-col">
         <div class="flex items-center gap-2">
           <span class="font-bold">CFG Scale</span>
@@ -343,12 +337,31 @@
         <input type="number" bind:value={scale} min="1" max={maxScale} />
       </label>
 
+      <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
+      <label class="flex flex-col">
+        <div class="flex items-center gap-2">
+          <span class="font-bold">Batch Size</span>
+
+          <HelpBubble
+            title="--n_samples : Number of samples to generate per prompt (stacked horizontally)."
+          />
+        </div>
+        <input
+          type="number"
+          disabled
+          class="opacity-30"
+          bind:value={samples}
+          min="1"
+          max={maxSamples}
+        />
+      </label>
+
       <label class="flex flex-col">
         <div class="flex items-center gap-2">
           <span class="font-bold">Batch Count</span>
 
           <HelpBubble
-            title="--n_iter : Number of images to generate (stacked vertically)."
+            title="--n_iter : Number of images batches to generate (stacked vertically)."
           />
         </div>
 
@@ -404,7 +417,9 @@
           <div class="flex items-center gap-2">
             <span class="font-bold">Random</span>
 
-            <HelpBubble title={`Using seed=-1 for a random seed does not tell you what the value is. If you want to have a record of what seed was used, check this option to get a random seed between 1-${maxSeed}.`} />
+            <HelpBubble
+              title={`Using seed=-1 for a random seed does not tell you what the value is. If you want to have a record of what seed was used, check this option to get a random seed between 1-${maxSeed}.`}
+            />
           </div>
 
           <input
