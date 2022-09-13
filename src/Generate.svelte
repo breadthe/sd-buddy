@@ -458,6 +458,12 @@
         {/each}
       </select>
     </div>
+
+    {#if prompt.trim() !== ""}
+      <Alert alertType={AlertTypes.Info} copy
+        >{@html stableDiffusionCommandHtml}</Alert
+      >
+    {/if}
   </div>
 
   <!-- Right column: generated image -->
@@ -479,12 +485,6 @@
 
     <!-- Alerts -->
     <div class="flex flex-col gap-4 max-w-[512px]">
-      {#if prompt.trim() !== ""}
-        <Alert alertType={AlertTypes.Info} copy
-          >{@html stableDiffusionCommandHtml}</Alert
-        >
-      {/if}
-
       {#if elapsed && currentRun}
         <Alert>Elapsed: {elapsed / 1000}s</Alert>
       {/if}
