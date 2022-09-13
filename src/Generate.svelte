@@ -279,103 +279,107 @@
 
     <!-- Params -->
     <div class="flex flex-col gap-4">
-      <label class="flex flex-col">
-        <div class="flex items-center gap-2">
-          <span class="font-bold">Steps</span>
-
-          <HelpBubble
-            title="--ddim_steps : Sampling steps, higher numbers produce more detailed images at the expense of processing time."
-          />
-        </div>
-
-        {#if useCustomSteps}
+      <div class="flex gap-4">
+        <label class="flex flex-col w-full">
           <div class="flex items-center gap-2">
-            <input type="number" bind:value={steps} min="1" max={maxSteps} />
-            <button
-              class="transparent"
-              on:click={() => {
-                useCustomSteps = false
-                steps = defaultSteps
-              }}
-              title="Switch to dropdown"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-4 h-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-                />
-              </svg>
-            </button>
+            <span class="font-bold">Steps</span>
+
+            <HelpBubble
+              title="--ddim_steps : Sampling steps, higher numbers produce more detailed images at the expense of processing time."
+            />
           </div>
-        {:else}
-          <select bind:value={steps} on:change={handleCustomSteps}>
-            {#each stepsOptions as option}
-              <option value={option}>{option}</option>
-            {/each}
-            <option value="10">custom</option>
-          </select>
-        {/if}
-      </label>
 
-      <label class="flex flex-col">
-        <div class="flex items-center gap-2">
-          <span class="font-bold">CFG Scale</span>
+          {#if useCustomSteps}
+            <div class="flex items-center gap-2">
+              <input type="number" bind:value={steps} min="1" max={maxSteps} />
+              <button
+                class="transparent"
+                on:click={() => {
+                  useCustomSteps = false
+                  steps = defaultSteps
+                }}
+                title="Switch to dropdown"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-4 h-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  />
+                </svg>
+              </button>
+            </div>
+          {:else}
+            <select bind:value={steps} on:change={handleCustomSteps}>
+              {#each stepsOptions as option}
+                <option value={option}>{option}</option>
+              {/each}
+              <option value="10">custom</option>
+            </select>
+          {/if}
+        </label>
 
-          <HelpBubble
-            title={`--scale : Classifier Free Guidance Scale, how closely the image should resemble the prompt, 1-${maxScale}.`}
-          />
-        </div>
+        <label class="flex flex-col w-full">
+          <div class="flex items-center gap-2">
+            <span class="font-bold">CFG Scale</span>
 
-        <input type="number" bind:value={scale} min="1" max={maxScale} />
-      </label>
+            <HelpBubble
+              title={`--scale : Classifier Free Guidance Scale, how closely the image should resemble the prompt, 1-${maxScale}.`}
+            />
+          </div>
 
-      <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
-      <label class="flex flex-col">
-        <div class="flex items-center gap-2">
-          <span class="font-bold">Batch Size</span>
-
-          <HelpBubble
-            title="--n_samples : Number of samples to generate per prompt (stacked horizontally)."
-          />
-        </div>
-        <input
-          type="number"
-          disabled
-          class="opacity-30"
-          bind:value={samples}
-          min="1"
-          max={maxSamples}
-        />
-      </label>
-
-      <label class="flex flex-col">
-        <div class="flex items-center gap-2">
-          <span class="font-bold">Batch Count</span>
-
-          <HelpBubble
-            title="--n_iter : Number of images batches to generate (stacked vertically)."
-          />
-        </div>
-
-        <input type="number" bind:value={iter} min="1" max={maxIter} />
-      </label>
+          <input type="number" bind:value={scale} min="1" max={maxScale} />
+        </label>
+      </div>
 
       <div class="flex gap-4">
-        <label class="flex flex-col">
+        <label class="flex flex-col w-full">
+          <div class="flex items-center gap-2">
+            <span class="font-bold">Batch Count</span>
+
+            <HelpBubble
+              title="--n_iter : Number of images batches to generate (stacked vertically)."
+            />
+          </div>
+
+          <input type="number" bind:value={iter} min="1" max={maxIter} />
+        </label>
+
+        <!-- most of us have OOM issues with this and this functionality is superceded by the Runs -->
+        <label class="flex flex-col w-full">
+          <div class="flex items-center gap-2">
+            <span class="font-bold">Batch Size</span>
+
+            <HelpBubble
+              title="--n_samples : Number of samples to generate per prompt (stacked horizontally)."
+            />
+          </div>
+          <input
+            type="number"
+            disabled
+            class="opacity-30"
+            bind:value={samples}
+            min="1"
+            max={maxSamples}
+          />
+        </label>
+      </div>
+
+      <div class="flex gap-4">
+        <label class="flex flex-col w-full">
           <span class="font-bold">Image Height</span>
           <!-- must be a multiple of 8 -->
           <input type="number" bind:value={height} min="1" step="8" />
         </label>
 
-        <label class="flex flex-col">
+        <label class="flex flex-col w-full">
           <span class="font-bold">Image Width</span>
           <!-- must be a multiple of 8 -->
           <input type="number" bind:value={width} min="1" step="8" />
@@ -396,7 +400,7 @@
       {/if}
 
       <div class="flex items-center justify-between gap-4">
-        <label class="flex-1 flex flex-col">
+        <label class="flex flex-col w-full">
           <div class="flex items-center gap-2">
             <span class="font-bold">Seed</span>
 
@@ -413,7 +417,7 @@
           />
         </label>
 
-        <label class="flex flex-col text-right">
+        <label class="flex flex-col text-right w-full">
           <div class="flex items-center gap-2">
             <span class="font-bold">Random</span>
 
