@@ -110,6 +110,7 @@
     }
   }
 
+  // reset parameters when reusing a prompt
   $: if (Object.keys($reusePrompt).length) {
     prompt = $reusePrompt?.prompt ?? prompt
     steps = $reusePrompt?.steps ?? steps
@@ -121,8 +122,8 @@
     width = $reusePrompt?.width ?? width
     useRandomSeed = false
     copies = 1
-    // Reset the prompt so we can modify the values.
-    $reusePrompt = {} as Run
+    $reusePrompt = {} as Run // Reset the prompt so we can modify the values.
+    resetPromptMatrix()
   }
 
   async function saveRun(run: Run) {
@@ -149,6 +150,13 @@
     rustResponse = ""
     rustError = ""
     currentRun = null
+    resetPromptMatrix()
+  }
+
+  function resetPromptMatrix() {
+    customVars.set([])
+    promptStrings.set([])
+    extractedVars.set([])
   }
 
   // queue up multiple runs
