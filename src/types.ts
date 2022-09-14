@@ -14,6 +14,11 @@ export enum Rating {
   Five = 5,
 }
 
+export interface CustomVar {
+    name: string;
+    values: string[];
+}
+
 export interface Run {
   id: string; // uuid
   prompt: string; // text prompt

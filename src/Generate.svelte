@@ -3,9 +3,18 @@
   import { v4 as uuidv4 } from "uuid"
   import { AlertTypes, Rating } from "./types"
   import type { Run } from "./types"
-  import { runs, reusePrompt, stableDiffusionDirectory } from "./store"
+  import {
+    customVars,
+    extractedVars,
+    promptStrings,
+    runs,
+    reusePrompt,
+    stableDiffusionDirectory,
+  } from "./store"
+  import { extractVars, buildStrings } from "./promptMatrix"
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
+  import PromptMatrix from "./lib/PromptMatrix.svelte"
   import RunItem from "./lib/RunItem.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
@@ -23,6 +32,14 @@
   // prompt
   const placeholder = "a red juicy apple floating in outer space, like a planet"
   let prompt: string = ""
+
+  // prompt matrix
+  $: buildStrings(prompt, $customVars)
+
+  // validate if all the custom vars are populated with at least 1 value
+  $: allCustomVarsAreFilled = $extractedVars.every((ev) =>
+    $customVars.find((cv) => `$${cv.name}` === ev[0] && cv.values.length)
+  )
 
   // --ddim_steps
   let defaultSteps: number = 10 // --ddim_steps, default 50 (keeping it 10 because slow computer)
@@ -136,11 +153,24 @@
 
   // queue up multiple runs
   async function generate() {
-    for (let i = 1; i <= copies; i++) {
-      currentCopy = i
-      console.log(`Queueing ${currentCopy}`)
-      const result = await doTheWork(currentCopy)
-      console.log(result)
+    // process the prompt matrix
+    if ($extractedVars.length && allCustomVarsAreFilled) {
+      for (let i = 0; i < $promptStrings.length; i++) {
+        const promptString = $promptStrings[i]
+        const stableDiffusionCommand: string = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+        currentCopy = i + 1
+        console.log(`Queueing ${currentCopy}`)
+        const result = await doTheWork(stableDiffusionCommand, currentCopy)
+        console.log(result)
+      }
+    } else {
+      // regular prompt
+      for (let i = 1; i <= copies; i++) {
+        currentCopy = i
+        console.log(`Queueing ${currentCopy}`)
+        const result = await doTheWork(stableDiffusionCommand, currentCopy)
+        console.log(result)
+      }
     }
   }
 
@@ -148,9 +178,9 @@
   const getRandomSeed = () => Math.floor(Math.random() * maxSeed)
 
   // generate a single run
-  async function doTheWork(n: number) {
+  async function doTheWork(command: string, n: number) {
     if ($stableDiffusionDirectory.trim() === "") return
-    if (stableDiffusionCommand.trim() === "") return
+    if (command.trim() === "") return
 
     isGenerating = true
     elapsed = 0
@@ -181,7 +211,7 @@
     // Invoke the Stable Diffusion command
     await invoke("stable_diffusion_command", {
       directory: $stableDiffusionDirectory,
-      command: stableDiffusionCommand,
+      command,
     })
       .then(async (res) => {
         rustResponse = JSON.stringify(res)
@@ -272,10 +302,14 @@
         name="prompt"
         rows="5"
         cols="50"
-        bind:value={prompt}
         {placeholder}
+        bind:value={prompt}
+        on:input={() => extractVars(prompt)}
       />
     </div>
+
+    <!-- Prompt Matrix  -->
+    <PromptMatrix />
 
     <!-- Params -->
     <div class="flex flex-col gap-4">
@@ -442,7 +476,9 @@
         disabled={!$stableDiffusionDirectory ||
           prompt.trim() === "" ||
           numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
-          isGenerating}
+          isGenerating ||
+          // if there are custom vars, make sure they're all filled
+          ($extractedVars.length && !allCustomVarsAreFilled)}
         on:click={generate}
         >{isGenerating
           ? `generating${copies > 1 ? ` ${currentCopy}/${copies}` : ""}...`
