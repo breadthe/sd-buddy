@@ -168,7 +168,11 @@
         stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
         currentCopy = i + 1
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
+        const result = await doTheWork(
+          promptString,
+          stableDiffusionCommand,
+          currentCopy
+        )
         console.log(result)
       }
     } else {
@@ -176,7 +180,11 @@
       for (let i = 1; i <= copies; i++) {
         currentCopy = i
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork(prompt, stableDiffusionCommand, currentCopy)
+        const result = await doTheWork(
+          prompt,
+          stableDiffusionCommand,
+          currentCopy
+        )
         console.log(result)
       }
     }
@@ -488,10 +496,19 @@
           // if there are custom vars, make sure they're all filled
           ($extractedVars.length && !allCustomVarsAreFilled)}
         on:click={generate}
-        >{isGenerating
-          ? `generating${copies > 1 ? ` ${currentCopy}/${copies}` : ""}...`
-          : "Generate!"}</button
       >
+        {#if isGenerating}
+          {#if $promptStrings.length}
+            {`generating prompt ${currentCopy}/${$promptStrings.length}...`}
+          {:else}
+            {`generating${
+              copies > 1 ? ` copy ${currentCopy}/${copies}` : ""
+            }...`}
+          {/if}
+        {:else}
+          Generate
+        {/if}
+      </button>
 
       <select
         bind:value={copies}
