@@ -165,10 +165,10 @@
     if ($extractedVars.length && allCustomVarsAreFilled) {
       for (let i = 0; i < $promptStrings.length; i++) {
         const promptString = $promptStrings[i]
-        const stableDiffusionCommand: string = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+        stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
         currentCopy = i + 1
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork(stableDiffusionCommand, currentCopy)
+        const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         console.log(result)
       }
     } else {
@@ -176,7 +176,7 @@
       for (let i = 1; i <= copies; i++) {
         currentCopy = i
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork(stableDiffusionCommand, currentCopy)
+        const result = await doTheWork(prompt, stableDiffusionCommand, currentCopy)
         console.log(result)
       }
     }
@@ -186,7 +186,7 @@
   const getRandomSeed = () => Math.floor(Math.random() * maxSeed)
 
   // generate a single run
-  async function doTheWork(command: string, n: number) {
+  async function doTheWork(prompt: string, command: string, n: number) {
     if ($stableDiffusionDirectory.trim() === "") return
     if (command.trim() === "") return
 
