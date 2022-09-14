@@ -300,7 +300,14 @@
     <div class="w-full flex flex-col">
       <div class="flex justify-between">
         <label for="prompt" class="font-bold">
-          Prompt
+          <div class="flex items-center gap-2">
+            <span class="font-bold">Prompt</span>
+
+            <HelpBubble
+              title="--prompt : Text prompt. Use $custom $parameters to generate a prompt matrix."
+            />
+          </div>
+
           {#if numPromptTokens > 75}
             <span class="text-red-600"
               >(estimated {numPromptTokens} tokens - max is ~77
