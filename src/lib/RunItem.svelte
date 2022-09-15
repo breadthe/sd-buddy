@@ -84,10 +84,10 @@
         {/if}
         <dt class="font-bold">steps</dt>
         <dd>{run.steps}</dd>
-        {#if run.samples}
+        <!-- {#if run.samples}
           <dt class="font-bold">samples</dt>
           <dd>{run.samples}</dd>
-        {/if}
+        {/if} -->
         {#if run.scale}
           <dt class="font-bold">scale</dt>
           <dd>{run.scale}</dd>
