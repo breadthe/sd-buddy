@@ -4,7 +4,7 @@ Companion desktop app for the self-hosted M1 Mac version of [Stable Diffusion](h
 
 It is intended to be a lazier way to generate images, by allowing you to focus on writing prompts instead of messing with the command line.
 
-![Stable Diffusion Buddy v0.7.0](https://user-images.githubusercontent.com/17433578/189464864-ea98481c-9cf6-46ff-a563-03cf6bac5a49.png)
+![Stable Diffusion Buddy v0.8.0](https://user-images.githubusercontent.com/17433578/190299350-cf862c0c-996c-49c2-805d-30f9194c98f1.png)
 
 Behind the scenes it executes this command in your local Stable Diffusion directory:
 
@@ -41,9 +41,10 @@ The first publicly-available version is pretty thin on features. My goal was to 
 
 - <label><input type="checkbox" checked /> Register and persist the location of the Stable Diffusion directory.</label>
 - <label><input type="checkbox" checked /> Clickable links for the Stable Diffusion project and output directories.</label>
-- <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **samples** (`--n_samples`), **scale** (`--scale`), **iter(ations?)** (`--n_iter`) image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
-- <label><input type="checkbox" checked /> **NEW** Generate multiple images with the same parameters, in sequence.</label>
-- <label><input type="checkbox" checked /> **NEW** Use a random seed for each generation.</label>
+- <label><input type="checkbox" checked /> Generation parameters: **prompt** (`--prompt`), **steps** (`--ddim_steps`), **scale** (`--scale`), **batch count** (`--n_iter`), **batch size** (`--n_samples`), image **height** (`--H`) and **width** (`--W`), **seed** (`--seed`).</label>
+- <label><input type="checkbox" checked /> Generate multiple images with the same parameters, in sequence.</label>
+- <label><input type="checkbox" checked /> Use a random seed for each generation.</label>
+- <label><input type="checkbox" checked /> **NEW** Parameter matrix (aka parametric prompts). Use variables prefixed with "$" to trigger a set of inputs for each variable where you can list comma-separated parameters. You can then generate the entire batch of prompt combinations with one click.</label>
 - <label><input type="checkbox" checked /> Real-time duration timer.</label>
 - <label><input type="checkbox" checked /> Display the output of the command and click it to copy to the clipboard.</label>
 - <label><input type="checkbox" checked /> Display the generated image at 512x512.</label>
@@ -108,7 +109,6 @@ I'll tackle these in whatever order I feel is a priority for how I use Stable Di
 - UI improvements including a Help section.
 - Configurable output folder.
 - Embed the metadata in the generated image, optionally. A similar thing can be done by saving the generation parameters to a text file with the same name as the image. Follow the changes in my [txt2img.py gist](https://gist.github.com/breadthe/e0fda9f766c691a2cf4533f1da65560e).
-- **Qualifiers**. You know, those image quality attributes that we like to tack on at the end (Ultra detailed, ultra realistic, photorealism, 8k, octane render, bla bla). I want to make them configurable separately from the **prompt** so that you can focus on the description, then just add previously saved qualifiers with a click.
 - Support `img2img.py` as in `python scripts/img2img.py --prompt "a red juicy apple floating in outer space, like a planet" --init-img apple-input.jpg --strength 0.8 --skip_grid --n_samples 1`.
 
 In addition, I need to sort out various small details around developing with Tauri, such as global keyboard shortcuts for common actions such as quitting the app, enabling copy/paste in text boxes, and narrowing down the file/directory operations scope to the settings folder.
