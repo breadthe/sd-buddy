@@ -41,7 +41,7 @@ export const extractVars = (prompt: string) => {
     customVars.set([])
     promptStrings.set([])
 
-    const pattern = /\$[\w]+/gi // find all tokens starting with $
+    const pattern = /\B\$[a-zA-z]+/gi // find all tokens starting with $
     const re = new RegExp(pattern)
 
     extractedVars.set([...prompt.matchAll(re)])
