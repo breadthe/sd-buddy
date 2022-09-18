@@ -364,7 +364,7 @@
             </div>
           {:else}
             <select bind:value={steps} on:change={handleCustomSteps}>
-              {#each stepsOptions as option}
+              {#each stepsOptions as option (option)}
                 <option value={option}>{option}</option>
               {/each}
               <option value="10">custom</option>
@@ -506,7 +506,7 @@
         bind:value={copies}
         title="Generate this many images with the same settings"
       >
-        {#each copiesOptions as option}
+        {#each copiesOptions as option (option)}
           <option value={option}>{option}</option>
         {/each}
       </select>

@@ -13,7 +13,7 @@
     <span class="font-bold">Prompt Parameters detected</span>
 
     <div class="flex flex-col gap-2">
-      {#each $extractedVars as extractedVar}
+      {#each $extractedVars as extractedVar (extractedVar)}
         {@const sanitizedVar = extractedVar.toString().replace("$", "")}
         <CustomVar name={sanitizedVar} />
       {/each}
@@ -27,7 +27,7 @@
         {/if}
       </p>
       <div class="max-h-32 overflow-auto">
-        {#each $promptStrings as promptString}
+        {#each $promptStrings as promptString, i (i)}
           <div>
             {promptString.toString()}
           </div>

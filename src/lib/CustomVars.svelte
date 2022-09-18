@@ -3,7 +3,7 @@
   import CustomVar from "./CustomVar.svelte"
 </script>
 
-{#each $extractedVars as extractedVar}
+{#each $extractedVars as extractedVar (extractedVar)}
   {@const sanitizedVar = extractedVar.toString().replace("$", "")}
   <div>
     <CustomVar name={sanitizedVar} />
