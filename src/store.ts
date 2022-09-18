@@ -181,3 +181,11 @@ function buildPromptStrings(prompt, customVars) {
     // assign it to the store
     return newPromptStrings
 }
+
+
+// determine if all custom variable fields are filled (each field has at least 1 value)
+export const allCustomVarsAreFilled = derived([extractedVars, customVars], ([$extractedVars, $customVars]) =>
+    $extractedVars.every((ev) =>
+        $customVars.find((cv) => `$${cv.name}` === ev && cv.values)
+    )
+)

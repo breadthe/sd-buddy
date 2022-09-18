@@ -11,6 +11,7 @@
     runs,
     reusePrompt,
     stableDiffusionDirectory,
+    allCustomVarsAreFilled
   } from "./store"
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
@@ -30,11 +31,6 @@
   let useCustomSteps: boolean = false
 
   // Form parameters:
-
-  // validate if all the custom vars are populated with at least 1 value
-  $: allCustomVarsAreFilled = $extractedVars.every((ev) =>
-    $customVars.find((cv) => `$${cv.name}` === ev && cv.values)
-  )
 
   // --ddim_steps
   let defaultSteps: number = 10 // --ddim_steps, default 50 (keeping it 10 because slow computer)
@@ -157,7 +153,7 @@
   // queue up multiple runs
   async function generate() {
     // process the prompt matrix
-    if ($extractedVars.length && allCustomVarsAreFilled) {
+    if ($extractedVars.length && $allCustomVarsAreFilled) {
       for (let i = 0; i < $promptStrings.length; i++) {
         const promptString = $promptStrings[i]
         stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
@@ -486,7 +482,7 @@
           numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
           isGenerating ||
           // if there are custom vars, make sure they're all filled
-          ($extractedVars.length && !allCustomVarsAreFilled)}
+          ($extractedVars.length && !$allCustomVarsAreFilled)}
         on:click={generate}
       >
         {#if isGenerating}

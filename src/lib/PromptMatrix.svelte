@@ -1,11 +1,6 @@
 <script lang="ts">
-  import { customVars, extractedVars, promptStrings } from "../store"
+  import { extractedVars, promptStrings, allCustomVarsAreFilled } from "../store"
   import CustomVar from "./CustomVar.svelte"
-
-  // validate if all the custom vars are populated with at least 1 value
-  $: allCustomVarsAreFilled = $extractedVars.every((ev) =>
-    $customVars.find((cv) => `$${cv.name}` === ev && cv.values)
-  )
 </script>
 
 {#if $extractedVars.length}
@@ -22,7 +17,7 @@
     {#if $promptStrings}
       <p>
         <strong>{$promptStrings.length}</strong> prompt variations
-        {#if !allCustomVarsAreFilled}
+        {#if !$allCustomVarsAreFilled}
           <strong class="text-red-600">incomplete</strong>
         {/if}
       </p>
