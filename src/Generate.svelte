@@ -33,7 +33,7 @@
 
   // validate if all the custom vars are populated with at least 1 value
   $: allCustomVarsAreFilled = $extractedVars.every((ev) =>
-    $customVars.find((cv) => `$${cv.name}` === ev[0] && cv.values.length)
+    $customVars.find((cv) => `$${cv.name}` === ev && cv.values)
   )
 
   // --ddim_steps
