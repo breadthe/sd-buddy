@@ -72,6 +72,15 @@ Open the app again and this time you'll get a different security warning. Click 
 
 ![2022-09-11-sd-buddy-security-3](https://user-images.githubusercontent.com/17433578/189551763-c49bf16e-82b5-496a-a81d-a48ef3329af7.png)
 
+## Windows and Linux builds
+
+For a short time there were Linux and Windows builds available. I disabled those for several reasons.
+
+1. This project is optimized around the M1 Mac flavor of Stable Diffusion.
+2. Even though Stable Diffusion can be installed on Windows, certain "magic" I employed around determining which is the last generated image dictates that this will remain a Mac build for now. I'll have to change this at some point since it's not ideal.
+3. The "magic" mentioned on #2 may actually work in Linux but I don't have a way to test it. If you do have a Linux environment with Stable Diffusion installed and are willing to build this app yourself, please give it a try and let me know in a new Discussions topic.
+4. In the end I kept only the Mac build because it makes GitHub Actions CI faster to have 1 build instead of 3.
+
 ## Building the app
 
 In addition to the above, if you want to build the Mac binary yourself, first install the [Tauri environment + CLI](https://tauri.app/v1/guides/getting-started/prerequisites) (including the Rust CLI + Cargo), then clone this repo and run:
@@ -117,13 +126,11 @@ In addition, I need to sort out various small details around developing with Tau
 
 ## Known issues
 
-1. While Mac ARM builds are now operational, Linux builds are yet to be tested. I don't yet have a Linux machine to test on but let me know if you try it out. Windows builds are technically available but some of the functionality is probably broken or buggy based on how the generated image is located on disk. I do need to find a universal way to do this.
+1. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
 
-2. The `tauri.allowlist.fs.scope` key in `tauri.conf.json`. This essentially defines what file system locations the `fs` command is allowed to touch. Currently it is set to `**` which means everywhere. Since `fs` is used only by the `tauri-settings` package to create and write to `settings.json`, I'm not worried about it. Nevertheless, I'd like to limit it to just the location it needs once I discover the correct string pattern for that option.
+2. The current (v0.3.0) image thumbnail rendering feature suffers from an issue stemming from the way I implemented it. Essentially when the program completes, I run a Rust function that executes a system command (`find` + arguments) to retrieve the name of the newest image in the output folder that was created during the timeframe in which the run completed. Then I read the image contents from disk as binary data and convert it to a base64 string to be rendered on the front-end. Unfortunately it seems that the Stable Diffusion python command sometimes overwrites files. So what used to be `grid-0032.jpg` from a previous run is also the same for a new run. This causes the generated thumbnails to look the same, since the metadata embedded with each run to points to the same location. **Workaround** I think my problem appeared because I was deleting images from disk that I didn't like, thus creating gaps. The SD command likes to back-fill those gaps but it also overwrites images that I hadn't deleted.
 
-3. The current (v0.3.0) image thumbnail rendering feature suffers from an issue stemming from the way I implemented it. Essentially when the program completes, I run a Rust function that executes a system command (`find` + arguments) to retrieve the name of the newest image in the output folder that was created during the timeframe in which the run completed. Then I read the image contents from disk as binary data and convert it to a base64 string to be rendered on the front-end. Unfortunately it seems that the Stable Diffusion python command sometimes overwrites files. So what used to be `grid-0032.jpg` from a previous run is also the same for a new run. This causes the generated thumbnails to look the same, since the metadata embedded with each run to points to the same location. **Workaround** I think my problem appeared because I was deleting images from disk that I didn't like, thus creating gaps. The SD command likes to back-fill those gaps but it also overwrites images that I hadn't deleted.
-
-4. Setting _Samples_ to anything other than 1 crashes the Python script with this message `failed assertion [MPSTemporaryNDArray initWithDevice:descriptor:] Error: product of dimension sizes > 2**31' /opt/homebrew/Cellar/python@3.10/3.10.6_2/Frameworks/Python.framework/Versions/3.10/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown`.
+3. Setting _Samples_ to anything other than 1 crashes the Python script with this message `failed assertion [MPSTemporaryNDArray initWithDevice:descriptor:] Error: product of dimension sizes > 2**31' /opt/homebrew/Cellar/python@3.10/3.10.6_2/Frameworks/Python.framework/Versions/3.10/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown`.
 
 ## Security FAQ
 
