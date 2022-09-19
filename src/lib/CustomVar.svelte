@@ -1,33 +1,26 @@
 <script type="ts">
   import type { CustomVar } from "../types"
-  import { customVars, extractedVars, promptStrings } from "../store"
+  import { prompt, extractedVars, customVars, promptStrings } from "../store"
 
   export let name = ""
 
-  let value: string
-  let varObj: CustomVar = {
-    name: "",
-    values: [],
-  }
+  let value
+  let varObj = {}
 
-  // parse the input string
-  function parseString(e) {
+  function handleCustomVar(e) {
     // split it by comma, trim spaces, filter empty values
     const params = e.target.value
       .split(",")
-      .map((v: string) => v.trim())
-      .filter((v: any) => v)
+      .map((v) => v.trim())
+      .filter((v) => v)
 
-    varObj = { name, values: params } // {"name": "age", "values":["young","old"]}
+    varObj = { name, values: params } // {"name": "age", "values":["20","30"]}
 
     if (params.length) {
-        customVars.push(varObj)
+      customVars.push(varObj)
     } else {
-        customVars.remove(varObj)
-    }
-
-    if (!$customVars.length) {
-      promptStrings.set([])
+      customVars.remove(varObj)
+      value = null
     }
   }
 </script>
@@ -41,6 +34,6 @@
     autocorrect="off"
     class="w-full"
     bind:value
-    on:input={parseString}
+    on:input={handleCustomVar}
   />
 </label>

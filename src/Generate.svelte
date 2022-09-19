@@ -4,17 +4,19 @@
   import { AlertTypes, Rating } from "./types"
   import type { Run } from "./types"
   import {
+    prompt,
     customVars,
     extractedVars,
     promptStrings,
     runs,
     reusePrompt,
     stableDiffusionDirectory,
+    allCustomVarsAreFilled
   } from "./store"
-  import { extractVars, buildStrings } from "./promptMatrix"
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
   import WarningBubble from "./lib/WarningBubble.svelte"
+  import Prompt from "./lib/Prompt.svelte"
   import PromptMatrix from "./lib/PromptMatrix.svelte"
   import RunItem from "./lib/RunItem.svelte"
 
@@ -29,18 +31,6 @@
   let useCustomSteps: boolean = false
 
   // Form parameters:
-
-  // prompt
-  const placeholder = "a red juicy apple floating in outer space, like a planet"
-  let prompt: string = ""
-
-  // prompt matrix
-  $: buildStrings(prompt, $customVars)
-
-  // validate if all the custom vars are populated with at least 1 value
-  $: allCustomVarsAreFilled = $extractedVars.every((ev) =>
-    $customVars.find((cv) => `$${cv.name}` === ev[0] && cv.values.length)
-  )
 
   // --ddim_steps
   let defaultSteps: number = 10 // --ddim_steps, default 50 (keeping it 10 because slow computer)
@@ -98,11 +88,11 @@
 
   let currentRun: Run // the currently generated run
 
-  $: numPromptTokens = Math.ceil(prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
+  $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
+    stableDiffusionCommand = `python scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `python scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
   }
 
   $: {
@@ -113,7 +103,7 @@
 
   // reset parameters when reusing a prompt
   $: if (Object.keys($reusePrompt).length) {
-    prompt = $reusePrompt?.prompt ?? prompt
+    prompt.set($reusePrompt?.prompt ?? $prompt)
     steps = $reusePrompt?.steps ?? steps
     iter = $reusePrompt?.iter ?? iter
     samples = $reusePrompt?.samples ?? samples
@@ -134,7 +124,7 @@
   // resets the form to its original state and clears the response alerts
   function resetForm() {
     reusePrompt.set(<Run>{})
-    prompt = ""
+    prompt.set("")
     steps = defaultSteps
     samples = defaultSamples
     scale = defaultScale
@@ -156,14 +146,14 @@
 
   function resetPromptMatrix() {
     customVars.set([])
-    promptStrings.set([])
-    extractedVars.set([])
+    // promptStrings.set([])
+    // extractedVars.set([])
   }
 
   // queue up multiple runs
   async function generate() {
     // process the prompt matrix
-    if ($extractedVars.length && allCustomVarsAreFilled) {
+    if ($extractedVars.length && $allCustomVarsAreFilled) {
       for (let i = 0; i < $promptStrings.length; i++) {
         const promptString = $promptStrings[i]
         stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
@@ -182,7 +172,7 @@
         currentCopy = i
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(
-          prompt,
+          $prompt,
           stableDiffusionCommand,
           currentCopy
         )
@@ -322,14 +312,8 @@
         </label>
         <button class="transparent" on:click={resetForm}>reset</button>
       </div>
-      <textarea
-        name="prompt"
-        rows="5"
-        cols="50"
-        {placeholder}
-        bind:value={prompt}
-        on:input={() => extractVars(prompt)}
-      />
+
+      <Prompt />
     </div>
 
     <!-- Prompt Matrix  -->
@@ -376,7 +360,7 @@
             </div>
           {:else}
             <select bind:value={steps} on:change={handleCustomSteps}>
-              {#each stepsOptions as option}
+              {#each stepsOptions as option (option)}
                 <option value={option}>{option}</option>
               {/each}
               <option value="10">custom</option>
@@ -494,15 +478,15 @@
       <button
         class="w-full"
         disabled={!$stableDiffusionDirectory ||
-          prompt.trim() === "" ||
+          $prompt.trim() === "" ||
           numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
           isGenerating ||
           // if there are custom vars, make sure they're all filled
-          ($extractedVars.length && !allCustomVarsAreFilled)}
+          ($extractedVars.length && !$allCustomVarsAreFilled)}
         on:click={generate}
       >
         {#if isGenerating}
-          {#if $promptStrings.length}
+          {#if $promptStrings}
             {`generating prompt ${currentCopy}/${$promptStrings.length}...`}
           {:else}
             {`generating${
@@ -518,13 +502,13 @@
         bind:value={copies}
         title="Generate this many images with the same settings"
       >
-        {#each copiesOptions as option}
+        {#each copiesOptions as option (option)}
           <option value={option}>{option}</option>
         {/each}
       </select>
     </div>
 
-    {#if prompt.trim() !== ""}
+    {#if $prompt.trim() !== ""}
       <Alert alertType={AlertTypes.Info} copy
         >{@html stableDiffusionCommandHtml}</Alert
       >

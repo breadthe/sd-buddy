@@ -1,9 +1,11 @@
-import { readable, writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
 import type { CustomVar, Run } from "./types";
 // import { get, set } from "tauri-settings";
 
 // Indicator for when the user is copying to clipboard
 export const copying = writable(false);
+
+export const prompt = writable("")
 
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
 export const reusePrompt = writable(<Run>{});
@@ -23,6 +25,7 @@ function createStableDiffusionDirectory() {
     };
 }
 export const stableDiffusionDirectory = createStableDiffusionDirectory();
+
 
 // Store runs to localStorage for now
 function createRunsStore() {
@@ -98,8 +101,16 @@ async function stableDiffusionDirectoryStore() {
 }
 export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); */
 
-export const extractedVars = writable([]) // [["$age"], ["$gender"]]
-export const promptStrings = writable([])
+
+// derive extractedVars from prompt, Example ["$age", "$gender"]
+export const extractedVars = derived(prompt, $prompt => extractVars($prompt))
+
+function extractVars(prompt) {
+    const pattern = /\B\$[a-zA-z]+/g; // find all tokens starting with $
+    const re = new RegExp(pattern);
+    return [...prompt.matchAll(re)].flatMap(p => p)
+}
+
 
 function createCustomVarsStore() {
     let storedCustomVars = []
@@ -134,4 +145,47 @@ function createCustomVarsStore() {
         }
     };
 }
-export const customVars = createCustomVarsStore(); // [{name: "age", values: ["old", "young"]}, {name: "gender", values: ["woman", "man", "child"]}]
+export const customVars = createCustomVarsStore() // [{name: "age", values: ["old", "young"]}, {name: "gender", values: ["woman", "man", "child"]}]
+
+
+// derive promptStrings from prompt and customVars
+export const promptStrings = derived([prompt, customVars], ([$prompt, $customVars]) => buildPromptStrings($prompt, $customVars))
+
+function buildPromptStrings(prompt, customVars) {
+    const vars = customVars
+    let newPromptStrings = null;
+
+    if (!vars.length) return
+    // console.log(vars)
+
+    // loop through all the vars
+    vars.forEach((customVar) => {
+        // when we start out the custom var doesn't have any values
+        if (!customVar.values) return
+
+        // if this is the first loop, init the promptstrings array with the blankest version of the prompt
+        if (!newPromptStrings) newPromptStrings = [prompt];
+        const temp = []
+        for (let partialPrompt of newPromptStrings) {
+            for (let val of customVar.values) {
+                // replace all the $vars in the prompt
+                const promptString = partialPrompt.replaceAll(`$${customVar.name}`, val)
+                temp.push(promptString)
+                // console.log(promptString)
+            }
+        }
+        newPromptStrings = temp
+    })
+    // you can randomize later if you want
+
+    // assign it to the store
+    return newPromptStrings
+}
+
+
+// determine if all custom variable fields are filled (each field has at least 1 value)
+export const allCustomVarsAreFilled = derived([extractedVars, customVars], ([$extractedVars, $customVars]) =>
+    $extractedVars.every((ev) =>
+        $customVars.find((cv) => `$${cv.name}` === ev && cv.values)
+    )
+)
