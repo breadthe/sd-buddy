@@ -11,7 +11,7 @@
     runs,
     reusePrompt,
     stableDiffusionDirectory,
-    allCustomVarsAreFilled
+    allCustomVarsAreFilled,
   } from "./store"
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
@@ -152,18 +152,23 @@
 
   // queue up multiple runs
   async function generate() {
-    // process the prompt matrix
+    // if there is a prompt matrix, process it
     if ($extractedVars.length && $allCustomVarsAreFilled) {
-      for (let i = 0; i < $promptStrings.length; i++) {
-        const promptString = $promptStrings[i]
+      const tmpPromptStrings = $promptStrings
+      currentCopy = 1
+      while (tmpPromptStrings.length > 0) {
+        // extract prompt strings randomly from the matrix
+        const ix = Math.floor(Math.random() * tmpPromptStrings.length)
+        const promptString = tmpPromptStrings[ix]
         stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
-        currentCopy = i + 1
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(
           promptString,
           stableDiffusionCommand,
           currentCopy
         )
+        tmpPromptStrings.splice(ix, 1)
+        currentCopy++
         console.log(result)
       }
     } else {
@@ -487,7 +492,7 @@
       >
         {#if isGenerating}
           {#if $promptStrings}
-            {`generating prompt ${currentCopy}/${$promptStrings.length}...`}
+            {`generating prompt ${currentCopy}/${$promptStrings.length + currentCopy - 1}...`}
           {:else}
             {`generating${
               copies > 1 ? ` copy ${currentCopy}/${copies}` : ""
