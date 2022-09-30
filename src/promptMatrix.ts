@@ -1,5 +1,6 @@
 import type { CustomVar } from "./types"
-import { customVars, extractedVars, promptStrings } from "./store/generate"
+import { generate } from "./store"
+const { customVars, extractedVars, promptStrings } = generate
 
 export const buildStrings = (prompt: string, customVarsArray: CustomVar[]) => {
     if (!prompt) {

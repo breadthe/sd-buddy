@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { AlertTypes } from "../types";
-  import { copying } from "../store/system";
-  import { copyToClipboard } from "../utils";
+  import { AlertTypes } from "../types"
+  import { system } from "../store"
+  const { copying } = system
+  import { copyToClipboard } from "../utils"
 
   const colors = {
     error: "bg-red-100 dark:bg-red-800",
@@ -9,23 +10,23 @@
     success: "bg-green-100 dark:bg-green-800",
     warning: "bg-yellow-100 dark:bg-yellow-800",
     neutral: "bg-gray-100 dark:bg-gray-800", // default
-  };
+  }
 
-  export let copy = false; // allow copying of text
-  export let alertType: AlertTypes = AlertTypes.Neutral;
+  export let copy = false // allow copying of text
+  export let alertType: AlertTypes = AlertTypes.Neutral
 
-  let alert: HTMLDivElement;
+  let alert: HTMLDivElement
 
   async function copyText() {
-    if (!copy) return;
+    if (!copy) return
 
-    copying.set(true);
+    copying.set(true)
 
-    await copyToClipboard(alert.innerText);
+    await copyToClipboard(alert.innerText)
 
     setTimeout(() => {
-      copying.set(false);
-    }, 1000);
+      copying.set(false)
+    }, 1000)
   }
 </script>
 

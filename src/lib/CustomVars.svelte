@@ -1,5 +1,6 @@
 <script>
-  import { extractedVars } from "../store/generate"
+  import { generate } from "../store"
+  const { extractedVars } = generate
   import CustomVar from "./CustomVar.svelte"
 </script>
 

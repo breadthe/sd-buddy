@@ -1,46 +1,51 @@
 <script lang="ts">
-  import { convertFileSrc } from "@tauri-apps/api/tauri";
-  import { open } from "@tauri-apps/api/shell";
-  import { reusePrompt, stableDiffusionDirectory } from "../store/generate";
-  import { createEventDispatcher, onMount, beforeUpdate } from "svelte";
-  import type { Run } from "../types";
+  import { convertFileSrc } from "@tauri-apps/api/tauri"
+  import { open } from "@tauri-apps/api/shell"
+  import { generate } from "../store"
+  const { reusePrompt, stableDiffusionDirectory } = generate
+  import { createEventDispatcher, onMount, beforeUpdate } from "svelte"
+  import type { Run } from "../types"
 
-  export let run: Run;
-  export let imageOnly: boolean = false; // display only the image
+  export let run: Run
+  export let imageOnly: boolean = false // display only the image
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 
   // Image processing stuff
-  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
-  let imgSrc: string = ""; // img src base64 string
+  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`
+  let imgSrc: string = "" // img src base64 string
 
   // Flags
-  let isDeleting = false;
+  let isDeleting = false
 
   async function openImage(imageName: string) {
-    if (!imageName) return;
+    if (!imageName) return
 
-    await open(`file://${stableDiffusionOutputDirectory}/${imageName}`);
+    await open(`file://${stableDiffusionOutputDirectory}/${imageName}`)
   }
 
   // @see https://tauri.app/v1/api/js/modules/tauri/#convertfilesrc
   async function loadTheImage() {
-    const filePath = `${stableDiffusionOutputDirectory}/${run.image_name}`;
-    const imageUrl = convertFileSrc(filePath);
-    imgSrc = imageUrl;
+    const filePath = `${stableDiffusionOutputDirectory}/${run.image_name}`
+    const imageUrl = convertFileSrc(filePath)
+    imgSrc = imageUrl
   }
 
   beforeUpdate(async () => {
-    await loadTheImage();
-  });
+    await loadTheImage()
+  })
 
   onMount(async () => {
-    await loadTheImage();
-  });
+    await loadTheImage()
+  })
 </script>
 
 <div
-  class={`relative ${imageOnly ? "w-full max-h-[512px] overflow-auto" : "max-w-[196px] border border-blue-500/50" } flex flex-col divide-y divide-blue-600/50 hover:border-blue-500 rounded`}
+  class={`relative ${
+    imageOnly
+      ? "w-full max-h-[512px] overflow-auto"
+      : "max-w-[196px] border border-blue-500/50"
+  } flex flex-col divide-y divide-blue-600/50 hover:border-blue-500 rounded`}
 >
   {#if !isDeleting}
     {#if run.image_name && imgSrc}
@@ -51,7 +56,9 @@
         on:click|preventDefault={() => openImage(run.image_name)}
       />
     {:else}
-        <div class="w-full text-center text-red-600" class:text-xs={!imageOnly}>image error</div>
+      <div class="w-full text-center text-red-600" class:text-xs={!imageOnly}>
+        image error
+      </div>
     {/if}
 
     {#if !imageOnly}
@@ -128,8 +135,8 @@
         <button
           class="link text-xs text-red-600"
           on:click={() => {
-            dispatch("deleteRun", run);
-            isDeleting = false;
+            dispatch("deleteRun", run)
+            isDeleting = false
           }}
         >
           Delete

@@ -1,21 +1,21 @@
 <script type="ts">
   import type { CustomVar } from "../types"
-  import { prompt, extractedVars, customVars, promptStrings } from "../store/generate"
+  import { customVars } from "../store/generate"
 
   export let name = ""
 
   let value: string
   let varObj: CustomVar = {
-      name: "",
-      values: []
+    name: "",
+    values: [],
   }
 
   function handleCustomVar(e) {
     // split it by comma, trim spaces, filter empty values
     const params = e.target.value
       .split(",")
-      .map((v) => v.trim())
-      .filter((v) => v)
+      .map((v: string) => v.trim())
+      .filter((v: any) => v)
 
     varObj = { name, values: params } // {"name": "age", "values":["20","30"]}
 

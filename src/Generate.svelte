@@ -3,7 +3,8 @@
   import { v4 as uuidv4 } from "uuid"
   import { AlertTypes, Rating } from "./types"
   import type { Run } from "./types"
-  import {
+  import { generate } from "./store"
+  const {
     prompt,
     customVars,
     extractedVars,
@@ -12,7 +13,7 @@
     reusePrompt,
     stableDiffusionDirectory,
     allCustomVarsAreFilled,
-  } from "./store/generate"
+  } = generate
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
   import WarningBubble from "./lib/WarningBubble.svelte"
@@ -151,7 +152,7 @@
   }
 
   // queue up multiple runs
-  async function generate() {
+  async function runPythonCommand() {
     // if there is a prompt matrix, process it
     if ($extractedVars.length && $allCustomVarsAreFilled) {
       const tmpPromptStrings = $promptStrings
@@ -488,11 +489,13 @@
           isGenerating ||
           // if there are custom vars, make sure they're all filled
           ($extractedVars.length && !$allCustomVarsAreFilled)}
-        on:click={generate}
+        on:click={runPythonCommand}
       >
         {#if isGenerating}
           {#if $promptStrings}
-            {`generating prompt ${currentCopy}/${$promptStrings.length + currentCopy - 1}...`}
+            {`generating prompt ${currentCopy}/${
+              $promptStrings.length + currentCopy - 1
+            }...`}
           {:else}
             {`generating${
               copies > 1 ? ` copy ${currentCopy}/${copies}` : ""

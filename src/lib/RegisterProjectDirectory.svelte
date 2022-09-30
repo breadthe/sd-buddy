@@ -1,19 +1,20 @@
 <script lang="ts">
-  import { open as openDialog } from "@tauri-apps/api/dialog";
-  import { appDir } from "@tauri-apps/api/path";
-  import { open } from "@tauri-apps/api/shell";
-  import { stableDiffusionDirectory } from "../store/generate";
+  import { open as openDialog } from "@tauri-apps/api/dialog"
+  import { appDir } from "@tauri-apps/api/path"
+  import { open } from "@tauri-apps/api/shell"
+  import { generate } from "../store"
+  const { stableDiffusionDirectory } = generate
 
-  let stableDiffusionDirectoryInput: HTMLInputElement;
+  let stableDiffusionDirectoryInput: HTMLInputElement
 
   // Flags
-  let isReregistering: boolean = false; // re-registering the Stable Diffusion directory
+  let isReregistering: boolean = false // re-registering the Stable Diffusion directory
 
   $: stableDiffusionDirectoryIsRegistered =
     stableDiffusionDirectoryInput &&
-    stableDiffusionDirectoryInput.value.trim() !== "";
+    stableDiffusionDirectoryInput.value.trim() !== ""
 
-  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`;
+  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`
 
   async function openDirectorySelectionDialog() {
     // Open a selection dialog for directories
@@ -21,25 +22,25 @@
       directory: true,
       multiple: false,
       defaultPath: await appDir(),
-    });
+    })
     if (Array.isArray(selected)) {
       // user selected multiple directories
     } else if (selected === null) {
       // user cancelled the selection
     } else {
       // user selected a single directory
-      stableDiffusionDirectoryInput.value = selected;
+      stableDiffusionDirectoryInput.value = selected
     }
   }
 
   async function openDirectory(directory: string) {
-    await open(`file://${directory}`);
+    await open(`file://${directory}`)
   }
 
   async function saveStableDiffusionDirectory() {
-    stableDiffusionDirectory.set(stableDiffusionDirectoryInput.value);
-    stableDiffusionDirectoryInput.value = "";
-    isReregistering = false;
+    stableDiffusionDirectory.set(stableDiffusionDirectoryInput.value)
+    stableDiffusionDirectoryInput.value = ""
+    isReregistering = false
   }
 </script>
 
@@ -103,7 +104,6 @@
             />
           </svg>
         </button>
-
       </div>
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold">SD output:</span>
