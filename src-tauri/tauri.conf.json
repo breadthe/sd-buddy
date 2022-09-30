@@ -78,11 +78,11 @@
         "minHeight": 800,
         "resizable": true,
         "title": "Stable Diffusion Buddy",
-        "width": 1200,
-        "minWidth": 1024
+        "width": 1300,
+        "minWidth": 1200
       },
       {
-        "width": 1200,
+        "width": 1300,
         "height": 800,
         "decorations": false,
         "url": "splashscreen.html",
