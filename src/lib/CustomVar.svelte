@@ -4,8 +4,11 @@
 
   export let name = ""
 
-  let value
-  let varObj = {}
+  let value: string
+  let varObj: CustomVar = {
+      name: "",
+      values: []
+  }
 
   function handleCustomVar(e) {
     // split it by comma, trim spaces, filter empty values
