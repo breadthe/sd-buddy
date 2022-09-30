@@ -1,5 +1,5 @@
 <script>
-  import { prompt, customVars, extractedVars } from "../store"
+  import { prompt, customVars, extractedVars } from "../store/generate"
 
   const placeholder = "a red juicy apple floating in outer space, like a planet"
 

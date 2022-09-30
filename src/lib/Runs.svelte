@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { runs } from "../store";
+  import { runs } from "../store/generate";
   import type { Run } from "../types";
   import RunItem from "./RunItem.svelte";
 

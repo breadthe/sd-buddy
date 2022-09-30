@@ -12,7 +12,7 @@
     reusePrompt,
     stableDiffusionDirectory,
     allCustomVarsAreFilled,
-  } from "./store"
+  } from "./store/generate"
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
   import WarningBubble from "./lib/WarningBubble.svelte"

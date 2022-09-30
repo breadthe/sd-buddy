@@ -1,6 +1,6 @@
 <script type="ts">
   import type { CustomVar } from "../types"
-  import { prompt, extractedVars, customVars, promptStrings } from "../store"
+  import { prompt, extractedVars, customVars, promptStrings } from "../store/generate"
 
   export let name = ""
 

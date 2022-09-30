@@ -1,6 +1,6 @@
 <script lang="ts">
   import { AlertTypes } from "../types";
-  import { copying } from "../store";
+  import { copying } from "../store/system";
   import { copyToClipboard } from "../utils";
 
   const colors = {

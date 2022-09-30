@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { extractedVars, promptStrings, allCustomVarsAreFilled } from "../store"
+  import { extractedVars, promptStrings, allCustomVarsAreFilled } from "../store/generate"
   import CustomVar from "./CustomVar.svelte"
 </script>
 
