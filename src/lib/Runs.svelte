@@ -1,7 +1,12 @@
 <script lang="ts">
+  // type imports
+  import type { Run } from "../types"
+
+  // store imports
   import { generate } from "../store"
   const { runs } = generate
-  import type { Run } from "../types"
+
+  // component imports
   import RunItem from "./RunItem.svelte"
 
   $: sortedRuns = $runs.sort(

@@ -1,6 +1,9 @@
 <script>
+  // store imports
   import { generate } from "../store"
   const { extractedVars } = generate
+
+  // component imports
   import CustomVar from "./CustomVar.svelte"
 </script>
 

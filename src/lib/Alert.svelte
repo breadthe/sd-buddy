@@ -1,8 +1,13 @@
 <script lang="ts">
+  // system/lib/util imports
+  import { copyToClipboard } from "../utils"
+
+  // type imports
   import { AlertTypes } from "../types"
+
+  // store imports
   import { system } from "../store"
   const { copying } = system
-  import { copyToClipboard } from "../utils"
 
   const colors = {
     error: "bg-red-100 dark:bg-red-800",

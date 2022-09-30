@@ -1,7 +1,10 @@
 <script lang="ts">
+  // system/lib/util imports
   import { open as openDialog } from "@tauri-apps/api/dialog"
   import { appDir } from "@tauri-apps/api/path"
   import { open } from "@tauri-apps/api/shell"
+
+  // store imports
   import { generate } from "../store"
   const { stableDiffusionDirectory } = generate
 

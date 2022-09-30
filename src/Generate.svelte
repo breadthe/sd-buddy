@@ -1,8 +1,13 @@
 <script lang="ts">
+  // system/lib/util imports
   import { invoke } from "@tauri-apps/api/tauri"
   import { v4 as uuidv4 } from "uuid"
+
+  // type imports
   import { AlertTypes, Rating } from "./types"
   import type { Run } from "./types"
+
+  // store imports
   import { generate } from "./store"
   const {
     prompt,
@@ -14,6 +19,8 @@
     stableDiffusionDirectory,
     allCustomVarsAreFilled,
   } = generate
+
+  // component imports
   import Alert from "./lib/Alert.svelte"
   import HelpBubble from "./lib/HelpBubble.svelte"
   import WarningBubble from "./lib/WarningBubble.svelte"

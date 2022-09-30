@@ -1,6 +1,9 @@
 <script lang="ts">
+  // store imports
   import { generate } from "../store"
   const { extractedVars, promptStrings, allCustomVarsAreFilled } = generate
+
+  // component imports
   import CustomVar from "./CustomVar.svelte"
 </script>
 

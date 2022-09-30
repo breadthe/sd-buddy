@@ -1,10 +1,15 @@
 <script lang="ts">
+  // system/lib/util imports
   import { convertFileSrc } from "@tauri-apps/api/tauri"
   import { open } from "@tauri-apps/api/shell"
+  import { createEventDispatcher, onMount, beforeUpdate } from "svelte"
+
+  // type imports
+  import type { Run } from "../types"
+
+  // store imports
   import { generate } from "../store"
   const { reusePrompt, stableDiffusionDirectory } = generate
-  import { createEventDispatcher, onMount, beforeUpdate } from "svelte"
-  import type { Run } from "../types"
 
   export let run: Run
   export let imageOnly: boolean = false // display only the image

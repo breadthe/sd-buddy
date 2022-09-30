@@ -1,4 +1,5 @@
 <script>
+  // store imports
   import { generate } from "../store"
   const { prompt, customVars, extractedVars } = generate
 
