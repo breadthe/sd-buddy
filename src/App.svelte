@@ -15,6 +15,7 @@
 
   // component imports
   import Nav from "./lib/Nav.svelte"
+  import Theme from "./lib/Theme.svelte"
 
   const sections = [
     { id: "Txt2Img", component: Txt2Img },
@@ -35,6 +36,9 @@
   <svelte:component
     this={sections.find((section) => section.id === $activeSection).component}
   />
+
+  <!-- Renderless, conditionally sets "dark" class on the html element -->
+  <Theme />
 </main>
 
 <style>

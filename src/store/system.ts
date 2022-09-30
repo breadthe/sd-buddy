@@ -9,3 +9,10 @@ export const activeSection = writable(storedActiveSection ? storedActiveSection 
 activeSection.subscribe(value => {
     localStorage.setItem("activeSection", JSON.stringify(value));
 })
+
+// Theme: dark, light, automatic
+const storedTheme = localStorage.getItem("theme") || "light"
+export const theme = writable(storedTheme ? storedTheme : "light")
+theme.subscribe((value: string) => {
+    localStorage.setItem("theme", value);
+})
