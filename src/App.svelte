@@ -3,22 +3,38 @@
   import { invoke } from "@tauri-apps/api/tauri"
   import { onMount } from "svelte"
 
+  // store imports
+  import { system } from "./store"
+  const { activeSection } = system
+
+  // section imports
+  import Gallery from "./Gallery.svelte"
+  import Img2Img from "./Img2Img.svelte"
+  import Settings from "./Settings.svelte"
+  import Txt2Img from "./Txt2Img.svelte"
+
   // component imports
-  import Generate from "./Generate.svelte"
-  import Runs from "./lib/Runs.svelte"
-  import RegisterProjectDirectory from "./lib/RegisterProjectDirectory.svelte"
+  import Nav from "./lib/Nav.svelte"
+
+  const sections = [
+    { id: "Txt2Img", component: Txt2Img },
+    { id: "Img2Img", component: Img2Img },
+    { id: "Gallery", component: Gallery },
+    { id: "Settings", component: Settings },
+  ]
 
   onMount(() => {
     invoke("close_splashscreen")
   })
 </script>
 
-<main class="flex flex-col gap-8">
-  <RegisterProjectDirectory />
+<main class="flex flex-col gap-2">
+  <Nav />
 
-  <Generate />
-
-  <Runs />
+  <!-- Dynamic section based on activeSection -->
+  <svelte:component
+    this={sections.find((section) => section.id === $activeSection).component}
+  />
 </main>
 
 <style>

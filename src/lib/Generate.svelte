@@ -4,11 +4,11 @@
   import { v4 as uuidv4 } from "uuid"
 
   // type imports
-  import { AlertTypes, Rating } from "./types"
-  import type { Run } from "./types"
+  import { AlertTypes, Rating } from "../types"
+  import type { Run } from "../types"
 
   // store imports
-  import { generate } from "./store"
+  import { generate } from "../store"
   const {
     prompt,
     customVars,
@@ -21,12 +21,12 @@
   } = generate
 
   // component imports
-  import Alert from "./lib/Alert.svelte"
-  import HelpBubble from "./lib/HelpBubble.svelte"
-  import WarningBubble from "./lib/WarningBubble.svelte"
-  import Prompt from "./lib/Prompt.svelte"
-  import PromptMatrix from "./lib/PromptMatrix.svelte"
-  import RunItem from "./lib/RunItem.svelte"
+  import Alert from "./Alert.svelte"
+  import HelpBubble from "./HelpBubble.svelte"
+  import WarningBubble from "./WarningBubble.svelte"
+  import Prompt from "./Prompt.svelte"
+  import PromptMatrix from "./PromptMatrix.svelte"
+  import RunItem from "./RunItem.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""

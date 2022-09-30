@@ -31,7 +31,7 @@
       {/each}
     </div>
   {:else}
-    <p class="text-xs text-center text-gray-500">No runs yet</p>
+    <p class="text-xs text-center text-neutral-500">No runs yet</p>
   {/if}
 </aside>
 

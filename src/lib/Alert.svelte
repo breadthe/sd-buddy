@@ -14,7 +14,7 @@
     info: "bg-blue-100 dark:bg-blue-800",
     success: "bg-green-100 dark:bg-green-800",
     warning: "bg-yellow-100 dark:bg-yellow-800",
-    neutral: "bg-gray-100 dark:bg-gray-800", // default
+    neutral: "bg-neutral-100 dark:bg-neutral-800", // default
   }
 
   export let copy = false // allow copying of text
@@ -48,7 +48,7 @@
     <div
       class="absolute top-0 left-0 w-full h-full flex items-center justify-center"
     >
-      <div class="bg-white dark:bg-gray-800 p-2 text-xs text-gray-600">
+      <div class="bg-white dark:bg-neutral-800 p-2 text-xs text-neutral-600">
         copied!
       </div>
     </div>
