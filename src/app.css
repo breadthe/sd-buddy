@@ -47,6 +47,7 @@ button {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
+    color: theme("colors.white");
     background-color: theme("colors.blue.500");
     cursor: pointer;
     transition: border-color 0.25s;
@@ -54,6 +55,8 @@ button {
 
 button:hover {
     border-color: theme("colors.blue.600");
+    background-color: theme("colors.blue.600");
+    color: theme("colors.white");
 }
 
 button:focus,
@@ -94,36 +97,10 @@ button.transparent:hover {
     border-color: theme("colors.transparent");
 }
 
-html.dark body {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: theme("colors.neutral.800");
+html body {
+    color: theme("colors.black");
+    background-color: theme("colors.white");
 }
-
-html.dark button.transparent:hover {
-    color: rgba(255, 255, 255, 0.87);
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: theme("colors.black");
-        background-color: theme("colors.white");
-    }
-
-    a:not(.hello-*):hover {
-        color: #747bff;
-    }
-
-    button {
-        background-color: theme("colors.blue.500");
-        color: theme("colors.white");
-    }
-
-    button:hover {
-        background-color: theme("colors.blue.600");
-        color: theme("colors.white");
-    }
-}
-
 
 /* Forms */
 
@@ -144,4 +121,15 @@ select {
 [type="radio"] {
     height: theme("height.4");
     width: theme("width.4");
+}
+
+/* Dark mode */
+
+html.dark body {
+    color: rgba(255, 255, 255, 0.87);
+    background-color: theme("colors.neutral.800");
+}
+
+html.dark button.transparent:hover {
+    color: rgba(255, 255, 255, 0.87);
 }
