@@ -26,8 +26,8 @@
     "vite": "^3.0.0"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.2",
-    "@tauri-apps/cli": "^1.0.5",
+    "@tauri-apps/api": "^1.1.0",
+    "@tauri-apps/cli": "^1.1.1",
     "tauri-settings": "^0.1.2",
     "tippy.js": "^6.3.7",
     "uuid": "^8.3.2"
