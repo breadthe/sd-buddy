@@ -6,11 +6,10 @@
   //   const { activeSection } = system
 
   // component imports
+  import Runs from "./lib/Runs.svelte"
 </script>
 
-<div class="flex flex-col gap-8">
-    coming soon...
-</div>
+<Runs template="gallery" />
 
 <style>
 </style>

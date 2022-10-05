@@ -3,6 +3,8 @@
   import { convertFileSrc } from "@tauri-apps/api/tauri"
   import { open } from "@tauri-apps/api/shell"
   import { createEventDispatcher, onMount, beforeUpdate } from "svelte"
+  import { tooltip } from "../tooltip"
+  import { isDark } from "../utils"
 
   // type imports
   import type { Run } from "../types"
@@ -12,6 +14,7 @@
   const { reusePrompt, stableDiffusionDirectory } = generate
 
   export let run: Run
+  export let template: string = "txt2img" // txt2img | gallery
   export let imageOnly: boolean = false // display only the image
 
   const dispatch = createEventDispatcher()
@@ -46,27 +49,28 @@
 </script>
 
 <div
-  class={`relative ${
-    imageOnly
-      ? "w-full max-h-[512px] overflow-auto"
-      : "max-w-[196px] border border-blue-500/50"
-  } flex flex-col divide-y divide-blue-600/50 hover:border-blue-500 rounded`}
+  class={`relative
+  ${imageOnly ? "w-full max-h-[512px] overflow-auto" : "max-w-[196px]"}
+  ${template === "txt2img" ? "border border-blue-500/50 rounded" : ""}
+  flex flex-col divide-y divide-blue-600/50 hover:border-blue-500`}
 >
   {#if !isDeleting}
     {#if run.image_name && imgSrc}
-      <img
-        src={imgSrc}
-        alt={run.image_name}
-        class="cursor-pointer"
-        on:click|preventDefault={() => openImage(run.image_name)}
-      />
-    {:else}
+      <div class="relative" use:tooltip={{ theme: (isDark() ? "dark-border" : "light-border"), disabled: template === "gallery" ? false : true }} title={run.prompt}>
+        <img
+          src={imgSrc}
+          alt={run.image_name}
+          class="cursor-pointer"
+          on:click|preventDefault={() => openImage(run.image_name)}
+        />
+      </div>
+    {:else if template !== "gallery"}
       <div class="w-full text-center text-red-600" class:text-xs={!imageOnly}>
         image error
       </div>
     {/if}
 
-    {#if !imageOnly}
+    {#if !imageOnly && template !== "gallery"}
       <dl
         class="p-2 text-xs hover:bg-blue-100 hover:dark:bg-blue-800 cursor-pointer"
         title="Click to re-use this prompt & parameters"

@@ -24,6 +24,10 @@ export function setIsDark(dark: boolean) {
     dark ? htmlNode?.classList.add("dark") : htmlNode?.classList.remove("dark")
 }
 
+export function isDark() {
+    return document.querySelector("html")?.classList.contains("dark") || window.matchMedia("(prefers-color-scheme: dark)").matches
+}
+
 export function setTheme(theme: string) {
     if (theme === "light") {
         return setIsDark(false)

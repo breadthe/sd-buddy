@@ -9,6 +9,8 @@
   // component imports
   import RunItem from "./RunItem.svelte"
 
+  export let template: string = "txt2img" // txt2img | gallery
+
   $: sortedRuns = $runs.sort(
     (a: { ended_at: Date }, b: { ended_at: Date }) =>
       Date.parse(b.ended_at) - Date.parse(a.ended_at)
@@ -22,16 +24,18 @@
 
 <aside class="flex flex-col gap-2 w-full">
   <h2 class="font-bold">
-    Runs <small class="text-xs font-normal">({$runs.length})</small>
+    {template === "txt2img" ? "Runs" : "Gallery"}
+    <small class="text-xs font-normal">({$runs.length})</small>
   </h2>
+
   {#if $runs.length}
     <div class="flex flex-wrap gap-2">
       {#each sortedRuns as run (run.id)}
-        <RunItem {run} on:deleteRun={(e) => deleteRun(e)} />
+        <RunItem {run} {template} on:deleteRun={(e) => deleteRun(e)} />
       {/each}
     </div>
   {:else}
-    <p class="text-xs text-center text-neutral-500">No runs yet</p>
+    <p class="text-xs text-center text-neutral-500">No {template === "txt2img" ? "runs" : "gallery"} yet</p>
   {/if}
 </aside>
 
