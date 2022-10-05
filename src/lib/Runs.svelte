@@ -24,7 +24,7 @@
 
 <aside class="flex flex-col gap-2 w-full">
   <h2 class="font-bold">
-    {template === "txt2img" ? "Runs" : "Gallery"}
+    {template === "txt2img" ? "Runs" : "Images"}
     <small class="text-xs font-normal">({$runs.length})</small>
   </h2>
 
@@ -35,7 +35,7 @@
       {/each}
     </div>
   {:else}
-    <p class="text-xs text-center text-neutral-500">No {template === "txt2img" ? "runs" : "gallery"} yet</p>
+    <p class="text-xs text-center text-neutral-500">No {template === "txt2img" ? "runs" : "images"} yet</p>
   {/if}
 </aside>
 
