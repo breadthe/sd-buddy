@@ -27,7 +27,7 @@
   ]
 </script>
 
-<nav class="sticky top-0 pb-2 w-full bg-white dark:bg-neutral-800">
+<nav class="sticky top-0 z-10 pb-2 w-full bg-white dark:bg-neutral-800">
   <ol class="flex gap-4">
     {#each menu as item (item.name)}
       <li
