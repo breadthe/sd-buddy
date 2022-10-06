@@ -23,10 +23,12 @@ a {
     text-decoration: inherit;
 }
 
-body {
+html body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
+    color: theme("colors.black");
+    background-color: theme("colors.white");
 }
 
 h1 {
@@ -39,6 +41,8 @@ h1 {
     margin: 0 auto;
     padding: 2rem;
 }
+
+/* Buttons */
 
 button {
     border-radius: 8px;
@@ -97,9 +101,27 @@ button.transparent:hover {
     border-color: theme("colors.transparent");
 }
 
-html body {
-    color: theme("colors.black");
-    background-color: theme("colors.white");
+/* .control-btn is used in the Runs controls section */
+button.control-btn {
+    color: theme("colors.gray.800");
+    background-color: transparent;
+    border: none;
+    border-radius: theme("borderRadius.DEFAULT");
+    padding: theme("padding.1") theme("padding.2");
+    font-weight: theme("fontWeight.bold");
+}
+
+button.control-btn.active,
+html.dark button.control-btn.active {
+    color: theme("colors.blue.500");
+}
+
+button.control-btn:hover {
+    color: theme("colors.blue.500") !important;
+}
+
+html.dark .control-btn {
+    color: theme("colors.gray.500");
 }
 
 /* Forms */

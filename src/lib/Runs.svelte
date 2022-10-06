@@ -7,6 +7,7 @@
   const { runs, sortedRuns } = generate
 
   // component imports
+  import RunControls from "./RunControls.svelte"
   import RunItem from "./RunItem.svelte"
 
   export let template: string = "txt2img" // txt2img | gallery
@@ -18,10 +19,14 @@
 </script>
 
 <aside class="flex flex-col gap-2 w-full">
-  <h2 class="font-bold">
-    {template === "txt2img" ? "Runs" : "Images"}
-    <small class="text-xs font-normal">({$runs.length})</small>
-  </h2>
+  <div class="flex items-center justify-between gap-4">
+    <h2 class="font-bold">
+      {template === "txt2img" ? "Runs" : "Images"}
+      <small class="text-xs font-normal">({$runs.length})</small>
+    </h2>
+
+    <RunControls />
+  </div>
 
   {#if $runs.length}
     <div class="flex flex-wrap gap-2">

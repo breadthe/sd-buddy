@@ -7,6 +7,17 @@ export const prompt = writable("")
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
 export const reusePrompt = writable(<Run>{});
 
+// Filter runs by a prompt string (partial or full)
+export const runFilter = writable("")
+
+// Sort runs by run_at date
+const storedRunSortOrder = localStorage.getItem("runSortOrder") || "asc"
+export const runSortOrder = writable(storedRunSortOrder ? storedRunSortOrder : "asc")
+runSortOrder.subscribe((value: string) => {
+    localStorage.setItem("runSortOrder", value);
+})
+
+
 // Store runs to localStorage for now
 function createStableDiffusionDirectory() {
     let storedStableDiffusionDirectory =

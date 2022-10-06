@@ -16,3 +16,43 @@ export const theme = writable(storedTheme ? storedTheme : "light")
 theme.subscribe((value: string) => {
     localStorage.setItem("theme", value);
 })
+
+// Thumbnail size
+const defaultThumbnailSize: number = 196
+const maxThumbnailSize: number = 512
+const stepSize: number = (maxThumbnailSize - defaultThumbnailSize) / 4
+function createThumbnailSizeStore() {
+    let storedThumbnailSize: number = JSON.parse(localStorage.getItem("thumbnailSize")) || defaultThumbnailSize;
+    const { subscribe, set } = writable(storedThumbnailSize);
+
+    return {
+        subscribe,
+        set: (value: number) => {
+            localStorage.setItem("thumbnailSize", JSON.stringify(value))
+        },
+        increase: () => {
+            let newThumbnailSize: number = storedThumbnailSize
+
+            // increment value by step size
+            newThumbnailSize += stepSize
+            if (newThumbnailSize > maxThumbnailSize) newThumbnailSize = maxThumbnailSize
+
+            storedThumbnailSize = newThumbnailSize;
+            localStorage.setItem("thumbnailSize", JSON.stringify(storedThumbnailSize))
+            set(storedThumbnailSize)
+        },
+        decrease: () => {
+            let newThumbnailSize: number = storedThumbnailSize
+
+            // decrement value by step size
+            newThumbnailSize -= stepSize
+            if (newThumbnailSize < defaultThumbnailSize) newThumbnailSize = defaultThumbnailSize
+
+            storedThumbnailSize = newThumbnailSize;
+            localStorage.setItem("thumbnailSize", JSON.stringify(storedThumbnailSize))
+            set(storedThumbnailSize)
+        },
+    };
+}
+
+export const thumbnailSize = createThumbnailSizeStore()

@@ -10,8 +10,9 @@
   import type { Run } from "../types"
 
   // store imports
-  import { generate } from "../store"
+  import { generate, system } from "../store"
   const { reusePrompt, stableDiffusionDirectory } = generate
+  const { thumbnailSize } = system
 
   export let run: Run
   export let template: string = "txt2img" // txt2img | gallery
@@ -50,9 +51,10 @@
 
 <div
   class={`relative
-  ${imageOnly ? "w-full max-h-[512px] overflow-auto" : "max-w-[196px]"}
+  ${imageOnly ? "w-full max-h-[512px] overflow-auto" : ""}
   ${template === "txt2img" ? "border border-blue-500/50 rounded" : ""}
   flex flex-col divide-y divide-blue-600/50 hover:border-blue-500`}
+  style={ imageOnly ? "" : `max-width: ${$thumbnailSize}px;` }
 >
   {#if !isDeleting}
     {#if run.image_name && imgSrc}
