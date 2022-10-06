@@ -63,41 +63,21 @@ function createRunsStore() {
 }
 export const runs = createRunsStore();
 
-/* type directory = {
-    stableDiffusionDirectory: string;
-};
-const getStableDiffusionDirectory = async () => {
-    let sdDir = "";
+// derived store for runs filtered by runFilter
+export const filteredRuns = derived([runs, runFilter], ([$runs, $runFilter]) => {
+        if ($runFilter === "") return $runs
 
-    await get<directory>("stableDiffusionDirectory")
-        .then((sdDirectory: string) => sdDir = sdDirectory)
-        .catch((err) => {
-            // do nothing, the user will have to set the directory
-        });
+        return $runs.filter((run: Run) => run.prompt.toLowerCase().includes($runFilter.toLowerCase()))
+    }
+);
 
-    return sdDir;
-}
-const setStableDiffusionDirectory = async (sdDirectory: string) => {
-    await set<directory>("stableDiffusionDirectory", sdDirectory)
-        .then(() => {
-            // update the store
-            stableDiffusionDirectory.set(sdDirectory);
-            console.log(`Stable Diffusion directory saved: ${sdDirectory}`)
-        })
-        .catch((err) => console.log(err));
-}
-async function stableDiffusionDirectoryStore() {
-    let storedStableDiffusionDirectory = await getStableDiffusionDirectory();
-    const { subscribe, set } = writable(storedStableDiffusionDirectory);
-
-    return {
-        subscribe,
-        set,
-        register: (sdDirectory: string) => setStableDiffusionDirectory(sdDirectory),
-    };
-}
-export const stableDiffusionDirectory = await stableDiffusionDirectoryStore(); */
-
+// derived store for filteredRuns sorted by ended_at date
+export const sortedRuns = derived([filteredRuns, runSortOrder], ([$filteredRuns, $runSortOrder]) => {
+    return $filteredRuns.sort(
+        (a: Run, b: Run) =>
+            $runSortOrder === "asc" ? Date.parse(b.ended_at) - Date.parse(a.ended_at) : Date.parse(a.ended_at) - Date.parse(b.ended_at)
+      )
+});
 
 // derive extractedVars from prompt, Example ["$age", "$gender"]
 export const extractedVars = derived(prompt, $prompt => extractVars($prompt))
