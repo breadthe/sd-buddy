@@ -23,6 +23,10 @@
     <h2 class="font-bold">
       {template === "txt2img" ? "Runs" : "Images"}
       <small class="text-xs font-normal">({$runs.length})</small>
+
+      {#if $sortedRuns.length && $sortedRuns !== $runs}
+        <small class="text-xs font-normal">{$sortedRuns.length} filtered</small>
+      {/if}
     </h2>
 
     <RunControls />
@@ -30,9 +34,13 @@
 
   {#if $runs.length}
     <div class="flex flex-wrap gap-2">
-      {#each $sortedRuns as run (run.id)}
-        <RunItem {run} {template} on:deleteRun={(e) => deleteRun(e)} />
-      {/each}
+      {#if $sortedRuns.length}
+        {#each $sortedRuns as run (run.id)}
+          <RunItem {run} {template} on:deleteRun={(e) => deleteRun(e)} />
+        {/each}
+      {:else}
+        <p class="text-sm text-gray-500">No image prompts match your filter.</p>
+      {/if}
     </div>
   {:else}
     <p class="text-xs text-center text-neutral-500">
