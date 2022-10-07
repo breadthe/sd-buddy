@@ -52,7 +52,7 @@
 <div
   class={`relative
   ${imageOnly ? "w-full max-h-[512px] overflow-auto" : ""}
-  ${template === "txt2img" ? "border border-blue-500/50 rounded" : ""}
+  ${template === "txt2img" && !imageOnly ? "border border-blue-500/50 rounded" : ""}
   flex flex-col divide-y divide-blue-600/50 hover:border-blue-500`}
   style={ imageOnly ? "" : `max-width: ${$thumbnailSize}px;` }
 >
