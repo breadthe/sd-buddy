@@ -133,6 +133,25 @@ In addition, I need to sort out various small details around developing with Tau
 
 3. Setting _Samples_ to anything other than 1 crashes the Python script with this message `failed assertion [MPSTemporaryNDArray initWithDevice:descriptor:] Error: product of dimension sizes > 2**31' /opt/homebrew/Cellar/python@3.10/3.10.6_2/Frameworks/Python.framework/Versions/3.10/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown`.
 
+## Troubleshooting
+
+### Image generation fails when disconnected from the internet
+
+While SD Buddy is completely offline and doesn't need the internet to function, it appears that the Stable Diffusion installation does in fact need an internet connection. I first ran into this problem while on plane in airplane mode. I haven't researched why that's the case. You can verify by putting your computer in airplane mode (or disconnecting from the internet) and running the Python script manually.
+
+### ModuleNotFoundError: no module named "ldm"
+
+If you receive this error when running `img2img` follow [these instructions](https://github.com/CompVis/stable-diffusion/issues/160).
+
+In `/path/to/stable-diffusion/scripts/img2img.py` add this line above the `ldm` imports:
+
+```python
+sys.path.append(os.path.join(os.path.dirname(__file__), "..")) # add this line
+from ldm.util import instantiate_from_config
+from ldm.models.diffusion.ddim import DDIMSampler
+from ldm.models.diffusion.plms import PLMSSampler
+```
+
 ## Security FAQ
 
 - **How secure is the app?** It is strictly a local app that doesn't communicate with the network. Tauri disables all system APIs by default. I've enabled the minimum necessary system APIs to allow it to function.
