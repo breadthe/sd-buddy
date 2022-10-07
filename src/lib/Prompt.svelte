@@ -23,4 +23,4 @@
   }
 </script>
 
-<textarea rows="5" cols="50" {placeholder} bind:value={$prompt} />
+<textarea rows="5" cols="50" {placeholder} bind:value={$prompt} autocomplete="off" autocorrect="off" />
