@@ -277,7 +277,6 @@
 
     await invoke("get_latest_image", {
       dirPath: stableDiffusionOutputDirectory,
-      elapsed: seconds.toString(),
     })
       .then((res) => {
         latest_image = JSON.stringify(res)

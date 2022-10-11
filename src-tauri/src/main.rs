@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::{path::Path, process::{Command, Stdio}};
+use std::{env, fs, fs::Metadata, path::Path, process::{Command, Stdio}, time::SystemTime};
 use tauri::{Manager, Menu, MenuItem, Submenu};
 
 fn main() {
@@ -65,7 +65,9 @@ fn main() {
 async fn stable_diffusion_command(directory: String, command: String) -> String {
     let stable_diffusion_directory = directory; // "/Users/zagreus/code/ml/stable-diffusion"
     let shell_command: String;
+    let operating_system: String = env::consts::OS.to_string();
 
+    println!("Operating System: {}", operating_system);
     println!("Stable Diffusion directory: {}", stable_diffusion_directory);
     println!("Command: {}", command);
 
@@ -75,7 +77,11 @@ async fn stable_diffusion_command(directory: String, command: String) -> String 
     } else if Path::new(&stable_diffusion_directory).join(".direnv").exists() {
         shell_command = format!("direnv exec {} {}", stable_diffusion_directory, command);
     } else {
-        shell_command = command;
+        if operating_system == "windows" {
+            shell_command = format!("cmd /C {}", command);
+        } else {
+            shell_command = format!("sh -c {}", command);
+        }
     }
 
     // execute the Stable Diffusion command
@@ -105,8 +111,45 @@ async fn close_splashscreen(window: tauri::Window) {
 }
 
 #[tauri::command]
-async fn get_latest_image(dir_path: String, elapsed: String) -> String {
-    latest_image(dir_path, elapsed)
+async fn get_latest_image(dir_path: String) -> String {
+    // latest_image_old(dir_path, elapsed)
+    latest_image(dir_path)
+}
+
+// Get the latest image created in the output directory
+fn latest_image(dir_path: String) -> String {
+    let mut files: Vec<(String, SystemTime)> = Vec::new();
+    let mut file_name: String;
+    let mut metadata: Metadata;
+
+    for entry in fs::read_dir(dir_path).unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
+
+        metadata = fs::metadata(&path).unwrap();
+
+        // get the modified date
+        let _modified = metadata.modified().unwrap();
+
+        // get the created date
+        let created = metadata.created().unwrap();
+
+        let _file_type = metadata.file_type();
+
+        let file_extension = path.extension().unwrap_or_default().to_str().unwrap_or_default().to_string();
+
+        file_name = path.file_name().unwrap_or_default().to_str().unwrap().to_string();
+
+        if file_extension == "png" {
+            files.push((file_name, created));
+        }
+    }
+
+    // sort the files by the modified date
+    files.sort_by(|a, b| a.1.cmp(&b.1));
+
+    // return the most recent file
+    files.last().unwrap().0.to_string()
 }
 
 // Runs the find command to get the latest image:
@@ -114,7 +157,8 @@ async fn get_latest_image(dir_path: String, elapsed: String) -> String {
 // "find all files in the current directory, depth of 1 (no subfolders), created in the last  2130s, sort by time created, and return the first one"
 // Output: grid-0034.png
 // @see https://rust-lang-nursery.github.io/rust-cookbook/os/external.html#run-piped-external-commands
-fn latest_image(dir_path: String, elapsed: String) -> String {
+// @deprecated
+fn _latest_image_old(dir_path: String, elapsed: String) -> String {
     let mut output: String = "".to_string();
 
     let find_args: [&str; 9] = [
