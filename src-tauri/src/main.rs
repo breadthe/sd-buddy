@@ -148,8 +148,13 @@ fn latest_image(dir_path: String) -> String {
     // sort the files by the modified date
     files.sort_by(|a, b| a.1.cmp(&b.1));
 
-    // return the most recent file
-    files.last().unwrap().0.to_string()
+    // return the most recent image
+    let mut latest_image: String = "".to_string(); // "" by default
+    if files.len() > 0 {
+        latest_image = files.last().unwrap().0.to_string();
+    }
+
+    latest_image
 }
 
 // Runs the find command to get the latest image:
