@@ -5,8 +5,7 @@
   import { open } from "@tauri-apps/api/shell"
 
   // store imports
-  import { generate } from "../store"
-  const { stableDiffusionDirectory } = generate
+  import { stableDiffusionDirectory } from "../store"
 
   let stableDiffusionDirectoryInput: HTMLInputElement
 

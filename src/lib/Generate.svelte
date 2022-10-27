@@ -8,8 +8,7 @@
   import type { Run } from "../types"
 
   // store imports
-  import { generate } from "../store"
-  const {
+  import {
     prompt,
     customVars,
     extractedVars,
@@ -18,7 +17,7 @@
     reusePrompt,
     stableDiffusionDirectory,
     allCustomVarsAreFilled,
-  } = generate
+  } from "../store"
 
   // component imports
   import Alert from "./Alert.svelte"

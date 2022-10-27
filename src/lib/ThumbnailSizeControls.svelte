@@ -4,8 +4,7 @@
   import { isDark } from "../utils"
 
   // store imports
-  import { system } from "../store"
-  const { thumbnailSize } = system
+  import { thumbnailSize } from "../store"
 </script>
 
 <div class="isolate inline-flex border border-gray-500 rounded">

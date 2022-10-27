@@ -3,8 +3,7 @@
   import type { Run } from "../types"
 
   // store imports
-  import { generate } from "../store"
-  const { runs, sortedRuns } = generate
+  import { runs, sortedRuns } from "../store"
 
   // component imports
   import RunControls from "./RunControls.svelte"

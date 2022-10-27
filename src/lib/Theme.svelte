@@ -3,8 +3,7 @@
   import { setTheme, setIsDark } from "../utils"
 
   // store imports
-  import { system } from "../store"
-  const { theme } = system
+  import { theme } from "../store"
 
   function handleTheme(_element: HTMLTemplateElement) {
     const initialTheme = $theme

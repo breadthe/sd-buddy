@@ -3,8 +3,7 @@
   import { setTheme } from "./utils"
 
   // store imports
-  import { system } from "./store"
-  const { theme } = system
+  import { theme } from "./store"
 
   let selectedTheme = $theme
 

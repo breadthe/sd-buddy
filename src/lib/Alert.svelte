@@ -6,8 +6,7 @@
   import { AlertTypes } from "../types"
 
   // store imports
-  import { system } from "../store"
-  const { copying } = system
+  import { copying } from "../store"
 
   const colors = {
     error: "bg-red-100 dark:bg-red-800",

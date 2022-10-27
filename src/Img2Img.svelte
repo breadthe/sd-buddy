@@ -2,8 +2,7 @@
   // system/lib/util imports
 
   // store imports
-  //   import { system } from "./store"
-  //   const { activeSection } = system
+  //   import { activeSection } from "./store"
 
   // component imports
 </script>

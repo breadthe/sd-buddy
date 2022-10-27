@@ -1,7 +1,6 @@
 <script lang="ts">
   // store imports
-  import { generate } from "../store"
-  const { runFilter } = generate
+  import { runFilter } from "../store"
 </script>
 
 <input

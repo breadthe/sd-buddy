@@ -1,7 +1,7 @@
 <script type="ts">
   // store imports
   import type { CustomVar } from "../types"
-  import { customVars } from "../store/generate"
+  import { customVars } from "../store"
 
   export let name = ""
 

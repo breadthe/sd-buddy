@@ -1,7 +1,6 @@
 <script lang="ts">
   // store imports
-  import { system } from "../store"
-  const { activeSection } = system
+  import { activeSection } from "../store"
 
   const menu = [
     {

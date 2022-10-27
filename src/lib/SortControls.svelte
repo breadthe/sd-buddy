@@ -4,8 +4,7 @@
   import { isDark } from "../utils"
 
   // store imports
-  import { generate } from "../store"
-  const { runSortOrder } = generate
+  import { runSortOrder } from "../store"
 </script>
 
 <div class="isolate inline-flex border border-gray-500 rounded">

@@ -10,9 +10,7 @@
   import type { Run } from "../types"
 
   // store imports
-  import { generate, system } from "../store"
-  const { reusePrompt, stableDiffusionDirectory } = generate
-  const { thumbnailSize } = system
+  import { reusePrompt, stableDiffusionDirectory, thumbnailSize } from "../store"
 
   export let run: Run
   export let template: string = "txt2img" // txt2img | gallery

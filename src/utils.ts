@@ -1,5 +1,4 @@
-import { system } from "./store"
-const { copying } = system
+import { copying } from "./store"
 
 export async function copyToClipboard(text: string) {
     if (!navigator.clipboard) return

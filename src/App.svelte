@@ -4,8 +4,7 @@
   import { onMount } from "svelte"
 
   // store imports
-  import { system } from "./store"
-  const { activeSection } = system
+  import { activeSection } from "./store"
 
   // section imports
   import Gallery from "./Gallery.svelte"
