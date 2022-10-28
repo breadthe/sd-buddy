@@ -4,15 +4,30 @@
 )]
 
 use std::{env, fs, fs::Metadata, path::Path, process::{Command, Stdio}, time::SystemTime};
-use tauri::{Manager, Menu, MenuItem, Submenu};
+use tauri::{AboutMetadata, Manager, Menu, MenuItem, Submenu};
 
 fn main() {
-    // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
+    const APP_NAME: &str = env!("CARGO_PKG_NAME");
+    const VERSION: &str = env!("CARGO_PKG_VERSION");
+    const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
+    const LICENSE: &str = env!("CARGO_PKG_LICENSE");
+    const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
+
+    let about_metadata = AboutMetadata::new()
+        .version(VERSION)
+        .authors(vec![AUTHORS.to_string()])
+        .website(REPOSITORY)
+        .license(LICENSE);
 
     let about_menu = Submenu::new(
         "App",
         Menu::new()
-            .add_native_item(MenuItem::Hide)
+        .add_native_item(MenuItem::About(
+            APP_NAME.to_string(),
+            about_metadata,
+        ))
+        .add_native_item(MenuItem::Separator)
+        .add_native_item(MenuItem::Hide)
             .add_native_item(MenuItem::HideOthers)
             .add_native_item(MenuItem::ShowAll)
             .add_native_item(MenuItem::Separator)

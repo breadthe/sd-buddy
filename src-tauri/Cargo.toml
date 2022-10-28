@@ -1,11 +1,11 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "sd-buddy"
+version = "0.10.0"
+description = "UI for Stable Diffusion on M1 Mac"
+authors = ["breadthe"]
 license = ""
-repository = ""
-default-run = "app"
+repository = "https://github.com/breadthe/sd-buddy"
+default-run = "sd-buddy"
 edition = "2021"
 rust-version = "1.57"
 
