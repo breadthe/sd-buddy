@@ -4,6 +4,7 @@
 )]
 
 use std::{env, path::Path};
+use serde_json::json;
 use tauri::{AboutMetadata, Manager, Menu, MenuItem, Submenu};
 mod funcs;
 
@@ -69,6 +70,7 @@ fn main() {
         // This is where you pass in your commands
         .invoke_handler(tauri::generate_handler![
             close_splashscreen,
+            detect_python,
             stable_diffusion_command,
             get_latest_image,
         ])
@@ -86,6 +88,29 @@ async fn close_splashscreen(window: tauri::Window) {
     }
     // Show main window
     window.get_window("main").unwrap().show().unwrap();
+}
+
+#[tauri::command]
+fn detect_python() -> String {
+    let python_binary_and_version: String = funcs::get_python_binary_and_version();
+    if python_binary_and_version == "NOT_FOUND" {
+        python_binary_and_version
+    } else {
+        let python_binary_and_version: Vec<&str> = python_binary_and_version.split("--").collect();
+        let python_binary: &str = python_binary_and_version[0];
+        let python_version: &str = python_binary_and_version[1];
+        println!("🐍 Python binary: {}", python_binary);
+        println!("🐍 Python version: {}", python_version);
+        let python_path: String = funcs::get_python_path(python_binary.to_string());
+        println!("🐍 Python path: {}", python_path);
+
+        // return a json object with all the python info
+        json!({
+            "binary": python_binary,
+            "version": python_version,
+            "path": python_path,
+        }).to_string()
+    }
 }
 
 #[tauri::command]

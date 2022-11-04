@@ -1,5 +1,95 @@
 use std::{fs, fs::Metadata, process::{Command, Stdio}, time::SystemTime};
 
+use anyhow::anyhow;
+use anyhow::Result;
+
+// Returns a concatenated string representing the python binary and version "python3--Python 3.10.8", or "NOT_FOUND"
+pub fn get_python_binary_and_version() -> String {
+    let python_binary_and_version: String = "NOT_FOUND".to_string();
+
+    // first check if "python" exists by running "python --version"
+    let check_python = || -> Result<String> {
+        let python_version_output = Command::new("python")
+            .arg("--version")
+            .output();
+
+        let python_binary_and_version_output = match python_version_output {
+            Ok(output) => {
+                let python_version = String::from_utf8(output.stdout)
+                    .expect("failed to convert python version output to string");
+                let python_version = python_version.replace("\n", "");
+                Ok("python--".to_string() + &python_version)
+            },
+            Err(e) => Err(e)
+        };
+
+        if python_binary_and_version_output.is_ok() {
+            return Ok(python_binary_and_version_output.unwrap());
+        } else {
+            return Err(anyhow!("PYTHON_NOT_FOUND"));
+        }
+    };
+
+    // then check if "python3" exists by running "python3 --version"
+    let check_python3 = || -> Result<String> {
+        let python_version_output = Command::new("python3")
+            .arg("--version")
+            .output();
+
+        let python_binary_and_version_output = match python_version_output {
+            Ok(output) => {
+                let python_version = String::from_utf8(output.stdout)
+                    .expect("failed to convert python3 version output to string");
+                let python_version = python_version.replace("\n", "");
+                Ok("python3--".to_string() + &python_version)
+            },
+            Err(e) => Err(e)
+        };
+
+        if python_binary_and_version_output.is_ok() {
+            return Ok(python_binary_and_version_output.unwrap());
+        } else {
+            return Err(anyhow!("PYTHON3_NOT_FOUND"));
+        }
+    };
+
+    if let Ok(python_version) = check_python() {
+        return python_version;
+    } else if let Ok(python_version) = check_python3() {
+        return python_version;
+    }
+
+    python_binary_and_version
+}
+
+pub fn get_python_path(python_binary: String) -> String {
+    let mut python_path: String;
+    let mut command: String = "".to_string();
+
+    // check if MacOS
+    if cfg!(target_os = "macos") ||  cfg!(target_os = "linux") {
+        // get the python path on Mac
+        command = "which".to_string();
+    } else if cfg!(target_os = "windows") {
+        // get the python path on Windows
+        command = "where".to_string();
+    }
+
+    let python_path_output = Command::new(&command)
+        .arg(&python_binary)
+        .output()
+        .expect(&format!("Failed to execute `{} {}` command", &command, &python_binary));
+
+    // convert the output to a string
+    python_path = String::from_utf8(python_path_output.stdout)
+        .expect(&format!("failed to convert `{} {}` output to string", &command, &python_binary));
+
+    // remove the newline from the end of the string
+    python_path = python_path.replace("\n", "");
+
+    python_path
+}
+
 // Get the latest image created in the output directory
 pub fn latest_image(dir_path: String) -> String {
     let mut files: Vec<(String, SystemTime)> = Vec::new();
