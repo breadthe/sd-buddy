@@ -68,13 +68,24 @@ fn main() {
     tauri::Builder::default()
         // This is where you pass in your commands
         .invoke_handler(tauri::generate_handler![
+            close_splashscreen,
             stable_diffusion_command,
             get_latest_image,
-            close_splashscreen
         ])
         .menu(menu)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+// This command must be async so that it doesn't run on the main thread.
+#[tauri::command]
+async fn close_splashscreen(window: tauri::Window) {
+    // Close splashscreen
+    if let Some(splashscreen) = window.get_window("splashscreen") {
+        splashscreen.close().unwrap();
+    }
+    // Show main window
+    window.get_window("main").unwrap().show().unwrap();
 }
 
 #[tauri::command]
@@ -113,17 +124,6 @@ async fn stable_diffusion_command(directory: String, command: String) -> String 
         .expect("failed to convert Stable Diffusion output to string");
 
     output
-}
-
-// This command must be async so that it doesn't run on the main thread.
-#[tauri::command]
-async fn close_splashscreen(window: tauri::Window) {
-    // Close splashscreen
-    if let Some(splashscreen) = window.get_window("splashscreen") {
-        splashscreen.close().unwrap();
-    }
-    // Show main window
-    window.get_window("main").unwrap().show().unwrap();
 }
 
 #[tauri::command]
