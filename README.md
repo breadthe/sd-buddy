@@ -152,6 +152,14 @@ from ldm.models.diffusion.ddim import DDIMSampler
 from ldm.models.diffusion.plms import PLMSSampler
 ```
 
+### UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+
+Enforce a small number of samples (`--n_iter`, `--n_samples`), ideally 1. Example:
+
+```shell
+python3 scripts/img2img.py --prompt "A fantasy landscape, trending on artstation" --init-img sketch-mountains-input.jpg --strength 0.8 --n_iter 1 --n_samples 1
+```
+
 ## Security FAQ
 
 - **How secure is the app?** It is strictly a local app that doesn't communicate with the network. Tauri disables all system APIs by default. I've enabled the minimum necessary system APIs to allow it to function.
