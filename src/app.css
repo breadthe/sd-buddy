@@ -45,16 +45,21 @@ h1 {
 /* Buttons */
 
 button {
-    border-radius: 8px;
+    border-radius: theme("borderRadius.xl");
     border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
+    padding: theme("spacing.2") theme("spacing.4");
+    font-size: theme("fontSize.base");
+    font-weight: theme("fontWeight.bold");
     font-family: inherit;
     color: theme("colors.white");
     background-color: theme("colors.blue.500");
     cursor: pointer;
     transition: border-color 0.25s;
+}
+
+button.btn-small {
+    padding: theme("spacing.1") theme("spacing.2");
+    font-size: theme("fontSize.sm");
 }
 
 button:hover {
