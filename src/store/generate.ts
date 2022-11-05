@@ -4,11 +4,9 @@ import type { CustomVar, Run } from "../types";
 export const prompt = writable<string>("")
 
 // Flag that indicates there's a run in progress
-// @todo see if this can be replaced by currentRun
 export const isGenerating = writable<boolean>(false)
 
 // The current run in progress
-// @todo see if this can replace by isGenerating
 export const currentRun = writable<Run | null>(null)
 
 // Elapsed time for the current run
