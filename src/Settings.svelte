@@ -1,6 +1,8 @@
 <script lang="ts">
   // system/lib/util imports
   import { invoke } from "@tauri-apps/api/tauri"
+  import { open as openDialog } from "@tauri-apps/api/dialog"
+  import { appDir } from "@tauri-apps/api/path"
   import { setTheme } from "./utils"
 
   // store imports
@@ -39,6 +41,24 @@
       .finally(() => {})
   }
 
+  async function openDirectorySelectionDialog() {
+    // Open a selection dialog for directories
+    const selected = await openDialog({
+      directory: true,
+      multiple: false,
+      defaultPath: await appDir(),
+    })
+    if (Array.isArray(selected)) {
+      // user selected multiple directories
+    } else if (selected === null) {
+      // user cancelled the selection
+    } else {
+      // user selected a single directory
+      python.path = selected
+      pythonMessage = `<strong>${python.path}</strong>`
+    }
+  }
+
   function registerPythonPath() {
     $pythonPath = python.path
     python = {
@@ -60,25 +80,28 @@
   <div class="flex gap-8 py-8 w-full">
     <div class="w-1/4">
       <h2 class="font-bold text-right">Python</h2>
-      <p class="text-xs text-right">Stable Diffusion requires Python to be installed. Here you can auto-detect the path of the Python binary or you can search for it yourself.</p>
+      <p class="text-xs text-right">
+        Stable Diffusion requires Python to be installed. Here you can auto-detect the path of the Python binary or you
+        can search for it yourself.
+      </p>
     </div>
     <div class="flex flex-col gap-2 w-3/4">
       {#if $pythonPath}
         <div class="">{$pythonPath}</div>
       {/if}
 
-      <button class="btn-small w-32" on:click={detectPython}
-        >Detect Python</button
-      >
+      <div class="flex gap-4">
+        <button class="btn-small w-32" on:click={detectPython}>Detect Python</button>
+
+        <button class="btn-small w-48" on:click={openDirectorySelectionDialog}>Locate Python manually</button>
+      </div>
 
       {#if pythonMessage}
         <div class="flex items-center gap-4">
           <span>{@html pythonMessage}</span>
 
           {#if python.path}
-            <button class="btn-small w-32" on:click={registerPythonPath}>
-              Use this Python
-            </button>
+            <button class="btn-small w-32" on:click={registerPythonPath}> Use this Python </button>
           {/if}
         </div>
       {/if}
