@@ -42,7 +42,7 @@
       {/if}
     </div>
   {:else}
-    <p class="text-xs text-center text-neutral-500">
+    <p class="text-xs text-center text-gray-500">
       No {template === "txt2img" ? "runs" : "images"} yet
     </p>
   {/if}

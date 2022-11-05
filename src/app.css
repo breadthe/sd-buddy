@@ -149,7 +149,7 @@ select {
 
 html.dark body {
     color: rgba(255, 255, 255, 0.87);
-    background-color: theme("colors.neutral.800");
+    background-color: theme("colors.gray.800");
 }
 
 html.dark button.transparent:hover {
