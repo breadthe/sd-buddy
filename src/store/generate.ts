@@ -1,11 +1,16 @@
 import { derived, writable } from "svelte/store";
 import type { CustomVar, Run } from "../types";
-// import { get, set } from "tauri-settings";
 
 export const prompt = writable("")
 
+// Flag that indicates there's a run in progress
+export const isGenerating = writable(false)
+
+// Elapsed time for the current run
+export const elapsed = writable(0) // in ms
+
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
-export const reusePrompt = writable(<Run>{});
+export const reusePrompt = writable(<Run>{})
 
 // Filter runs by a prompt string (partial or full)
 export const runFilter = writable("")
@@ -93,10 +98,10 @@ export const runs = createRunsStore();
 
 // derived store for runs filtered by runFilter
 export const filteredRuns = derived([runs, runFilter], ([$runs, $runFilter]) => {
-        if ($runFilter === "") return $runs
+    if ($runFilter === "") return $runs
 
-        return $runs.filter((run: Run) => run.prompt.toLowerCase().includes($runFilter.toLowerCase()))
-    }
+    return $runs.filter((run: Run) => run.prompt.toLowerCase().includes($runFilter.toLowerCase()))
+}
 );
 
 // derived store for filteredRuns sorted by ended_at date
@@ -104,7 +109,7 @@ export const sortedRuns = derived([filteredRuns, runSortOrder], ([$filteredRuns,
     return $filteredRuns.sort(
         (a: Run, b: Run) =>
             $runSortOrder === "asc" ? Date.parse(b.ended_at) - Date.parse(a.ended_at) : Date.parse(a.ended_at) - Date.parse(b.ended_at)
-      )
+    )
 });
 
 // derive extractedVars from prompt, Example ["$age", "$gender"]

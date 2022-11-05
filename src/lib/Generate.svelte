@@ -10,6 +10,8 @@
   // store imports
   import {
     prompt,
+    isGenerating,
+    elapsed,
     customVars,
     extractedVars,
     promptStrings,
@@ -35,7 +37,6 @@
   let rustError: string = ""
 
   // Flags
-  let isGenerating: boolean = false
   let useCustomSteps: boolean = false
 
   // Form parameters:
@@ -75,7 +76,7 @@
   let maxSeed: number = 4294967295
   let useRandomSeed: boolean = false
   // use the initial random seed when Random is checked for the first run, regenerate for subsequent runs
-  $: if (useRandomSeed || (useRandomSeed && isGenerating && currentCopy > 1)) {
+  $: if (useRandomSeed || (useRandomSeed && $isGenerating && currentCopy > 1)) {
     seed = getRandomSeed()
   }
 
@@ -86,13 +87,12 @@
   let currentCopy: number = 1
 
   // Duration timers
-  let elapsed: number = 0 // in ms
   $: elapsedSeconds = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
     style: "unit",
     unit: "second",
-  }).format(elapsed / 1000)
+  }).format($elapsed / 1000)
 
   let currentRun: Run // the currently generated run
 
@@ -131,7 +131,7 @@
     !$pythonPath || // python path is not set
     $prompt.trim() === "" || // prompt is empty
     numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
-    isGenerating || // disable while generating
+    $isGenerating || // disable while generating
     // if there are custom vars, make sure they're all filled
     ($extractedVars.length && !$allCustomVarsAreFilled)
 
@@ -153,9 +153,9 @@
     seed = defaultSeed
     useRandomSeed = false
     copies = defaultCopies
-    isGenerating = false
+    isGenerating.set(false)
     useCustomSteps = false
-    elapsed = 0
+    elapsed.set(0)
     rustResponse = ""
     rustError = ""
     currentRun = null
@@ -204,8 +204,8 @@
     if ($stableDiffusionDirectory.trim() === "") return
     if (command.trim() === "") return
 
-    isGenerating = true
-    elapsed = 0
+    isGenerating.set(true)
+    elapsed.set(0)
     rustResponse = ""
     rustError = ""
     currentRun = null
@@ -213,7 +213,7 @@
     // timer that runs every 100ms
     const startTimer = new Date()
     const timer = setInterval(() => {
-      elapsed = Math.floor(new Date().getTime() - startTimer.getTime())
+      elapsed.set(Math.floor(new Date().getTime() - startTimer.getTime()))
     }, 100)
 
     const run: Run = {
@@ -244,15 +244,15 @@
         rustError = JSON.stringify(err)
       })
       .finally(() => {
-        isGenerating = false
+        isGenerating.set(false)
 
         clearInterval(timer)
 
         run.ended_at = new Date()
-        run.elapsed = elapsed // in s
+        run.elapsed = $elapsed // in s
       })
 
-    await getLatestImageFromOutputDirectory(elapsed).then((image_name) => {
+    await getLatestImageFromOutputDirectory($elapsed).then((image_name) => {
       run.image_name = JSON.parse(image_name)
     })
 
@@ -273,6 +273,8 @@
   // We will assume that the latest image is the one we just generated
   async function getLatestImageFromOutputDirectory(elapsed: number): Promise<string> {
     let latest_image = ""
+
+    // @deprecated - this is a hack to get the latest image
     let seconds = Math.ceil(elapsed / 1000) + 10 // convert ms to seconds, add 10 seconds to be safe
 
     await invoke("get_latest_image", {
@@ -476,7 +478,7 @@
     <div class="flex items-center justify-between gap-4">
       <!-- Generate button -->
       <button class="w-full" disabled={disableGenerate} on:click={runPythonCommand}>
-        {#if isGenerating}
+        {#if $isGenerating}
           {#if $promptStrings}
             {`generating prompt ${currentCopy}/${$promptStrings.length + currentCopy - 1}...`}
           {:else}
@@ -505,7 +507,7 @@
     <div class="flex items-center justify-center border border-blue-500/50 rounded w-[512px] h-[512px] mt-6">
       {#if currentRun}
         <RunItem run={currentRun} imageOnly />
-      {:else if elapsed}
+      {:else if $elapsed}
         <span class="tabular-nums">{elapsedSeconds}</span>
       {:else}
         <span class="text-black/50 dark:text-white/50">the image will be generated here</span>
@@ -514,8 +516,8 @@
 
     <!-- Alerts -->
     <div class="flex flex-col gap-4 max-w-[512px]">
-      {#if elapsed && currentRun}
-        <Alert>Elapsed: {elapsed / 1000}s</Alert>
+      {#if $elapsed && currentRun}
+        <Alert>Elapsed: {$elapsed / 1000}s</Alert>
       {/if}
 
       {#if rustResponse}
