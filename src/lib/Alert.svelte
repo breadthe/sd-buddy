@@ -13,7 +13,7 @@
     info: "bg-blue-100 dark:bg-blue-800",
     success: "bg-green-100 dark:bg-green-800",
     warning: "bg-yellow-100 dark:bg-yellow-800",
-    neutral: "bg-gray-100 dark:bg-gray-800", // default
+    neutral: "bg-gray-100 dark:bg-gray-900", // default
   }
 
   export let copy = false // allow copying of text
