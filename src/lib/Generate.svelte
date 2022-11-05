@@ -125,6 +125,16 @@
     resetPromptMatrix()
   }
 
+  // disable the Generate button when these conditions are met
+  $: disableGenerate =
+    !$stableDiffusionDirectory || // no stable diffusion directory
+    !$pythonPath || // python path is not set
+    $prompt.trim() === "" || // prompt is empty
+    numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
+    isGenerating || // disable while generating
+    // if there are custom vars, make sure they're all filled
+    ($extractedVars.length && !$allCustomVarsAreFilled)
+
   async function saveRun(run: Run) {
     runs.push(run)
   }
@@ -489,13 +499,7 @@
       <!-- Generate button -->
       <button
         class="w-full"
-        disabled={!$stableDiffusionDirectory ||
-          !$pythonPath ||
-          $prompt.trim() === "" ||
-          numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
-          isGenerating ||
-          // if there are custom vars, make sure they're all filled
-          ($extractedVars.length && !$allCustomVarsAreFilled)}
+        disabled={disableGenerate}
         on:click={runPythonCommand}
       >
         {#if isGenerating}
