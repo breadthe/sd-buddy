@@ -1,9 +1,9 @@
 <script lang="ts">
   // store imports
-  import { extractedVars, promptStrings, allCustomVarsAreFilled } from "../store"
+  import { extractedVars, promptStrings, allCustomVarsAreFilled } from "../../store"
 
   // component imports
-  import CustomVar from "./CustomVar.svelte"
+  import CustomVar from "../CustomVar.svelte"
 </script>
 
 {#if $extractedVars.length}

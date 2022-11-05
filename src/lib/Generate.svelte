@@ -27,9 +27,9 @@
   import Alert from "./Alert.svelte"
   import HelpBubble from "./HelpBubble.svelte"
   import WarningBubble from "./WarningBubble.svelte"
-  import Prompt from "./Prompt.svelte"
-  import PromptMatrix from "./PromptMatrix.svelte"
   import RunItem from "./RunItem.svelte"
+  import Prompt from "./form/Prompt.svelte"
+  import PromptMatrix from "./form/PromptMatrix.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
