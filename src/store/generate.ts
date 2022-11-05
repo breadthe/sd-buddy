@@ -18,7 +18,24 @@ runSortOrder.subscribe((value: string) => {
 })
 
 
-// Store runs to localStorage for now
+// The path of the python executable
+function createPythonPath() {
+    let storedPythonPath =
+        JSON.parse(localStorage.getItem("pythonPath")) || "";
+    const { subscribe, set } = writable(storedPythonPath);
+
+    return {
+        subscribe,
+        set: (path: string) => {
+            localStorage.setItem("pythonPath", JSON.stringify(path));
+            set(path);
+        },
+    };
+}
+export const pythonPath = createPythonPath();
+
+
+// The directory where Stable Diffusion is installed
 function createStableDiffusionDirectory() {
     let storedStableDiffusionDirectory =
         JSON.parse(localStorage.getItem("stableDiffusionDirectory")) || "";
