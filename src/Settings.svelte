@@ -8,6 +8,9 @@
   // store imports
   import { theme, pythonPath } from "./store"
 
+  // component imports
+  import RegisterProjectDirectory from "./lib/RegisterProjectDirectory.svelte"
+
   let pythonMessage: string = ""
   let python = {
     binary: null,
@@ -105,6 +108,17 @@
           {/if}
         </div>
       {/if}
+    </div>
+  </div>
+
+  <!-- Stable Diffusion directory -->
+  <div class="flex gap-8 py-8 w-full">
+    <div class="w-1/4">
+      <h2 class="font-bold text-right">Stable Diffusion</h2>
+      <p class="text-xs text-right">Register the path of your Stable Diffusion project.</p>
+    </div>
+    <div class="flex flex-col gap-2 w-3/4">
+      <RegisterProjectDirectory />
     </div>
   </div>
 

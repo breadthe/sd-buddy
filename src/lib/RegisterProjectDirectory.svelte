@@ -6,6 +6,7 @@
 
   // store imports
   import { stableDiffusionDirectory } from "../store"
+  import SDProjectOutputDirectory from "./SDProjectOutputDirectory.svelte"
 
   let stableDiffusionDirectoryInput: HTMLInputElement
 
@@ -13,8 +14,7 @@
   let isReregistering: boolean = false // re-registering the Stable Diffusion directory
 
   $: stableDiffusionDirectoryIsRegistered =
-    stableDiffusionDirectoryInput &&
-    stableDiffusionDirectoryInput.value.trim() !== ""
+    stableDiffusionDirectoryInput && stableDiffusionDirectoryInput.value.trim() !== ""
 
   $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`
 
@@ -56,36 +56,28 @@
         class="flex-1"
       />
 
-      <button
-        class=""
-        title="Browse directories"
-        on:click={openDirectorySelectionDialog}>Browse</button
-      >
+      <button class="btn-small" title="Browse directories" on:click={openDirectorySelectionDialog}>Browse</button>
 
       <button
-        class=""
+        class="btn-small"
         title="Register Stable Diffusion directory"
         disabled={!stableDiffusionDirectoryIsRegistered}
         on:click={saveStableDiffusionDirectory}>Save</button
       >
 
-      <button
-        class="btn-transparent"
-        title="Close directory selection"
-        on:click={() => (isReregistering = false)}>Cancel</button
+      <button class="btn-transparent" title="Close directory selection" on:click={() => (isReregistering = false)}
+        >Cancel</button
       >
     </div>
   {/if}
   {#if $stableDiffusionDirectory}
     <div class="flex flex-col gap-1">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-bold">SD project:</span>
+        <span class="text-base font-bold">Path</span>
         <a
           href={`file://${$stableDiffusionDirectory}`}
-          class="font-mono text-xs text-blue-600 hover:underline"
-          on:click|preventDefault={() =>
-            openDirectory($stableDiffusionDirectory)}
-          >{$stableDiffusionDirectory}</a
+          class="font-mono text-base text-blue-600 hover:underline"
+          on:click|preventDefault={() => openDirectory($stableDiffusionDirectory)}>{$stableDiffusionDirectory}</a
         >
         <button
           title="Re-register the Stable Diffusion directory"
@@ -108,14 +100,8 @@
         </button>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-xs font-bold">SD output:</span>
-        <a
-          href={`file://${stableDiffusionOutputDirectory}`}
-          class="font-mono text-xs text-blue-600 hover:underline"
-          on:click|preventDefault={() =>
-            openDirectory(stableDiffusionOutputDirectory)}
-          >{stableDiffusionOutputDirectory}</a
-        >
+        <span class="text-base font-bold">Output</span>
+        <SDProjectOutputDirectory />
       </div>
     </div>
   {/if}
