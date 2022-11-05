@@ -9,6 +9,7 @@
 
   // store imports
   import {
+    // generate params
     prompt,
     isGenerating,
     currentRun,
@@ -21,6 +22,11 @@
     stableDiffusionDirectory,
     allCustomVarsAreFilled,
     pythonPath,
+
+    // form params
+    defaultSteps,
+    steps,
+    useCustomSteps,
   } from "../store"
 
   // component imports
@@ -30,6 +36,7 @@
   import RunItem from "./RunItem.svelte"
   import Prompt from "./form/Prompt.svelte"
   import PromptMatrix from "./form/PromptMatrix.svelte"
+  import Steps from "./form/Steps.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
@@ -37,16 +44,7 @@
   let rustResponse: string = ""
   let rustError: string = ""
 
-  // Flags
-  let useCustomSteps: boolean = false
-
   // Form parameters:
-
-  // --ddim_steps
-  let defaultSteps: number = 10 // --ddim_steps, default 50 (keeping it 10 because slow computer)
-  let steps: number = defaultSteps // selected steps
-  let maxSteps: number = 100
-  let stepsOptions: number[] = [1, 2, 3, 4, 5, 10, 15, 25, 50, 75, 100]
 
   // --scale
   let defaultScale: number = 8 // --scale, default 7.5 but we round to 8
@@ -98,8 +96,8 @@
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
+    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
   }
 
   $: {
@@ -111,7 +109,7 @@
   // reset parameters when reusing a prompt
   $: if (Object.keys($reusePrompt).length) {
     prompt.set($reusePrompt?.prompt ?? $prompt)
-    steps = $reusePrompt?.steps ?? steps
+    steps.set($reusePrompt?.steps ?? $steps)
     iter = $reusePrompt?.iter ?? iter
     samples = $reusePrompt?.samples ?? samples
     scale = $reusePrompt?.scale ?? scale
@@ -142,7 +140,7 @@
   function resetForm() {
     reusePrompt.set(<Run>{})
     prompt.set("")
-    steps = defaultSteps
+    steps.set($defaultSteps)
     samples = defaultSamples
     scale = defaultScale
     iter = defaultIter
@@ -153,7 +151,7 @@
     useRandomSeed = false
     copies = defaultCopies
     isGenerating.set(false)
-    useCustomSteps = false
+    useCustomSteps.set(false)
     elapsed.set(0)
     rustResponse = ""
     rustError = ""
@@ -218,7 +216,7 @@
     const run: Run = {
       id: uuidv4(),
       prompt,
-      steps,
+      steps: $steps,
       samples,
       scale,
       iter,
@@ -290,11 +288,6 @@
 
     return latest_image
   }
-
-  function handleCustomSteps(event: Event) {
-    // very hacky way of swapping input <-> select without losing the value
-    useCustomSteps = event.target.selectedOptions[0].innerText === "custom"
-  }
 </script>
 
 <section class="flex gap-8">
@@ -333,47 +326,7 @@
     <!-- Params -->
     <div class="flex flex-col gap-4">
       <div class="flex gap-4">
-        <label class="flex flex-col w-full">
-          <div class="flex items-center gap-2">
-            <span class="font-bold">Steps</span>
-
-            <HelpBubble
-              title="--ddim_steps : Sampling steps, higher numbers produce more detailed images at the expense of processing time."
-            />
-          </div>
-
-          {#if useCustomSteps}
-            <div class="flex items-center gap-2">
-              <input type="number" bind:value={steps} min="1" max={maxSteps} />
-              <button
-                class="btn-transparent"
-                on:click={() => {
-                  useCustomSteps = false
-                  steps = defaultSteps
-                }}
-                title="Switch to dropdown"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-4 h-4"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                </svg>
-              </button>
-            </div>
-          {:else}
-            <select bind:value={steps} on:change={handleCustomSteps}>
-              {#each stepsOptions as option (option)}
-                <option value={option}>{option}</option>
-              {/each}
-              <option value="10">custom</option>
-            </select>
-          {/if}
-        </label>
+        <Steps />
 
         <label class="flex flex-col w-full">
           <div class="flex items-center gap-2">
