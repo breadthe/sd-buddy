@@ -17,7 +17,7 @@
   }
 </script>
 
-<aside class="flex flex-col gap-2 w-full">
+<section class="flex flex-col gap-2 w-full">
   <div class="flex items-center justify-between gap-4">
     <h2 class="font-bold">
       {template === "txt2img" ? "Runs" : "Images"}
@@ -46,7 +46,7 @@
       No {template === "txt2img" ? "runs" : "images"} yet
     </p>
   {/if}
-</aside>
+</section>
 
 <style>
 </style>

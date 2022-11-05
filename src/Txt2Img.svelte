@@ -5,13 +5,13 @@
   import RegisterProjectDirectory from "./lib/RegisterProjectDirectory.svelte"
 </script>
 
-<div class="flex flex-col gap-8">
+<section class="flex flex-col gap-8 w-full">
   <RegisterProjectDirectory />
 
   <Generate />
 
   <Runs />
-</div>
+</section>
 
 <style>
 </style>
