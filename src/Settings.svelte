@@ -55,37 +55,49 @@
   }
 </script>
 
-<section class="flex flex-col gap-8">
+<section class="flex flex-col divide-y divide-gray-500 w-full">
   <!-- Python -->
-  <div class="flex flex-col w-1/4">
-    <span class="font-bold">Python</span>
+  <div class="flex gap-8 py-8 w-full">
+    <div class="w-1/4">
+      <h2 class="font-bold text-right">Python</h2>
+      <p class="text-xs text-right">Stable Diffusion requires Python to be installed. Here you can auto-detect the path of the Python binary or you can search for it yourself.</p>
+    </div>
+    <div class="flex flex-col gap-2 w-3/4">
+      {#if $pythonPath}
+        <div class="">{$pythonPath}</div>
+      {/if}
 
-    {#if $pythonPath}
-      <span>Python binary path: {$pythonPath}</span>
-    {/if}
+      <button class="btn-small w-32" on:click={detectPython}
+        >Detect Python</button
+      >
 
-    <button on:click={detectPython}>Detect Python</button>
+      {#if pythonMessage}
+        <div class="flex items-center gap-4">
+          <span>{@html pythonMessage}</span>
 
-    {#if pythonMessage}
-      <span>
-        {@html pythonMessage}
-      </span>
-    {/if}
-
-    {#if python.path}
-      <button on:click={registerPythonPath}> Use this Python </button>
-    {/if}
+          {#if python.path}
+            <button class="btn-small w-32" on:click={registerPythonPath}>
+              Use this Python
+            </button>
+          {/if}
+        </div>
+      {/if}
+    </div>
   </div>
 
   <!-- Theme -->
-  <label class="flex flex-col w-1/4">
-    <span class="font-bold">Theme</span>
-    <select bind:value={selectedTheme} on:change={saveTheme}>
-      {#each preferences.themes as theme}
-        <option value={theme.value}>{theme.label}</option>
-      {/each}
-    </select>
-  </label>
+  <div class="flex gap-8 py-8 w-full">
+    <div class="w-1/4">
+      <h2 class="font-bold text-right">Theme</h2>
+    </div>
+    <div class="w-3/4">
+      <select bind:value={selectedTheme} on:change={saveTheme}>
+        {#each preferences.themes as theme}
+          <option value={theme.value}>{theme.label}</option>
+        {/each}
+      </select>
+    </div>
+  </div>
 </section>
 
 <style>
