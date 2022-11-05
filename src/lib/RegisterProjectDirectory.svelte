@@ -70,7 +70,7 @@
       >
 
       <button
-        class="transparent"
+        class="btn-transparent"
         title="Close directory selection"
         on:click={() => (isReregistering = false)}>Cancel</button
       >
@@ -89,7 +89,7 @@
         >
         <button
           title="Re-register the Stable Diffusion directory"
-          class="transparent"
+          class="btn-transparent"
           on:click={() => (isReregistering = !isReregistering)}
           ><svg
             xmlns="http://www.w3.org/2000/svg"

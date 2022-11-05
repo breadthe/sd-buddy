@@ -332,7 +332,7 @@
             >
           {/if}
         </label>
-        <button class="transparent" on:click={resetForm}>reset</button>
+        <button class="btn-transparent" on:click={resetForm}>reset</button>
       </div>
 
       <Prompt />
@@ -357,7 +357,7 @@
             <div class="flex items-center gap-2">
               <input type="number" bind:value={steps} min="1" max={maxSteps} />
               <button
-                class="transparent"
+                class="btn-transparent"
                 on:click={() => {
                   useCustomSteps = false
                   steps = defaultSteps

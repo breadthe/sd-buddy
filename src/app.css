@@ -92,14 +92,14 @@ button.link:hover {
     color: inherit;
 }
 
-button.transparent {
+button.btn-transparent {
     padding: theme("padding.0");
     background-color: theme("colors.transparent");
     color: inherit;
     opacity: theme("opacity.50");
 }
 
-button.transparent:hover {
+button.btn-transparent:hover {
     background-color: theme("colors.transparent");
     color: theme("colors.black");
     opacity: theme("opacity.100");
@@ -157,6 +157,6 @@ html.dark body {
     background-color: theme("colors.gray.800");
 }
 
-html.dark button.transparent:hover {
+html.dark button.btn-transparent:hover {
     color: rgba(255, 255, 255, 0.87);
 }
