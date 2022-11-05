@@ -27,6 +27,8 @@
     defaultSteps,
     steps,
     useCustomSteps,
+    defaultScale,
+    scale,
   } from "../store"
 
   // component imports
@@ -37,6 +39,7 @@
   import Prompt from "./form/Prompt.svelte"
   import PromptMatrix from "./form/PromptMatrix.svelte"
   import Steps from "./form/Steps.svelte"
+  import Scale from "./form/Scale.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
@@ -45,11 +48,6 @@
   let rustError: string = ""
 
   // Form parameters:
-
-  // --scale
-  let defaultScale: number = 8 // --scale, default 7.5 but we round to 8
-  let scale: number = defaultScale // selected scale (context free guidance)
-  let maxScale: number = 20 // 1 is AI almost ignores prompt, 20 is "stick to my prompt"
 
   // --n_iter
   let defaultIter: number = 1 // --n_iter, default 1
@@ -96,8 +94,8 @@
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
+    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${samples?.toString()} --scale ${$scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
   }
 
   $: {
@@ -112,7 +110,7 @@
     steps.set($reusePrompt?.steps ?? $steps)
     iter = $reusePrompt?.iter ?? iter
     samples = $reusePrompt?.samples ?? samples
-    scale = $reusePrompt?.scale ?? scale
+    scale.set($reusePrompt?.scale ?? $scale)
     seed = $reusePrompt?.seed ?? seed
     height = $reusePrompt?.height ?? height
     width = $reusePrompt?.width ?? width
@@ -142,9 +140,8 @@
     prompt.set("")
     steps.set($defaultSteps)
     samples = defaultSamples
-    scale = defaultScale
+    scale.set($defaultScale)
     iter = defaultIter
-    scale = defaultScale
     height = defaultHeight
     width = defaultWidth
     seed = defaultSeed
@@ -175,7 +172,7 @@
         // extract prompt strings randomly from the matrix
         const ix = Math.floor(Math.random() * tmpPromptStrings.length)
         const promptString = tmpPromptStrings[ix]
-        stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${$scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         tmpPromptStrings.splice(ix, 1)
@@ -218,7 +215,7 @@
       prompt,
       steps: $steps,
       samples,
-      scale,
+      scale: $scale,
       iter,
       height,
       width,
@@ -328,17 +325,7 @@
       <div class="flex gap-4">
         <Steps />
 
-        <label class="flex flex-col w-full">
-          <div class="flex items-center gap-2">
-            <span class="font-bold">CFG Scale</span>
-
-            <HelpBubble
-              title={`--scale : Classifier Free Guidance Scale, how closely the image should resemble the prompt, 1-${maxScale}.`}
-            />
-          </div>
-
-          <input type="number" bind:value={scale} min="1" max={maxScale} />
-        </label>
+        <Scale />
       </div>
 
       <div class="flex gap-4">
