@@ -8,6 +8,9 @@
   import { stableDiffusionDirectory } from "../store"
   import SDProjectOutputDirectory from "./SDProjectOutputDirectory.svelte"
 
+  // component imports
+  import OpenDirectory from "./OpenDirectory.svelte"
+
   let stableDiffusionDirectoryInput: HTMLInputElement
 
   // Flags
@@ -15,8 +18,6 @@
 
   $: stableDiffusionDirectoryIsRegistered =
     stableDiffusionDirectoryInput && stableDiffusionDirectoryInput.value.trim() !== ""
-
-  $: stableDiffusionOutputDirectory = `${$stableDiffusionDirectory}/outputs/txt2img-samples`
 
   async function openDirectorySelectionDialog() {
     // Open a selection dialog for directories
@@ -74,11 +75,7 @@
     <div class="flex flex-col gap-1">
       <div class="flex items-center gap-2">
         <span class="text-base font-bold">Path</span>
-        <a
-          href={`file://${$stableDiffusionDirectory}`}
-          class="font-mono text-base text-blue-600 hover:underline"
-          on:click|preventDefault={() => openDirectory($stableDiffusionDirectory)}>{$stableDiffusionDirectory}</a
-        >
+        <OpenDirectory directory={$stableDiffusionDirectory} />
         <button
           title="Re-register the Stable Diffusion directory"
           class="btn-transparent"
