@@ -11,6 +11,7 @@
   import {
     prompt,
     isGenerating,
+    currentRun,
     elapsed,
     customVars,
     extractedVars,
@@ -94,8 +95,6 @@
     unit: "second",
   }).format($elapsed / 1000)
 
-  let currentRun: Run // the currently generated run
-
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
@@ -158,7 +157,7 @@
     elapsed.set(0)
     rustResponse = ""
     rustError = ""
-    currentRun = null
+    currentRun.set(null)
     resetPromptMatrix()
   }
 
@@ -208,7 +207,7 @@
     elapsed.set(0)
     rustResponse = ""
     rustError = ""
-    currentRun = null
+    currentRun.set(null)
 
     // timer that runs every 100ms
     const startTimer = new Date()
@@ -258,7 +257,7 @@
 
     saveRun(run)
 
-    currentRun = run
+    currentRun.set(run)
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -505,8 +504,8 @@
   <div class="flex flex-col gap-4">
     <!-- Image + timer -->
     <div class="flex items-center justify-center border border-blue-500/50 rounded w-[512px] h-[512px] mt-6">
-      {#if currentRun}
-        <RunItem run={currentRun} imageOnly />
+      {#if $currentRun}
+        <RunItem run={$currentRun} imageOnly />
       {:else if $elapsed}
         <span class="tabular-nums">{elapsedSeconds}</span>
       {:else}
@@ -516,7 +515,7 @@
 
     <!-- Alerts -->
     <div class="flex flex-col gap-4 max-w-[512px]">
-      {#if $elapsed && currentRun}
+      {#if $elapsed && $currentRun}
         <Alert>Elapsed: {$elapsed / 1000}s</Alert>
       {/if}
 

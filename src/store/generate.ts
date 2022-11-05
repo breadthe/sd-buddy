@@ -1,13 +1,18 @@
 import { derived, writable } from "svelte/store";
 import type { CustomVar, Run } from "../types";
 
-export const prompt = writable("")
+export const prompt = writable<string>("")
 
 // Flag that indicates there's a run in progress
-export const isGenerating = writable(false)
+// @todo see if this can be replaced by currentRun
+export const isGenerating = writable<boolean>(false)
+
+// The current run in progress
+// @todo see if this can replace by isGenerating
+export const currentRun = writable<Run | null>(null)
 
 // Elapsed time for the current run
-export const elapsed = writable(0) // in ms
+export const elapsed = writable<number>(0) // in ms
 
 // Use this in lieu of an event bus to assign a prompt from a saved run to the prompt input
 export const reusePrompt = writable(<Run>{})
