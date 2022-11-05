@@ -52,7 +52,7 @@ button {
     font-weight: theme("fontWeight.bold");
     font-family: inherit;
     color: theme("colors.white");
-    background-color: theme("colors.blue.500");
+    background-color: theme("colors.blue.600");
     cursor: pointer;
     transition: border-color 0.25s;
 }
@@ -63,8 +63,8 @@ button.btn-small {
 }
 
 button:hover {
-    border-color: theme("colors.blue.600");
-    background-color: theme("colors.blue.600");
+    border-color: theme("colors.blue.500");
+    background-color: theme("colors.blue.500");
     color: theme("colors.white");
 }
 
