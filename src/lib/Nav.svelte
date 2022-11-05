@@ -26,15 +26,18 @@
   ]
 </script>
 
-<nav class="sticky top-0 z-10 pb-2 w-full bg-white dark:bg-neutral-800">
+<nav class="sticky top-0 z-10 pb-2 w-full bg-white dark:bg-gray-800">
   <ol class="flex gap-4">
     {#each menu as item (item.name)}
       <li
-        class="border-blue-600 cursor-pointer hover:text-blue-600"
-        class:border-b-4={item.name === $activeSection}
-        class:text-blue-600={item.name === $activeSection}
-        class:font-bold={item.name === $activeSection}
-        class:rounded={item.name !== $activeSection}
+        class="cursor-pointer border-2 hover:border-blue-600 rounded"
+        class:border-blue-600={item.section === $activeSection}
+        class:text-white={item.name === $activeSection}
+        class:bg-blue-600={item.name === $activeSection}
+        class:border-white={item.section !== $activeSection}
+        class:hover:text-blue-600={item.name !== $activeSection}
+        class:dark:border-gray-800={item.section !== $activeSection}
+        class:dark:hover:border-blue-600={item.section !== $activeSection}
         on:click={() => (activeSection.set(item.section))}
       >
         <span class="px-2">{item.name}</span>
