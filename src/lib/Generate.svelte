@@ -180,11 +180,7 @@
         const promptString = tmpPromptStrings[ix]
         stableDiffusionCommand = `python scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${scale?.toString()} --n_iter ${iter?.toString()} --ddim_steps ${steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork(
-          promptString,
-          stableDiffusionCommand,
-          currentCopy
-        )
+        const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         tmpPromptStrings.splice(ix, 1)
         currentCopy++
         console.log(result)
@@ -194,11 +190,7 @@
       for (let i = 1; i <= copies; i++) {
         currentCopy = i
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork(
-          $prompt,
-          stableDiffusionCommand,
-          currentCopy
-        )
+        const result = await doTheWork($prompt, stableDiffusionCommand, currentCopy)
         console.log(result)
       }
     }
@@ -279,9 +271,7 @@
 
   // Get the latest image from the output directory
   // We will assume that the latest image is the one we just generated
-  async function getLatestImageFromOutputDirectory(
-    elapsed: number
-  ): Promise<string> {
+  async function getLatestImageFromOutputDirectory(elapsed: number): Promise<string> {
     let latest_image = ""
     let seconds = Math.ceil(elapsed / 1000) + 10 // convert ms to seconds, add 10 seconds to be safe
 
@@ -316,9 +306,7 @@
           <div class="flex items-center gap-2">
             <span class="font-bold">Prompt</span>
 
-            <HelpBubble
-              title="--prompt : Text prompt. Use $custom $parameters to generate a prompt matrix."
-            />
+            <HelpBubble title="--prompt : Text prompt. Use $custom $parameters to generate a prompt matrix." />
           </div>
 
           {#if numPromptTokens > 75}
@@ -372,11 +360,7 @@
                   stroke="currentColor"
                   class="w-4 h-4"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-                  />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
                 </svg>
               </button>
             </div>
@@ -408,9 +392,7 @@
           <div class="flex items-center gap-2">
             <span class="font-bold">Batch Count</span>
 
-            <HelpBubble
-              title="--n_iter : Number of images batches to generate (stacked vertically)."
-            />
+            <HelpBubble title="--n_iter : Number of images batches to generate (stacked vertically)." />
           </div>
 
           <input type="number" bind:value={iter} min="1" max={maxIter} />
@@ -420,9 +402,7 @@
           <div class="flex items-center gap-2">
             <span class="font-bold">Batch Size</span>
 
-            <HelpBubble
-              title="--n_samples : Number of samples to generate per prompt (stacked horizontally)."
-            />
+            <HelpBubble title="--n_samples : Number of samples to generate per prompt (stacked horizontally)." />
 
             <WarningBubble
               title="Use values greater than 1 at your own risk. It always crashes for me at 2, works fine at 3 and 4."
@@ -477,50 +457,37 @@
           />
         </label>
 
-        <label class="flex flex-col text-right w-full">
+        <!-- <label class="flex flex-col text-right w-full"> -->
+        <div class="flex flex-col text-right w-full">
           <div class="flex items-center gap-2">
-            <span class="font-bold">Random</span>
+            <label for="randomSeed" class="font-bold">Random</label>
 
             <HelpBubble
               title={`Using seed=-1 for a random seed does not tell you what the value is. If you want to have a record of what seed was used, check this option to get a random seed between 1-${maxSeed}.`}
             />
           </div>
 
-          <input
-            type="checkbox"
-            bind:checked={useRandomSeed}
-            class="my-2 border"
-          />
-        </label>
+          <input id="randomSeed" type="checkbox" bind:checked={useRandomSeed} class="my-2 border" />
+        </div>
+        <!-- </label> -->
       </div>
     </div>
 
     <div class="flex items-center justify-between gap-4">
       <!-- Generate button -->
-      <button
-        class="w-full"
-        disabled={disableGenerate}
-        on:click={runPythonCommand}
-      >
+      <button class="w-full" disabled={disableGenerate} on:click={runPythonCommand}>
         {#if isGenerating}
           {#if $promptStrings}
-            {`generating prompt ${currentCopy}/${
-              $promptStrings.length + currentCopy - 1
-            }...`}
+            {`generating prompt ${currentCopy}/${$promptStrings.length + currentCopy - 1}...`}
           {:else}
-            {`generating${
-              copies > 1 ? ` copy ${currentCopy}/${copies}` : ""
-            }...`}
+            {`generating${copies > 1 ? ` copy ${currentCopy}/${copies}` : ""}...`}
           {/if}
         {:else}
           Generate
         {/if}
       </button>
 
-      <select
-        bind:value={copies}
-        title="Generate this many images with the same settings"
-      >
+      <select bind:value={copies} title="Generate this many images with the same settings">
         {#each copiesOptions as option (option)}
           <option value={option}>{option}</option>
         {/each}
@@ -528,26 +495,20 @@
     </div>
 
     {#if $prompt.trim() !== ""}
-      <Alert alertType={AlertTypes.Info} copy
-        >{@html stableDiffusionCommandHtml}</Alert
-      >
+      <Alert alertType={AlertTypes.Info} copy>{@html stableDiffusionCommandHtml}</Alert>
     {/if}
   </div>
 
   <!-- Right column: generated image -->
   <div class="flex flex-col gap-4">
     <!-- Image + timer -->
-    <div
-      class="flex items-center justify-center border border-blue-500/50 rounded w-[512px] h-[512px] mt-6"
-    >
+    <div class="flex items-center justify-center border border-blue-500/50 rounded w-[512px] h-[512px] mt-6">
       {#if currentRun}
         <RunItem run={currentRun} imageOnly />
       {:else if elapsed}
         <span class="tabular-nums">{elapsedSeconds}</span>
       {:else}
-        <span class="text-black/50 dark:text-white/50"
-          >the image will be generated here</span
-        >
+        <span class="text-black/50 dark:text-white/50">the image will be generated here</span>
       {/if}
     </div>
 
