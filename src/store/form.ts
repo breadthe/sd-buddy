@@ -35,3 +35,10 @@ export const height = writable<number>(DEFAULT_HEIGHT) // selected height
 const DEFAULT_WIDTH = 512 // default 512
 export const defaultWidth = readable<number>(DEFAULT_WIDTH)
 export const width = writable<number>(DEFAULT_WIDTH) // selected width
+
+// --seed (Seed)
+const DEFAULT_SEED = 42 // default 42, set to -1 for random
+export const defaultSeed = readable<number>(DEFAULT_SEED)
+export const seed = writable<number>(DEFAULT_SEED) // selected seed
+export const maxSeed = readable<number>(4294967295)
+export const useRandomSeed = writable<boolean>(false)

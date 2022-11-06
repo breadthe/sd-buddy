@@ -37,6 +37,10 @@
     height,
     defaultWidth,
     width,
+    defaultSeed,
+    seed,
+    maxSeed,
+    useRandomSeed,
   } from "../store"
 
   // component imports
@@ -51,6 +55,7 @@
   import Samples from "./form/Samples.svelte"
   import Height from "./form/Height.svelte"
   import Width from "./form/Width.svelte"
+    import Seed from "./form/Seed.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
@@ -58,16 +63,9 @@
   let rustResponse: string = ""
   let rustError: string = ""
 
-  // Form parameters:
-
-  // --seed
-  let defaultSeed: number = 42 // --seed default 42, set to -1 for random
-  let seed: number = defaultSeed // selected seed
-  let maxSeed: number = 4294967295
-  let useRandomSeed: boolean = false
   // use the initial random seed when Random is checked for the first run, regenerate for subsequent runs
-  $: if (useRandomSeed || (useRandomSeed && $isGenerating && currentCopy > 1)) {
-    seed = getRandomSeed()
+  $: if ($useRandomSeed || ($useRandomSeed && $isGenerating && currentCopy > 1)) {
+    seed.set(getRandomSeed())
   }
 
   // parameters for generating multiple images with the same settings
@@ -87,8 +85,8 @@
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${$samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${$height}</strong> --W <strong>${$width}</strong> --seed <strong>${seed}</strong> --fixed_code`
+    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${$seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${$samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${$height}</strong> --W <strong>${$width}</strong> --seed <strong>${$seed}</strong> --fixed_code`
   }
 
   $: {
@@ -104,10 +102,10 @@
     iter.set($reusePrompt?.iter ?? $iter)
     samples.set($reusePrompt?.samples ?? $samples)
     scale.set($reusePrompt?.scale ?? $scale)
-    seed = $reusePrompt?.seed ?? seed
+    seed.set($reusePrompt?.seed ?? $seed)
     height.set($reusePrompt?.height ?? $height)
     width.set($reusePrompt?.width ?? $width)
-    useRandomSeed = false
+    useRandomSeed.set(false)
     copies = 1
     $reusePrompt = {} as Run // Reset the prompt so we can modify the values.
     resetPromptMatrix()
@@ -137,8 +135,8 @@
     iter.set($defaultIter)
     height.set($defaultHeight)
     width.set($defaultWidth)
-    seed = defaultSeed
-    useRandomSeed = false
+    seed.set($defaultSeed)
+    useRandomSeed.set(false)
     copies = defaultCopies
     isGenerating.set(false)
     useCustomSteps.set(false)
@@ -165,7 +163,7 @@
         // extract prompt strings randomly from the matrix
         const ix = Math.floor(Math.random() * tmpPromptStrings.length)
         const promptString = tmpPromptStrings[ix]
-        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${seed?.toString()} --fixed_code`
+        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${$seed?.toString()} --fixed_code`
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         tmpPromptStrings.splice(ix, 1)
@@ -184,7 +182,7 @@
   }
 
   // generate a random seed between 0 and maxSeed
-  const getRandomSeed = () => Math.floor(Math.random() * maxSeed)
+  const getRandomSeed = () => Math.floor(Math.random() * $maxSeed)
 
   // generate a single run
   async function doTheWork(prompt: string, command: string, n: number) {
@@ -193,9 +191,9 @@
 
     isGenerating.set(true)
     elapsed.set(0)
+    currentRun.set(null)
     rustResponse = ""
     rustError = ""
-    currentRun.set(null)
 
     // timer that runs every 100ms
     const startTimer = new Date()
@@ -212,7 +210,7 @@
       iter: $iter,
       height: $height,
       width: $width,
-      seed,
+      seed: $seed,
       started_at: startTimer,
       rating: Rating.One,
     }
@@ -347,22 +345,7 @@
       {/if}
 
       <div class="flex items-center justify-between gap-4">
-        <label class="flex flex-col w-full">
-          <div class="flex items-center gap-2">
-            <span class="font-bold">Seed</span>
-
-            <HelpBubble title={`--seed : -1 to randomize, max ${maxSeed}.`} />
-          </div>
-
-          <input
-            type="number"
-            bind:value={seed}
-            disabled={useRandomSeed}
-            class:opacity-30={useRandomSeed}
-            min="-1"
-            max={maxSeed}
-          />
-        </label>
+        <Seed />
 
         <!-- <label class="flex flex-col text-right w-full"> -->
         <div class="flex flex-col text-right w-full">
@@ -370,11 +353,11 @@
             <label for="randomSeed" class="font-bold">Random</label>
 
             <HelpBubble
-              title={`Using seed=-1 for a random seed does not tell you what the value is. If you want to have a record of what seed was used, check this option to get a random seed between 1-${maxSeed}.`}
+              title={`Using seed=-1 for a random seed does not tell you what the value is. If you want to have a record of what seed was used, check this option to get a random seed between 1-${$maxSeed}.`}
             />
           </div>
 
-          <input id="randomSeed" type="checkbox" bind:checked={useRandomSeed} class="my-2 border" />
+          <input id="randomSeed" type="checkbox" bind:checked={$useRandomSeed} class="my-2 border" />
         </div>
         <!-- </label> -->
       </div>
