@@ -31,18 +31,20 @@
     scale,
     defaultIter,
     iter,
+    defaultSamples,
+    samples,
   } from "../store"
 
   // component imports
   import Alert from "./Alert.svelte"
   import HelpBubble from "./HelpBubble.svelte"
-  import WarningBubble from "./WarningBubble.svelte"
   import RunItem from "./RunItem.svelte"
   import Prompt from "./form/Prompt.svelte"
   import PromptMatrix from "./form/PromptMatrix.svelte"
   import Steps from "./form/Steps.svelte"
   import Scale from "./form/Scale.svelte"
   import Iter from "./form/Iter.svelte"
+  import Samples from "./form/Samples.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
@@ -51,11 +53,6 @@
   let rustError: string = ""
 
   // Form parameters:
-
-  // --n_samples
-  let defaultSamples: number = 1 // --n_samples, default 3
-  let samples: number = defaultSamples // selected samples
-  let maxSamples: number = 10 // no idea what it should be, go with 10 for now
 
   // --H
   let defaultHeight: number = 512 // --H default 512
@@ -92,8 +89,8 @@
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
+    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${$samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
   }
 
   $: {
@@ -107,7 +104,7 @@
     prompt.set($reusePrompt?.prompt ?? $prompt)
     steps.set($reusePrompt?.steps ?? $steps)
     iter.set($reusePrompt?.iter ?? $iter)
-    samples = $reusePrompt?.samples ?? samples
+    samples.set($reusePrompt?.samples ?? $samples)
     scale.set($reusePrompt?.scale ?? $scale)
     seed = $reusePrompt?.seed ?? seed
     height = $reusePrompt?.height ?? height
@@ -137,7 +134,7 @@
     reusePrompt.set(<Run>{})
     prompt.set("")
     steps.set($defaultSteps)
-    samples = defaultSamples
+    samples.set($defaultSamples)
     scale.set($defaultScale)
     iter.set($defaultIter)
     height = defaultHeight
@@ -170,7 +167,7 @@
         // extract prompt strings randomly from the matrix
         const ix = Math.floor(Math.random() * tmpPromptStrings.length)
         const promptString = tmpPromptStrings[ix]
-        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         tmpPromptStrings.splice(ix, 1)
@@ -212,7 +209,7 @@
       id: uuidv4(),
       prompt,
       steps: $steps,
-      samples,
+      samples: $samples,
       scale: $scale,
       iter: $iter,
       height,
@@ -329,18 +326,7 @@
       <div class="flex gap-4">
         <Iter />
 
-        <label class="flex flex-col w-full">
-          <div class="flex items-center gap-2">
-            <span class="font-bold">Batch Size</span>
-
-            <HelpBubble title="--n_samples : Number of samples to generate per prompt (stacked horizontally)." />
-
-            <WarningBubble
-              title="Use values greater than 1 at your own risk. It always crashes for me at 2, works fine at 3 and 4."
-            />
-          </div>
-          <input type="number" bind:value={samples} min="1" max={maxSamples} />
-        </label>
+        <Samples />
       </div>
 
       <div class="flex gap-4">
