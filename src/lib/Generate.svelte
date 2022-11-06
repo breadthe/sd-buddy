@@ -35,6 +35,8 @@
     samples,
     defaultHeight,
     height,
+    defaultWidth,
+    width,
   } from "../store"
 
   // component imports
@@ -48,6 +50,7 @@
   import Iter from "./form/Iter.svelte"
   import Samples from "./form/Samples.svelte"
   import Height from "./form/Height.svelte"
+  import Width from "./form/Width.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
@@ -56,10 +59,6 @@
   let rustError: string = ""
 
   // Form parameters:
-
-  // --W
-  let defaultWidth: number = 512 // --W default 512
-  let width: number = defaultWidth // selected width
 
   // --seed
   let defaultSeed: number = 42 // --seed default 42, set to -1 for random
@@ -88,8 +87,8 @@
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
 
   $: {
-    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${$samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${$height}</strong> --W <strong>${width}</strong> --seed <strong>${seed}</strong> --fixed_code`
+    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${seed?.toString()} --fixed_code`
+    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${$samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${$height}</strong> --W <strong>${$width}</strong> --seed <strong>${seed}</strong> --fixed_code`
   }
 
   $: {
@@ -107,7 +106,7 @@
     scale.set($reusePrompt?.scale ?? $scale)
     seed = $reusePrompt?.seed ?? seed
     height.set($reusePrompt?.height ?? $height)
-    width = $reusePrompt?.width ?? width
+    width.set($reusePrompt?.width ?? $width)
     useRandomSeed = false
     copies = 1
     $reusePrompt = {} as Run // Reset the prompt so we can modify the values.
@@ -137,7 +136,7 @@
     scale.set($defaultScale)
     iter.set($defaultIter)
     height.set($defaultHeight)
-    width = defaultWidth
+    width.set($defaultWidth)
     seed = defaultSeed
     useRandomSeed = false
     copies = defaultCopies
@@ -166,7 +165,7 @@
         // extract prompt strings randomly from the matrix
         const ix = Math.floor(Math.random() * tmpPromptStrings.length)
         const promptString = tmpPromptStrings[ix]
-        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${width?.toString()} --seed ${seed?.toString()} --fixed_code`
+        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${seed?.toString()} --fixed_code`
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         tmpPromptStrings.splice(ix, 1)
@@ -212,7 +211,7 @@
       scale: $scale,
       iter: $iter,
       height: $height,
-      width,
+      width: $width,
       seed,
       started_at: startTimer,
       rating: Rating.One,
@@ -331,14 +330,10 @@
       <div class="flex gap-4">
         <Height />
 
-        <label class="flex flex-col w-full">
-          <span class="font-bold">Image Width</span>
-          <!-- must be a multiple of 8 -->
-          <input type="number" bind:value={width} min="1" step="8" />
-        </label>
+        <Width />
       </div>
 
-      {#if width !== 512 && $height !== $defaultHeight}
+      {#if $width !== $defaultWidth && $height !== $defaultHeight}
         <div class="flex flex-col">
           <span class="font-bold">Dimension validation warning</span>
           <span class="text-red-600"

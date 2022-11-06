@@ -30,3 +30,8 @@ export const maxSamples = readable<number>(10) // no idea what it should be, go 
 const DEFAULT_HEIGHT = 512 // default 512
 export const defaultHeight = readable<number>(DEFAULT_HEIGHT)
 export const height = writable<number>(DEFAULT_HEIGHT) // selected height
+
+// --W (Image Width)
+const DEFAULT_WIDTH = 512 // default 512
+export const defaultWidth = readable<number>(DEFAULT_WIDTH)
+export const width = writable<number>(DEFAULT_WIDTH) // selected width
