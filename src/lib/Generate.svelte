@@ -45,7 +45,6 @@
 
   // component imports
   import Alert from "./Alert.svelte"
-  import HelpBubble from "./HelpBubble.svelte"
   import RunItem from "./RunItem.svelte"
   import Prompt from "./form/Prompt.svelte"
   import PromptMatrix from "./form/PromptMatrix.svelte"
@@ -282,34 +281,8 @@
 <section class="flex gap-8">
   <!-- Left column: prompt + params -->
   <div class="flex-1 flex flex-col gap-4">
-    <!-- Prompt -->
-    <div class="w-full flex flex-col">
-      <div class="flex justify-between">
-        <label for="prompt" class="font-bold">
-          <div class="flex items-center gap-2">
-            <span class="font-bold">Prompt</span>
+    <Prompt {numPromptTokens} on:resetForm={resetForm} />
 
-            <HelpBubble title="--prompt : Text prompt. Use $custom $parameters to generate a prompt matrix." />
-          </div>
-
-          {#if numPromptTokens > 75}
-            <span class="text-red-600"
-              >(estimated {numPromptTokens} tokens - max is ~77
-              <a
-                class="text-blue-600 hover:underline"
-                href="https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/"
-                target="_blank">source</a
-              >)</span
-            >
-          {/if}
-        </label>
-        <button class="btn-transparent" on:click={resetForm}>reset</button>
-      </div>
-
-      <Prompt />
-    </div>
-
-    <!-- Prompt Matrix  -->
     <PromptMatrix />
 
     <!-- Params -->
