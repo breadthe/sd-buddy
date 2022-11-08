@@ -3,7 +3,7 @@
 
   export let title: string = ""
 
-  // later when dark mode is controlled from the store
+  // @todo later when dark mode is controlled from the store
   // use:tooltip={{ theme: $theme === 'dark' ? 'dark' : 'light-border' }}
 </script>
 
