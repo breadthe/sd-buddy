@@ -81,9 +81,10 @@ button:disabled {
 button.btn-link {
     background-color: transparent;
     border-color: transparent;
-    padding: 0;
+    padding: theme("spacing.0");
     font-weight: inherit;
     text-decoration: underline;
+    border: theme("spacing.0");
 }
 
 button.btn-link:hover {
@@ -97,6 +98,7 @@ button.btn-transparent {
     background-color: theme("colors.transparent");
     color: inherit;
     opacity: theme("opacity.50");
+    border: theme("spacing.0");
 }
 
 button.btn-transparent:hover {
