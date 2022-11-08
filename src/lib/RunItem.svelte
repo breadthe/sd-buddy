@@ -136,13 +136,13 @@
       </p>
       <div class="flex gap-2">
         <button
-          class="link text-xs text-blue-600"
+          class="btn-link text-xs text-blue-600"
           on:click={() => (isDeleting = false)}
         >
           Cancel
         </button>
         <button
-          class="link text-xs text-red-600"
+          class="btn-link text-xs text-red-600"
           on:click={() => {
             dispatch("deleteRun", run)
             isDeleting = false

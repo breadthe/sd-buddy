@@ -78,7 +78,7 @@ button:disabled {
     cursor: not-allowed;
 }
 
-button.link {
+button.btn-link {
     background-color: transparent;
     border-color: transparent;
     padding: 0;
@@ -86,7 +86,7 @@ button.link {
     text-decoration: underline;
 }
 
-button.link:hover {
+button.btn-link:hover {
     background-color: transparent;
     border-color: transparent;
     color: inherit;
