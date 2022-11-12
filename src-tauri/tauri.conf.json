@@ -79,7 +79,9 @@
         "resizable": true,
         "title": "Stable Diffusion Buddy",
         "width": 1300,
-        "minWidth": 1200
+        "minWidth": 1200,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay"
       },
       {
         "width": 1300,
