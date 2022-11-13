@@ -2,13 +2,28 @@
   // system/lib/util imports
   import { invoke } from "@tauri-apps/api/tauri"
   import { v4 as uuidv4 } from "uuid"
+  import { tooltip } from "../tooltip"
+  import { isDark, getRandomSeed, txt2ImgParams } from "../utils"
 
   // type imports
-  import { AlertTypes, Rating } from "../types"
+  import { AlertTypes, QueueItemStatus, Rating, type QueueItem } from "../types"
   import type { Run } from "../types"
 
   // store imports
   import {
+    pythonPath,
+    stableDiffusionDirectory,
+    runs,
+
+    // queue
+    queue,
+    startQueue,
+    stopQueue,
+    queueIsProcessing,
+    queueIsExpanded,
+    incompleteQueue,
+    currentQueueItem,
+
     // generate params
     prompt,
     isGenerating,
@@ -17,11 +32,8 @@
     customVars,
     extractedVars,
     promptStrings,
-    runs,
     reusePrompt,
-    stableDiffusionDirectory,
     allCustomVarsAreFilled,
-    pythonPath,
 
     // form params
     defaultSteps,
@@ -56,6 +68,7 @@
   import Width from "./form/Width.svelte"
   import Seed from "./form/Seed.svelte"
   import UseRandomSeed from "./form/UseRandomSeed.svelte"
+  import PushToQueueBtn from "./queue/PushToQueueBtn.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
   let stableDiffusionCommand: string = ""
@@ -65,7 +78,7 @@
 
   // use the initial random seed when Random is checked for the first run, regenerate for subsequent runs
   $: if ($useRandomSeed || ($useRandomSeed && $isGenerating && currentCopy > 1)) {
-    seed.set(getRandomSeed())
+    seed.set(getRandomSeed($maxSeed))
   }
 
   // parameters for generating multiple images with the same settings
@@ -121,6 +134,15 @@
     // if there are custom vars, make sure they're all filled
     ($extractedVars.length && !$allCustomVarsAreFilled)
 
+  $: if ($startQueue) {
+    console.log("processing queue")
+    startQueue.set(false)
+    queueIsProcessing.set(true)
+
+    // process the queue
+    processQueue()
+  }
+
   async function saveRun(run: Run) {
     runs.push(run)
   }
@@ -153,6 +175,45 @@
     // extractedVars.set([])
   }
 
+  async function processQueue() {
+    if ($queue.length) {
+      currentCopy = 1
+
+      // this kinda works until you remove items from the queue, because it screws up the indexes
+      for (const queueItem of $queue) {
+        // ignore skipped items
+        if (queueItem.status === QueueItemStatus.Skipped) continue
+        if (queueItem.status === QueueItemStatus.Completed) continue
+
+        queueItem.started_at = new Date()
+        queueItem.status = QueueItemStatus.Running
+        await queue.updateStatus(queueItem.id, queueItem.status)
+
+        const txt2ImgCommand = `${$pythonPath} scripts/txt2img.py ${txt2ImgParams(queueItem.run)}`
+        const result = await doTheWork(queueItem.run.prompt, txt2ImgCommand, currentCopy)
+
+        queueItem.status = QueueItemStatus.Completed
+        await queue.updateStatus(queueItem.id, queueItem.status)
+
+        currentCopy++
+        console.log(result)
+      }
+
+      queue.clearCompleted()
+
+      // collapse the queue if it's empty (excluding skipped items)
+      if ($queue.length === 0) {
+        queueIsExpanded.set(false)
+      }
+
+      // send the stop signal if nothing is left in the queue
+      if (!$currentQueueItem) {
+        stopQueue.set(true)
+        queueIsProcessing.set(false) // this is not needed, it's handled in Generate
+      }
+    }
+  }
+
   // queue up multiple runs
   async function runPythonCommand() {
     // if there is a prompt matrix, process it
@@ -180,9 +241,6 @@
       }
     }
   }
-
-  // generate a random seed between 0 and maxSeed
-  const getRandomSeed = () => Math.floor(Math.random() * $maxSeed)
 
   // generate a single run
   async function doTheWork(prompt: string, command: string, n: number) {
@@ -326,8 +384,16 @@
     </div>
 
     <div class="flex items-center justify-between gap-4">
+      <PushToQueueBtn {disableGenerate} {copies} />
+
       <!-- Generate button -->
-      <button class="w-full" disabled={disableGenerate} on:click={runPythonCommand}>
+      <button
+        class="w-full"
+        disabled={disableGenerate}
+        on:click={runPythonCommand}
+        title="Generate the current prompt or prompt matrix"
+        use:tooltip={{ theme: isDark() ? "dark-border" : "light-border" }}
+      >
         {#if $isGenerating}
           {#if $promptStrings}
             {`generating prompt ${currentCopy}/${$promptStrings.length + currentCopy - 1}...`}

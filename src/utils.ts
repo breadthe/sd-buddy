@@ -1,4 +1,5 @@
 import { copying } from "./store"
+import type { Run } from "./types"
 
 export async function copyToClipboard(text: string) {
     if (!navigator.clipboard) return
@@ -41,4 +42,29 @@ export function setTheme(theme: string) {
             window.matchMedia("(prefers-color-scheme: dark)").matches
         )
     }
+}
+
+
+// Stable Diffusion functions
+
+// generate a random seed between 0 and maxSeed
+export const getRandomSeed = (maxSeed: number) => Math.floor(Math.random() * maxSeed)
+
+/**
+ * Returns a concatenated string of the command line arguments for txt2img
+ * Pass html = true to return an HTML string of the same
+ */
+export function txt2ImgParams(run: Run, html: boolean = false) {
+    return [
+        `--plms`,
+        `--prompt ${html ? `<strong>` : ``}"${run.prompt}"${html ? `</strong>` : ``}`,
+        `--n_samples ${html ? `<strong>` : ``}${run?.samples.toString()}${html ? `</strong>` : ``}`,
+        `--scale ${html ? `<strong>` : ``}${run?.scale.toString()}${html ? `</strong>` : ``}`,
+        `--n_iter ${html ? `<strong>` : ``}${run?.iter.toString()}${html ? `</strong>` : ``}`,
+        `--ddim_steps ${html ? `<strong>` : ``}${run?.steps.toString()}${html ? `</strong>` : ``}`,
+        `--H ${html ? `<strong>` : ``}${run.height}${html ? `</strong>` : ``}`,
+        `--W ${html ? `<strong>` : ``}${run.width}${html ? `</strong>` : ``}`,
+        `--seed ${html ? `<strong>` : ``}${run?.seed.toString()}${html ? `</strong>` : ``}`,
+        `--fixed_code`,
+    ].join(" ")
 }

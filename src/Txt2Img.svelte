@@ -3,11 +3,12 @@
   import { AlertTypes } from "./types"
 
   // store imports
-  import { activeSection, pythonPath, stableDiffusionDirectory } from "./store"
+  import { activeSection, pythonPath, stableDiffusionDirectory, queue } from "./store"
 
   // component imports
   import Alert from "./lib/Alert.svelte"
   import Generate from "./lib/Generate.svelte"
+  import Queue from "./lib/queue/Queue.svelte"
   import Runs from "./lib/Runs.svelte"
   import SDProjectOutputDirectory from "./lib/SDProjectOutputDirectory.svelte"
 </script>
@@ -33,6 +34,8 @@
   {/if}
 
   <Generate />
+
+  <Queue />
 
   <Runs />
 </section>
