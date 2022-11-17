@@ -134,6 +134,8 @@ In addition, I need to sort out various small details around developing with Tau
 
 3. Setting _Samples_ to anything other than 1 crashes the Python script with this message `failed assertion [MPSTemporaryNDArray initWithDevice:descriptor:] Error: product of dimension sizes > 2**31' /opt/homebrew/Cellar/python@3.10/3.10.6_2/Frameworks/Python.framework/Versions/3.10/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown`.
 
+4. The queue cannot be stopped currently (v0.11.0) while it's processing. There is also a minor issue which prevents the same prompt matrix from being added more than once, which would actually be a feature if it was consistent with how simple prompts behave (they can be added multiple times).
+
 ## Troubleshooting
 
 ### Image generation fails when disconnected from the internet
