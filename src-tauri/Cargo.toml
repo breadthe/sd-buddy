@@ -1,6 +1,6 @@
 [package]
 name = "sd-buddy"
-version = "0.10.1"
+version = "0.11.0"
 description = "UI for Stable Diffusion on M1 Mac"
 authors = ["breadthe"]
 license = ""
