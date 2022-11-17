@@ -45,6 +45,7 @@ The first publicly-available version is pretty thin on features. My goal was to 
 - <label><input type="checkbox" checked /> Generate multiple images with the same parameters, in sequence.</label>
 - <label><input type="checkbox" checked /> Use a random seed for each generation.</label>
 - <label><input type="checkbox" checked /> Parameter matrix (aka parametric prompts). Use variables prefixed with "$" to trigger a set of inputs for each variable where you can list comma-separated parameters. You can then generate the entire batch of prompt combinations with one click.</label>
+- <label><input type="checkbox" checked /> **NEW** Prompt queue. Push prompts to a queue so they can be generated in sequence. Delete queue items, or mark them as skipped.</label>
 - <label><input type="checkbox" checked /> Real-time duration timer.</label>
 - <label><input type="checkbox" checked /> Display the output of the command and click it to copy to the clipboard.</label>
 - <label><input type="checkbox" checked /> Display the generated image at 512x512.</label>
@@ -54,7 +55,7 @@ The first publicly-available version is pretty thin on features. My goal was to 
 - <label><input type="checkbox" checked /> Links to the generated images (opens it in the associated program).</label>
 - <label><input type="checkbox" checked /> Click a previous run to reuse the prompt & all the generation parameters.</label>
 - <label><input type="checkbox" checked /> Each run contains generation parameters metadata.</label>
-- <label><input type="checkbox" checked /> **NEW** Gallery section which shows all the generated images in a simple grid. Has controls to filter by prompt fragment, sort by generated timestamp, and change thumbnail size.</label>
+- <label><input type="checkbox" checked /> Gallery section which shows all the generated images in a simple grid. Has controls to filter by prompt fragment, sort by generated timestamp, and change thumbnail size.</label>
 - <label><input type="checkbox" checked /> Keyboard shortcuts for quitting the app, copy/paste, etc.</label>
 
 ## Download
