@@ -1,4 +1,7 @@
-import { readable, writable } from "svelte/store";
+import { derived, readable, writable } from "svelte/store"
+import { txt2ImgParams } from "../utils"
+import { prompt, pythonPath } from "./"
+import { Rating, type Run } from "../types"
 
 // --ddim_steps (Steps)
 const DEFAULT_DDIM_STEPS = 10 // default 50 (keeping it 10 because slow computer)
@@ -42,3 +45,29 @@ export const defaultSeed = readable<number>(DEFAULT_SEED)
 export const seed = writable<number>(DEFAULT_SEED) // selected seed
 export const maxSeed = readable<number>(4294967295)
 export const useRandomSeed = writable<boolean>(false)
+
+export const stableDiffusionCommand = derived([pythonPath, prompt, steps, scale, iter, samples, height, width, seed], ([$pythonPath, $prompt, $steps, $scale, $iter, $samples, $height, $width, $seed]) =>
+    stableDiffusionCommandString($pythonPath, $prompt, $steps, $scale, $iter, $samples, $height, $width, $seed)
+)
+
+export const stableDiffusionCommandHtml = derived([pythonPath, prompt, steps, scale, iter, samples, height, width, seed], ([$pythonPath, $prompt, $steps, $scale, $iter, $samples, $height, $width, $seed]) =>
+    stableDiffusionCommandString($pythonPath, $prompt, $steps, $scale, $iter, $samples, $height, $width, $seed, true)
+)
+
+const stableDiffusionCommandString = (pythonPath: string, prompt: string, steps: number, scale: number, iter: number, samples: number, height: number, width: number, seed: number, html: boolean = false): string => {
+    const run: Run = {
+        prompt: prompt,
+        steps: steps,
+        scale: scale,
+        iter: iter,
+        samples: samples,
+        height: height,
+        width: width,
+        seed: seed,
+        id: "",
+        started_at: undefined,
+        rating: Rating.One
+    }
+
+    return `${pythonPath} scripts/txt2img.py ${txt2ImgParams(run, html)}`
+}

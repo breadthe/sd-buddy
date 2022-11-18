@@ -6,7 +6,7 @@
   import { isDark, getRandomSeed, txt2ImgParams } from "../utils"
 
   // type imports
-  import { AlertTypes, QueueItemStatus, Rating, type QueueItem } from "../types"
+  import { AlertTypes, QueueItemStatus, Rating } from "../types"
   import type { Run } from "../types"
 
   // store imports
@@ -14,6 +14,8 @@
     pythonPath,
     stableDiffusionDirectory,
     runs,
+    stableDiffusionCommand,
+    stableDiffusionCommandHtml,
 
     // queue
     queue,
@@ -21,7 +23,6 @@
     stopQueue,
     queueIsProcessing,
     queueIsExpanded,
-    incompleteQueue,
     currentQueueItem,
 
     // generate params
@@ -71,8 +72,6 @@
   import PushToQueueBtn from "./queue/PushToQueueBtn.svelte"
 
   let stableDiffusionOutputDirectory: string = ""
-  let stableDiffusionCommand: string = ""
-  let stableDiffusionCommandHtml: string = ""
   let rustResponse: string = ""
   let rustError: string = ""
 
@@ -96,11 +95,6 @@
   }).format($elapsed / 1000)
 
   $: numPromptTokens = Math.ceil($prompt.length / 4) // very rough estimation https://www.reddit.com/r/StableDiffusion/comments/wl4cn3/the_maximum_usable_length_of_a_stable_diffusion/
-
-  $: {
-    stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${$prompt}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${$seed?.toString()} --fixed_code`
-    stableDiffusionCommandHtml = `${$pythonPath} scripts/txt2img.py --prompt <strong>"${$prompt}"</strong> --plms --n_samples <strong>${$samples}</strong> --scale <strong>${$scale}</strong> --n_iter <strong>${$iter}</strong> --ddim_steps <strong>${$steps}</strong> --H <strong>${$height}</strong> --W <strong>${$width}</strong> --seed <strong>${$seed}</strong> --fixed_code`
-  }
 
   $: {
     if ($stableDiffusionDirectory) {
@@ -224,7 +218,7 @@
         // extract prompt strings randomly from the matrix
         const ix = Math.floor(Math.random() * tmpPromptStrings.length)
         const promptString = tmpPromptStrings[ix]
-        stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${$seed?.toString()} --fixed_code`
+        const stableDiffusionCommand = `${$pythonPath} scripts/txt2img.py --prompt "${promptString}" --plms --n_samples ${$samples?.toString()} --scale ${$scale?.toString()} --n_iter ${$iter?.toString()} --ddim_steps ${$steps?.toString()} --H ${$height?.toString()} --W ${$width?.toString()} --seed ${$seed?.toString()} --fixed_code`
         console.log(`Queueing ${currentCopy}`)
         const result = await doTheWork(promptString, stableDiffusionCommand, currentCopy)
         tmpPromptStrings.splice(ix, 1)
@@ -236,7 +230,7 @@
       for (let i = 1; i <= copies; i++) {
         currentCopy = i
         console.log(`Queueing ${currentCopy}`)
-        const result = await doTheWork($prompt, stableDiffusionCommand, currentCopy)
+        const result = await doTheWork($prompt, $stableDiffusionCommand, currentCopy)
         console.log(result)
       }
     }
@@ -413,7 +407,7 @@
     </div>
 
     {#if $prompt.trim() !== ""}
-      <Alert alertType={AlertTypes.Info} copy>{@html stableDiffusionCommandHtml}</Alert>
+      <Alert alertType={AlertTypes.Info} copy>{@html $stableDiffusionCommandHtml}</Alert>
     {/if}
   </div>
 
