@@ -109,7 +109,6 @@
 
 <button
   class="flex items-center"
-  disabled={disableGenerate}
   on:click={pushToQueue}
   title="Push the current prompt or prompt matrix to the queue"
   use:tooltip={{ theme: isDark() ? "dark-border" : "light-border" }}
