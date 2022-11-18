@@ -129,11 +129,13 @@ async fn stable_diffusion_command(directory: String, command: String) -> String 
     } else if Path::new(&stable_diffusion_directory).join(".direnv").exists() {
         shell_command = format!("direnv exec {} {}", stable_diffusion_directory, command);
     } else {
-        if operating_system == "windows" {
+        // disable this for now; it causes issues when not using a virtual environment
+        /* if operating_system == "windows" {
             shell_command = format!("cmd /C {}", command);
         } else {
             shell_command = format!("sh -c {}", command);
-        }
+        } */
+        shell_command = format!("{}", command);
     }
 
     // execute the Stable Diffusion command
