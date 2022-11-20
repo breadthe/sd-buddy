@@ -18,7 +18,7 @@
     <p class="font-bold">Stop the current run & clear the queue?</p>
     <div class="flex gap-2">
       <button
-        class="btn-link"
+        class="btn-transparent"
         on:click={() => {
           clearQueue()
           isClearing = false
@@ -26,7 +26,7 @@
       >
         Clear
       </button>
-      <button class="btn-link" on:click={() => (isClearing = false)}>Cancel</button>
+      <button class="btn-transparent" on:click={() => (isClearing = false)}>Cancel</button>
     </div>
   </div>
 {/if}
