@@ -30,6 +30,6 @@
     "@tauri-apps/cli": "^1.2.0",
     "tauri-settings": "^0.1.2",
     "tippy.js": "^6.3.7",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   }
 }
