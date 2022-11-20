@@ -118,15 +118,19 @@
     resetPromptMatrix()
   }
 
-  // disable the Generate button when these conditions are met
-  $: disableGenerate =
+  // disable the Enqueue button when these conditions are met
+  $: disableEnqueue =
     !$stableDiffusionDirectory || // no stable diffusion directory
     !$pythonPath || // python path is not set
     $prompt.trim() === "" || // prompt is empty
     numPromptTokens > 80 || // giving user a bit more leeway than strictly 75 since we're estimating
-    $isGenerating || // disable while generating
     // if there are custom vars, make sure they're all filled
     ($extractedVars.length && !$allCustomVarsAreFilled)
+
+  // disable the Generate button when these conditions are met
+  $: disableGenerate =
+    disableEnqueue || // all the conditions for disabling the Enqueue button
+    $isGenerating // and in addition disable while generating
 
   $: if ($startQueue) {
     console.log("processing queue")
@@ -378,7 +382,7 @@
     </div>
 
     <div class="flex items-center justify-between gap-4">
-      <PushToQueueBtn {disableGenerate} {copies} />
+      <PushToQueueBtn {disableEnqueue} {copies} />
 
       <!-- Generate button -->
       <button

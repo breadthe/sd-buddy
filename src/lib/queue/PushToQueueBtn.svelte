@@ -34,7 +34,7 @@
     useRandomSeed,
   } from "../../store"
 
-  export let disableGenerate: boolean = false
+  export let disableEnqueue: boolean = false
   export let copies: number = 1
 
   function pushToQueue() {
@@ -109,6 +109,7 @@
 
 <button
   class="flex items-center"
+  disabled={disableEnqueue}
   on:click={pushToQueue}
   title="Push the current prompt or prompt matrix to the queue"
   use:tooltip={{ theme: isDark() ? "dark-border" : "light-border" }}
